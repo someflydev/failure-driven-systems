@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: start phase 3 by making internal modular boundaries explicit before extracting any service.
+
+Context:
+- The platform must teach modular monolith before service sprawl.
+- Phase 3 introduces internal boundaries, contract thinking, and only later one carefully justified extraction.
+- The best first candidate boundary is report rendering: it can be separated as pure computation without moving source-of-truth data ownership.
+
+First inspect:
+- `services/api/`
+- report generation code
+- notification side-effect code
+- `curriculum/PHASE_PLAN.md`
+- `docs/SYSTEM_EVOLUTION.md`
+- `exercises/TEMPLATE.md`
+- phase 2 capstone docs
+- `git status --short`
+
+Work to perform:
+1. Refactor the API code into clear internal modules if it is not already organized. Suggested modules: customers, work_requests, reports, notifications, async_jobs, health, shared database/config.
+2. Keep behavior unchanged. This prompt is about internal boundaries and seams, not new features.
+3. Add module-level documentation or `docs/architecture/modular-monolith.md` explaining why these boundaries exist and why they are not separate services yet.
+4. Add tests or adjust imports so existing behavior remains covered after refactor.
+5. Create `exercises/phase-3/01-modular-monolith-boundaries.md` following `exercises/TEMPLATE.md` and requiring the learner to identify coupling, ownership of facts, and what would break if each module were extracted.
+6. Create `lessons/phase-3/README.md` with the initial phase 3 path and a warning that extraction is not automatically good.
+7. Add an ADR draft at `docs/adr/0001-report-rendering-boundary.md` that argues for and against extracting report rendering later. Keep the decision status as proposed or exploratory.
+
+Boundaries:
+- Do not create a second deployable service yet.
+- Do not move database ownership.
+- Do not introduce service-to-service HTTP yet.
+- Do not break public API behavior.
+- Avoid overengineering with generic repository/service frameworks.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Compare current API behavior before/after through tests.
+- Confirm docs use the phrase "service boundaries are expensive".
+- Confirm no new Docker service was added.

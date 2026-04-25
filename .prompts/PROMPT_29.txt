@@ -1,0 +1,37 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add LLM-assisted debugging, incident critique, and mock interview workflows for phase 4 while preserving the struggle-first doctrine.
+
+Context:
+- LLMs should help analyze evidence after the learner has collected logs, metrics, timelines, and hypotheses.
+- Assistants should act as incident commanders, skeptical reviewers, and interviewers, not as shortcut answer engines.
+- This prompt creates reusable workflows, not new runtime features.
+
+First inspect:
+- `docs/ASSISTANT_WORKFLOW.md`
+- `reviews/llm/`
+- `ops/incidents/`
+- `scenarios/phase-4/`
+- `exercises/TEMPLATE.md`
+- `exercises/phase-4/`
+- `git status --short`
+
+Work to perform:
+1. Add `reviews/llm/TEMPLATE_incident_commander.md` asking the assistant to request facts, challenge assumptions, and force clear next checks.
+2. Add `reviews/llm/TEMPLATE_log_analysis_helper.md` requiring the learner to paste a bounded log excerpt, metrics snapshot, scenario name, and their own hypothesis before asking for analysis.
+3. Add `reviews/llm/TEMPLATE_postmortem_critique.md`.
+4. Create `interviews/phase-4-operational-debugging.md` with mock interview questions based on actual OpsLedger failure scenarios.
+5. Create `quizzes/phase-4.md` with short-answer questions on logs, metrics, correlation IDs, health checks, incident response, and postmortem quality.
+6. Update `docs/ASSISTANT_WORKFLOW.md` with phase 4 incident-analysis boundaries.
+7. Create `reviews/rubrics/phase-4-capstone.md` and `exercises/phase-4/04-phase-4-capstone.md` following `exercises/TEMPLATE.md`.
+
+Boundaries:
+- Do not add runtime code unless needed to fix broken references.
+- Do not create canned final answers to incident questions.
+- Do not encourage pasting unlimited logs or secrets into LLMs.
+- Do not skip learner hypothesis collection.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Search templates for requirements to include learner hypothesis and evidence.
+- Confirm no template asks for secrets or full environment dumps.

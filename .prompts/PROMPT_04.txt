@@ -1,0 +1,45 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add the initial Python project tooling and quality gates for the OpsLedger API without building feature logic yet.
+
+Context:
+- The primary backend stack is Python with FastAPI, chosen for pragmatic API development, strong ecosystem, type-hinted request models, and interview relevance.
+- PostgreSQL will be the source of truth, introduced through SQLAlchemy and Alembic.
+- Python tooling is repo-root and uses `uv` with an explicit Python 3.12 environment.
+- Redis, workers, Docker deployment, and k3s are later concepts. Do not introduce them in this prompt.
+- The repo should remain viable on a modest Linux VPS and local development machine.
+
+First inspect:
+- `README.md`
+- `docs/DOMAIN.md`
+- `docs/CONSTRAINTS.md`
+- `docs/REPO_MAP.md`
+- `AGENT.md`
+- `git status --short`
+
+Work to perform:
+1. Create a Python project scaffold under `services/api/`.
+2. Create a repo-root `pyproject.toml` using `uv` as the dependency and virtualenv workflow. Require Python 3.12 explicitly, for example with `requires-python = ">=3.12,<3.13"` or an equivalent pinned project setting. Include FastAPI, Uvicorn, Pydantic settings, SQLAlchemy, Alembic, psycopg, pytest, httpx, ruff, and mypy or pyright. Keep dependency choices minimal.
+3. Create or document the local environment with `uv`, such as `uv venv --python 3.12` followed by `uv sync`. Do not introduce pip-only or ad hoc virtualenv instructions as the primary path.
+4. Add package structure for the API under `services/api/`, such as:
+   - `services/api/opledger_api/__init__.py`
+   - `services/api/opledger_api/main.py`
+   - `services/api/opledger_api/config.py`
+   - `services/api/opledger_api/health.py`
+   - `services/api/tests/`
+5. Implement only a minimal FastAPI app with a root route and `/health/live` endpoint that does not require a database.
+6. Add `scripts/verify.sh` to run formatting/linting/type checks/tests that exist so far through the repo-root `uv` environment. It should be strict but realistic for the current repo state.
+7. Add `docs/TECH_STACK.md` explaining why FastAPI + Postgres is the default, why repo-root `uv` tooling and Python 3.12 are used, what is deferred, and when Go/JVM/Node/Rust/Elixir may be discussed later.
+8. Update `README.md` with minimal local development instructions based on `uv` and Python 3.12.
+
+Boundaries:
+- Do not create database tables yet.
+- Do not add Redis, workers, queues, Docker Compose, Dokku, or k3s yet.
+- Do not make the API depend on external services for liveness.
+- Do not introduce frontend code.
+
+Verification:
+- Create/sync the environment with `uv` using Python 3.12 if available in the environment.
+- Run `./scripts/verify.sh`.
+- Run the minimal app locally long enough to confirm `/health/live` if practical; if not practical, document why.
+- Confirm `rg "Redis|worker|queue|k3s"` does not show accidental implementation references outside docs saying they are deferred.

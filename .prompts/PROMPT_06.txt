@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: implement the first relational data model and migrations for OpsLedger while teaching source-of-truth discipline and relational basics.
+
+Context:
+- Phase 1 allows a single FastAPI service, PostgreSQL, migrations, synchronous request-response, validation, tests, logs, and Dokku deployment later.
+- Phase 1 forbids queues, Redis, caching, service extraction, and Kubernetes.
+- The initial domain should stay small: customers and work requests are enough to teach relationships, constraints, and CRUD.
+
+First inspect:
+- `docs/DOMAIN.md`
+- `curriculum/PHASE_PLAN.md`
+- `services/api/opledger_api/`
+- Alembic setup from the prior prompt
+- existing tests
+- `git status --short`
+
+Work to perform:
+1. Add SQLAlchemy models for:
+   - `Customer`: id, name, email, created_at, updated_at
+   - `WorkRequest`: id, customer_id, title, description, status, created_at, updated_at
+2. Add database constraints:
+   - customer email uniqueness
+   - work request status limited to a small explicit set such as `open`, `in_progress`, `resolved`, `cancelled`
+   - foreign key from work request to customer
+3. Create an Alembic migration for these tables. Use deterministic names and avoid hand-wavy generated leftovers.
+4. Add Pydantic schemas for API input/output, but do not implement full endpoints yet if that would make the prompt too large. At minimum, schemas should be ready for prompt 7.
+5. Add `docs/data-models/phase-1.md` explaining the relational choices, what is normalized, what is deliberately not modeled yet, and what failures constraints prevent.
+6. Update `docs/DOMAIN.md` with a pointer to the implemented phase 1 model.
+
+Boundaries:
+- Do not add status event history yet. It is introduced deliberately in PROMPT_08 as the transaction lesson.
+- Do not add background jobs, Redis, cache, service extraction, or report tables.
+- Do not denormalize for read performance yet.
+- Do not bypass database constraints with only application validation.
+
+Verification:
+- Run migration creation and, if a database is available, apply/rollback it.
+- Run tests and lint/type checks.
+- Add at least one unit test around schema validation or model construction if DB integration is not available.
+- Confirm docs explain why Postgres is the source of truth.

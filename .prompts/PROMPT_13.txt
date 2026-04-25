@@ -1,0 +1,43 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: consolidate phase 1 into a coherent learning path with navigation, review gates, quizzes, and a capstone that proves the learner can build, deploy, break, debug, and explain a single-service system.
+
+Context:
+- Phase 1 is single service, single Postgres truth, synchronous request-response, basic deployment, logs, and runbooks.
+- Phase 1 explicitly excludes queues, Redis, caching, service extraction, Kubernetes, and advanced observability.
+- The repo should be navigable for a public reader and useful for interview preparation.
+
+First inspect:
+- `curriculum/README.md`
+- `curriculum/PHASE_PLAN.md`
+- `exercises/TEMPLATE.md`
+- `exercises/phase-1/`
+- `reviews/checklists/`
+- `ops/runbooks/`
+- `deploy/dokku/`
+- API implementation
+- `git status --short`
+
+Work to perform:
+1. Create `lessons/phase-1/README.md` as the phase 1 lesson index. Link the app features, exercises, scenarios, runbooks, review checklist, and deployment docs in the intended order.
+2. Create `quizzes/phase-1.md` with short-answer questions. Focus on HTTP basics, relational modeling, transactions, migrations, health checks, logs, deployment, and DB failure. Do not ask about queues or caching yet except "why not yet".
+3. Create `interviews/phase-1-backend.md` with mock interview questions and expected strong-answer traits, not full canned answers.
+4. Create `reviews/rubrics/phase-1-capstone.md` with scoring categories: implementation correctness, relational reasoning, operational debugging, deployment evidence, explanation quality, and restraint around premature complexity.
+5. Create `exercises/phase-1/07-phase-1-capstone.md` following `exercises/TEMPLATE.md` and requiring the learner to:
+   - add a small safe CRUD improvement
+   - test it
+   - deploy it to Dokku or document the blocker
+   - simulate DB unavailable
+   - write a short explanation of tradeoffs
+   - run an LLM critique only after completing their own notes
+6. Update `README.md` with a compact "Phase 1 path" pointer.
+
+Boundaries:
+- Do not add phase 2 implementation.
+- Do not create answer keys that let the learner bypass reasoning.
+- Do not make quizzes multiple-choice only; explanation matters.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run `rg "queue|Redis|cache|k3s|Kubernetes" lessons/phase-1 exercises/phase-1 quizzes/phase-1.md interviews/phase-1-backend.md` and ensure mentions are only exclusions or preview notes.
+- Confirm all phase 1 exercises follow `exercises/TEMPLATE.md`.

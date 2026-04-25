@@ -1,0 +1,47 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add database and storage paradigm comparison material tied to OpsLedger decisions and interview practice.
+
+Context:
+- The implementation primarily uses Postgres and Redis.
+- The platform should still teach how to reason about document stores, key-value systems, queues/streams, analytical stores, search indexes, vector storage, and when not to add another datastore.
+- This prompt is mostly educational architecture material grounded in the implemented system.
+
+First inspect:
+- `docs/architecture/current-system.md`
+- ADRs for Postgres and Redis
+- data model docs
+- phase 6 lesson docs
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Create `docs/storage/README.md` as a storage decision guide for OpsLedger.
+2. Add concise comparison docs:
+   - `docs/storage/relational-postgres.md`
+   - `docs/storage/document-stores.md`
+   - `docs/storage/key-value-and-cache.md`
+   - `docs/storage/queues-and-streams.md`
+   - `docs/storage/search-indexes.md`
+   - `docs/storage/analytical-stores.md`
+   - `docs/storage/vector-storage.md`
+   - `docs/storage/when-not-to-add-a-datastore.md`
+3. Each doc must include:
+   - what problem this paradigm solves
+   - what OpsLedger would gain
+   - what OpsLedger would pay operationally
+   - failure modes
+   - interview explanation prompts
+4. Create `exercises/phase-6/02-datastore-tradeoff-defense.md` following `exercises/TEMPLATE.md`.
+5. Create `interviews/phase-6-storage-systems.md` with questions and strong-answer traits.
+6. Update phase 6 navigation.
+
+Boundaries:
+- Do not add actual MongoDB, Elasticsearch, ClickHouse, vector DB, Kafka, or cloud-managed services.
+- Do not imply every paradigm belongs in this repo.
+- Do not create generic textbook content; tie comparisons to OpsLedger workloads.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Search storage docs for "OpsLedger" and confirm comparisons are grounded in this system.
+- Confirm docs repeatedly explain when not to add another datastore.

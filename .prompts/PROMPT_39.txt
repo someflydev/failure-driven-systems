@@ -1,0 +1,54 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add role-path overlays that route learners through the same evolving system for different interview targets without creating separate projects.
+
+Context:
+- The platform supports overlapping paths:
+  - Backend/Python systems engineer
+  - Data/backend engineer
+  - Practical distributed systems engineer
+  - High-leverage generalist backend engineer
+  - Architecture/decision-capable engineer
+- The paths should emphasize different exercises, scenarios, reviews, and interview materials over the same OpsLedger system.
+
+First inspect:
+- `curriculum/`
+- `lessons/`
+- `exercises/TEMPLATE.md`
+- `exercises/`
+- `scenarios/`
+- `interviews/`
+- `reviews/`
+- `docs/architecture/current-system.md`
+- `git status --short`
+
+Work to perform:
+1. Create `paths/README.md` explaining that paths are overlays, not separate codebases.
+2. Create path guides:
+   - `paths/backend-python.md`
+   - `paths/data-backend.md`
+   - `paths/distributed-systems.md`
+   - `paths/generalist-backend.md`
+   - `paths/architecture-decisions.md`
+3. Each guide must include:
+   - target outcome
+   - recommended phase emphasis
+   - required exercises
+   - optional extensions
+   - review/interview checkpoints
+   - portfolio artifacts to produce
+   - what not to overfocus on
+4. Create `paths/shared-capstone.md` describing a final cross-path portfolio defense based on OpsLedger.
+5. Create `interviews/role-tracks/` with one concise mock interview guide per path.
+6. Update root README, curriculum README, and phase 6 README to link paths.
+
+Boundaries:
+- Do not duplicate all exercises into each path.
+- Do not fork the codebase by path.
+- Do not imply completing every optional extension is required.
+- Do not make architecture path purely theoretical; it must refer to built artifacts.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm each path references existing artifacts by path.
+- Confirm every path includes at least one implementation, one debugging, one review, and one explanation milestone.

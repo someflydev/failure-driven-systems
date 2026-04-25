@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: introduce Redis-backed background work to move report generation out of the request path, with explicit worker operation and simple local deployment.
+
+Context:
+- The learner has now experienced synchronous report pain.
+- Phase 2 allows Redis, a worker process, queued tasks, job status visibility, retries later, and duplicate execution scenarios later.
+- The architecture is still mostly one core service plus one worker using the same codebase and database. Do not extract a separate service yet.
+
+First inspect:
+- report code from phase 2 prompt 14
+- `exercises/TEMPLATE.md`
+- `exercises/phase-2/01-synchronous-report-pain.md`
+- `docker-compose.yml`
+- API config
+- `docs/TECH_STACK.md`
+- `git status --short`
+
+Work to perform:
+1. Choose a minimal Python job library appropriate for the current stack. Prefer a simple Redis-backed worker such as RQ unless the existing project strongly points elsewhere. Document the choice.
+2. Add Redis config and update local Docker Compose to include Redis.
+3. Add a worker entrypoint/process that can generate reports in the background.
+4. Add an API endpoint to enqueue report generation and return a job identifier quickly.
+5. Persist enough job/report state in Postgres to let users inspect what happened even if Redis is ephemeral. If creating durable job status, prefer `ReportJob` unless an equivalent name already exists and is documented.
+6. Add scripts or documented commands to run the worker locally and in Docker.
+7. Update `docs/TECH_STACK.md` with why Redis is now justified and why it is not the system of record.
+8. Create `exercises/phase-2/02-background-report-worker.md` following `exercises/TEMPLATE.md` and requiring the learner to compare synchronous versus queued behavior.
+
+Boundaries:
+- Do not add retries yet except whatever unavoidable library default exists; document defaults honestly.
+- Do not add idempotency yet.
+- Do not extract a reporting service.
+- Do not store authoritative report state only in Redis.
+- Do not add Kubernetes.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run local stack with API, Postgres, Redis, and worker if practical.
+- Enqueue a report, process it, and confirm persisted job/report status.
+- Stop the worker and confirm enqueued jobs do not complete, then document observed behavior.

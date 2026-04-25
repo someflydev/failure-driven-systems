@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: begin phase 6 by adding architecture decision records, decision memo templates, and tradeoff-defense exercises grounded in the implemented system.
+
+Context:
+- Phase 6 consolidates real understanding into architecture discussion and interview readiness.
+- Decisions must be tied to actual constraints: small VPS, Dokku, Postgres, Redis, one extracted stateless service, worker, observability, and measured performance.
+- Avoid architecture astronautics. Every proposal must specify workload, team, operational cost, and failure modes.
+
+First inspect:
+- `docs/adr/`
+- `docs/SYSTEM_EVOLUTION.md`
+- all phase README files
+- current deployment docs
+- current architecture docs
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Create `docs/architecture/current-system.md` describing the current deployed shape: API, Postgres, Redis, worker, reporting service, logs, metrics, deployment modes.
+2. Create `docs/adr/TEMPLATE.md` with fields for context, decision, alternatives, consequences, failure modes, operational cost, rollback, and interview defense.
+3. Add ADRs or update existing ADRs for:
+   - FastAPI + Python as primary stack
+   - Postgres as source of truth
+   - Redis for queue/cache with Postgres durability
+   - stateless reporting service extraction
+   - Dokku-first deployment strategy
+4. Create `exercises/phase-6/01-decision-memo-defense.md` following `exercises/TEMPLATE.md` and requiring the learner to write and defend a small decision memo.
+5. Create `lessons/phase-6/README.md` with the initial phase 6 path.
+6. Create `reviews/checklists/architecture-review.md` for reviewing proposals.
+
+Boundaries:
+- Do not add new runtime features.
+- Do not rewrite prior docs into bloated essays.
+- Do not present one architecture as universally best.
+- Do not add k3s manifests yet; that is a separate later prompt.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm ADRs reference actual repo artifacts and constraints.
+- Confirm every decision lists tradeoffs and consequences.

@@ -1,0 +1,47 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: extract exactly one bounded service: a stateless report-rendering service, then wire the existing worker to call it with timeouts and clear fallback behavior.
+
+Context:
+- The learner has built a modular monolith and explicit report rendering contract.
+- This extraction is intentionally narrow. The new service owns no authoritative data; the core API/Postgres remains the source of truth.
+- The purpose is to experience service-to-service communication, deployment complexity, timeouts, and operational cost.
+
+First inspect:
+- `docs/contracts/report-rendering-v1.md`
+- `docs/adr/0001-report-rendering-boundary.md`
+- `docs/TECH_STACK.md`
+- repo-root `pyproject.toml` and existing `uv` Python 3.12 workflow
+- report rendering module
+- worker code
+- Docker Compose
+- `exercises/TEMPLATE.md`
+- tests
+- `git status --short`
+
+Work to perform:
+1. Create `services/reporting/` as a small FastAPI service implementing the report rendering contract. Use the existing repo-root Python tooling, `uv` workflow, and Python 3.12 version unless an already documented repo convention requires otherwise.
+2. Keep it stateless. It receives input payloads and returns rendered report output. It must not connect to the core database.
+3. Add a core API/worker client for the reporting service with:
+   - configurable base URL
+   - explicit timeout
+   - clear exception type or error mapping
+   - no unbounded retries
+4. Update local Docker Compose to include the reporting service.
+5. Add tests for the reporting service contract and the core client behavior.
+6. Update report job execution so it uses the extracted service when configured. If you keep a local in-process fallback for local development, document it and make the default explicit.
+7. Update the ADR status to accepted or accepted-for-learning, with tradeoffs.
+8. Add `exercises/phase-3/03-extract-reporting-service.md` following `exercises/TEMPLATE.md` and requiring the learner to explain why this extraction is educational and why it may not be worth it in a small production system.
+
+Boundaries:
+- Extract only the report-rendering service.
+- Do not extract notifications, customers, work requests, or job orchestration.
+- Do not add Kubernetes.
+- Do not share a database with the reporting service.
+- Do not add service mesh, gRPC, or distributed tracing yet.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run Compose with API, Postgres, Redis, worker, and reporting service if practical.
+- Generate a report through the worker and confirm it calls the reporting service.
+- Stop the reporting service and confirm timeout/failure behavior is visible and bounded.

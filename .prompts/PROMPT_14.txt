@@ -1,0 +1,38 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: begin phase 2 by creating synchronous pain around report generation before introducing workers or queues.
+
+Context:
+- Failure-driven learning requires the learner to feel why synchronous-only systems hurt.
+- Do not introduce Redis or workers in this prompt.
+- OpsLedger reports are derived summaries over work requests and status history. They are a natural feature that becomes awkward synchronously.
+
+First inspect:
+- `curriculum/PHASE_PLAN.md`
+- `lessons/phase-1/README.md`
+- `exercises/TEMPLATE.md`
+- API models and endpoints
+- tests
+- `docs/DOCTRINE.md`
+- `git status --short`
+
+Work to perform:
+1. Add a synchronous report generation endpoint such as `POST /reports/work-requests/summary`. It should compute a simple summary from existing data and persist a `Report` row if needed, or return the computed result if persistence is not yet justified. Choose the smallest design that creates measurable synchronous work. If persistence is introduced here, use `Report` for report output only; reserve queued job status naming such as `ReportJob` for the async prompts.
+2. Add an intentional but controlled delay option for local learning, enabled only by config or test-only parameter, so the learner can observe slow request behavior without damaging production defaults.
+3. Add tests for report correctness and for the no-delay default.
+4. Add `docs/data-models/phase-2-reports.md` if a report table is introduced. Explain derived data versus source-of-truth data.
+5. Create `exercises/phase-2/01-synchronous-report-pain.md` following `exercises/TEMPLATE.md`. The exercise should require measuring latency, observing blocked user experience, and explaining why moving work out of the request path may help.
+6. Create `lessons/phase-2/README.md` with only the first lesson linked for now and a clear warning that the queue comes after the pain is observed.
+
+Boundaries:
+- No Redis.
+- No worker.
+- No background jobs.
+- No caching.
+- Do not fake async with fire-and-forget in the web process.
+- Do not call the pattern "queue" as the solution until after the learner observes the pain. You can preview that later prompts address it.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Manually call the report endpoint with delay enabled if practical and observe latency.
+- Confirm phase 2 exercise tells the learner to record before/after expectations before implementing async.

@@ -1,0 +1,35 @@
+You are running in a fresh coding-assistant session inside a new repository named `failure-driven-systems`.
+
+Goal: establish the repository doctrine, public positioning, and navigable skeleton for a serious failure-driven systems learning platform. Do not implement the application yet.
+
+Core context:
+- This repo teaches practical backend, data/backend, distributed systems, generalist platform judgment, and architecture decision readiness.
+- The target practice environment is one Linux VPS with 4 GB RAM, 3 vCPUs, Dokku installed, k3s available later, Docker available, and modest budget.
+- The learning doctrine is: experience, failure/friction, naming, pattern, variation, explanation, defense under questioning.
+- The platform must prefer simplicity first, a modular monolith before service sprawl, Postgres as source of truth, Redis only when a later failure creates the need, Dokku before k3s, and LLMs as reviewers/interviewers/critics rather than ghostwriters.
+- The repo is a public-quality artifact, not a toy tutorial collection.
+
+First inspect:
+- `pwd`
+- `git status --short`
+- existing files with `rg --files -g '!*'`
+
+Work to perform:
+1. Create a concise root `README.md` that explains what the project is, who it is for, what makes it different, and the high-level phase sequence. Keep it public-facing but not bloated.
+2. Create `AGENT.md` as a routing file for future coding-assistant sessions. It must say to inspect repo state first, preserve existing work, follow prompt files, and verify changes before final response.
+3. Create `docs/DOCTRINE.md` with the full learning doctrine: failure before abstraction, friction before naming, simple deployment first, source-of-truth clarity, operational judgment, LLM boundaries, and the constrained VPS philosophy.
+4. Create `docs/REPO_MAP.md` defining the intended repo layers and directories. Include planned directories such as `services/`, `curriculum/`, `lessons/`, `exercises/`, `scenarios/`, `reviews/`, `interviews/`, `deploy/`, `ops/`, `scripts/`, `tests/`, and `data/`, but make clear that directories should be populated only when justified by later prompts.
+5. Create `curriculum/README.md` with six phases and strict concept timing boundaries. This should mirror the doctrine: phase 1 single service, phase 2 async, phase 3 careful boundaries, phase 4 observability/incidents, phase 5 performance/caching/read models, phase 6 architecture/interviews.
+6. Create `docs/CONSTRAINTS.md` describing the Linux VPS, Dokku, k3s-later, Postgres, Redis-later, and no-managed-cloud assumptions.
+7. Create or update a minimal `.gitignore` suitable for Python, local env files, caches, generated artifacts, and temporary learner outputs. Preserve any existing entries.
+
+Boundaries:
+- Do not create Python app code yet.
+- Do not add Docker, databases, Redis, queues, or k3s manifests yet.
+- Do not create vague placeholder docs. Each document should contain durable guidance future prompts can rely on.
+- Keep files ASCII.
+
+Verification:
+- Run `rg --files | sort` and confirm the created structure is clean.
+- Run a basic docs sanity check by searching for the doctrine phrases `failure before abstraction`, `Dokku`, `k3s`, `Postgres`, and `LLM`.
+- Ensure no generated docs claim features already exist.

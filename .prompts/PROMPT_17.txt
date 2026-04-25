@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add retry behavior and controlled failure injection for report jobs so the learner experiences partial failure and unsafe assumptions before idempotency is fully solved.
+
+Context:
+- Phase 2 teaches retries as a design decision, not a magic flag.
+- Retrying a job can duplicate side effects unless the code is safe.
+- This prompt should create visible failure/retry behavior and tests, then set up the need for idempotency in the next prompt.
+
+First inspect:
+- worker implementation
+- durable job status model
+- `docs/async/phase-2-job-lifecycle.md`
+- `exercises/TEMPLATE.md`
+- phase 2 exercises
+- tests
+- `git status --short`
+
+Work to perform:
+1. Add controlled failure injection for report generation, limited to local/test scenarios and disabled by default. Gate it behind an explicit non-production setting. Examples: env var or request flag that causes the worker to fail before completion or after partial progress.
+2. Add retry configuration with bounded attempts and backoff. Document exact behavior and library defaults.
+3. Update durable job status to record attempt count, last_error, and timestamps for started/finished or failed attempts if not already present.
+4. Add tests for:
+   - failed job records error
+   - retry attempt count changes
+   - bounded retries stop
+   - no infinite retry loop
+5. Create `scenarios/phase-2/report-retry-failure.md` with steps to trigger failure, inspect logs/status, and explain what happened.
+6. Create `exercises/phase-2/04-retries-before-idempotency.md` following `exercises/TEMPLATE.md` and requiring the learner to identify duplicate side-effect risks before implementing the fix.
+
+Boundaries:
+- Do not fully solve idempotency yet. Name the risk, create observability, and prepare the next prompt.
+- Do not allow unbounded retries.
+- Do not swallow worker exceptions without durable evidence.
+- Do not introduce service extraction.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run the failure scenario locally if practical.
+- Confirm retry docs include max attempts, backoff, and what state persists.
+- Confirm the exercise asks "what could duplicate?" before naming the final pattern.

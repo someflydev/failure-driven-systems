@@ -1,0 +1,37 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: improve hot read paths with pagination, query inspection, and narrowly justified indexes based on measured behavior.
+
+Context:
+- Phase 5 has performance baselines. Optimization must follow evidence.
+- Postgres remains the system of record.
+- The learner should understand pagination, access patterns, indexes, and why every index has write/storage cost.
+
+First inspect:
+- performance baseline docs/results if present
+- work request list endpoints
+- database models/migrations
+- metrics
+- `docs/performance/baselines.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Review existing list endpoints and make pagination behavior explicit and safe. Add maximum limits and predictable ordering if missing.
+2. Add query inspection guidance using `EXPLAIN` or `EXPLAIN ANALYZE` in `docs/performance/query-inspection.md`.
+3. Add only indexes justified by current access patterns, such as status plus created_at for filtered work request lists, if tests/docs support the decision.
+4. Add migration(s) for any indexes and document write-side tradeoffs.
+5. Add tests for pagination bounds, ordering stability, and filtered query behavior.
+6. Add `exercises/phase-5/02-pagination-and-indexes.md` following `exercises/TEMPLATE.md` and requiring the learner to compare before/after query plans or at least reason about expected access pattern improvements.
+
+Boundaries:
+- Do not add caching yet.
+- Do not add read replicas.
+- Do not add every conceivable index.
+- Do not claim an index improved performance without evidence or a documented hypothesis.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run baseline/perf smoke test if practical.
+- If a DB is available, capture at least one query plan before/after; otherwise document how to capture it.
+- Confirm docs mention index maintenance cost.

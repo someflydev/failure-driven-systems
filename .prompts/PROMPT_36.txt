@@ -1,0 +1,43 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add language/runtime/paradigm tradeoff material and one optional polyglot extension exercise without fragmenting the main codebase.
+
+Context:
+- The main implementation stays Python/FastAPI.
+- Learners should be able to discuss Python, Go, TypeScript/Node, JVM, Rust, and BEAM/Elixir tradeoffs at a practical level.
+- Polyglot systems are justified by constraints and team capability, not novelty.
+
+First inspect:
+- `docs/TECH_STACK.md`
+- architecture ADRs
+- `docs/architecture/current-system.md`
+- phase 6 docs
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Create `docs/languages/README.md` as a practical runtime decision guide.
+2. Add docs:
+   - `docs/languages/python.md`
+   - `docs/languages/go.md`
+   - `docs/languages/typescript-node.md`
+   - `docs/languages/jvm.md`
+   - `docs/languages/rust.md`
+   - `docs/languages/beam-elixir.md`
+   - `docs/languages/polyglot-systems.md`
+3. Each doc must address strengths, weaknesses, runtime/deployment implications, team productivity, operability, and when it might fit an OpsLedger component.
+4. Create `exercises/phase-6/03-runtime-selection-defense.md` following `exercises/TEMPLATE.md`.
+5. Create an optional extension spec at `extensions/polyglot-report-renderer/README.md` that asks the learner to reimplement the stateless reporting service in Go or TypeScript as a contract-compatible exercise. This should be a spec only unless the repo already has capacity and clear verification.
+6. Create `interviews/phase-6-language-runtime.md`.
+7. Update phase 6 navigation.
+
+Boundaries:
+- Do not implement a second language service in the main path.
+- Do not turn the repo into a polyglot showcase.
+- Do not make unsupported performance claims without context.
+- Do not disparage languages; focus on fit, constraints, and tradeoffs.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm language docs are tied to OpsLedger components, not generic lists.
+- Confirm optional extension clearly says it is not required for the main path.

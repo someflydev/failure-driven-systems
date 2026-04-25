@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: begin phase 5 by adding performance baselines and light load testing before any caching or optimization.
+
+Context:
+- Phase 5 teaches measurement before intervention.
+- The learner should identify bottlenecks before adding cache or read models.
+- The target environment is a small VPS, so load tests must be lightweight and safe.
+
+First inspect:
+- current API endpoints
+- metrics implementation
+- Docker/Dokku docs
+- phase 4 observability docs
+- `curriculum/PHASE_PLAN.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Add a lightweight performance test approach. Choose a simple tool such as `k6`, `hey`, `wrk`, or a small Python script. Document why the choice fits the repo.
+2. Add `scripts/perf/` with safe baseline scenarios. Defaults must target localhost, use low rates, and require explicit opt-in before any write-oriented or non-local target run:
+   - listing work requests
+   - creating work requests at low rate if safe
+   - polling report job status
+3. Add fixture/seed data support if necessary for repeatable read tests. Keep it small and deterministic.
+4. Create `docs/performance/baselines.md` explaining how to run tests locally and on the VPS, what not to do on a tiny server, and how to record results.
+5. Add `exercises/phase-5/01-measure-before-optimizing.md` following `exercises/TEMPLATE.md` and requiring the learner to collect baseline latency/error results and identify one suspected bottleneck before changing code.
+6. Create `lessons/phase-5/README.md` with the initial phase 5 path.
+
+Boundaries:
+- Do not add caching yet.
+- Do not add indexes unless a measured query and current schema clearly justify it; if you add one, document the measurement.
+- Do not run destructive or high-volume load by default.
+- Do not default performance scripts to deployed, shared, or production URLs. Non-local targets must be explicit.
+- Do not add a large benchmarking framework.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run the smallest perf smoke test locally if practical.
+- Confirm scripts have conservative defaults.
+- Confirm docs require recording baseline before optimizing.

@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add incident response exercises, postmortem templates, and operational runbooks that force learners to debug with logs, metrics, and status surfaces.
+
+Context:
+- Phase 4 teaches incident thinking and debugging, not just observability libraries.
+- The platform should simulate deliberate, teachable pressure rather than chaos engineering theater.
+- Learners should practice concise status updates, hypothesis-driven debugging, and post-incident learning.
+
+First inspect:
+- `docs/observability/`
+- `ops/runbooks/`
+- `scenarios/`
+- phase 4 exercises
+- metrics/logging implementation
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Create `ops/incidents/TEMPLATE_postmortem.md` with sections for summary, impact, timeline, detection, root cause, contributing factors, what went well, what went poorly, action items, and interview explanation.
+2. Create `ops/incidents/TEMPLATE_incident_status_update.md` for short updates during an incident.
+3. Add incident scenarios:
+   - `scenarios/phase-4/reporting-service-latency-incident.md`
+   - `scenarios/phase-4/worker-stalled-incident.md`
+   - `scenarios/phase-4/noisy-nonfatal-errors.md`
+   - `scenarios/phase-4/ambiguous-logs-before-correlation.md`
+4. Create `ops/runbooks/report-jobs-stuck.md` and `ops/runbooks/reporting-service-down.md`.
+5. Add `exercises/phase-4/03-incident-debugging-drill.md` following `exercises/TEMPLATE.md` and requiring the learner to run a scenario, produce status updates, identify evidence, and write a short postmortem.
+6. Add `reviews/checklists/incident-review.md` for critiquing incident response quality.
+
+Boundaries:
+- Do not add new product features.
+- Do not require production traffic or destructive actions.
+- Do not create scenarios that need large infrastructure.
+- Do not let the LLM write the postmortem before the learner creates their own timeline.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm scenarios reference actual logs, metrics, endpoints, and job statuses available in the repo.
+- Confirm templates are concise enough to use during practice.

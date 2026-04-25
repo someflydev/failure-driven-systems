@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: teach partial failure and compatibility across the extracted reporting service boundary.
+
+Context:
+- Phase 3 now has one extracted stateless service.
+- Mixed-version reality is normal. Downstream services can be slow, unavailable, or return an older/newer contract.
+- The learner needs practical service-boundary debugging before observability tooling expands in phase 4.
+
+First inspect:
+- `services/reporting/`
+- reporting client in the core API/worker
+- contract docs/tests
+- Docker Compose
+- `exercises/TEMPLATE.md`
+- phase 3 exercises
+- `git status --short`
+
+Work to perform:
+1. Add controlled failure modes to the reporting service for local/scenario use. They must be disabled by default and gated by an explicit non-production setting:
+   - delayed response
+   - 500 response
+   - malformed or incompatible response
+2. Ensure the core client handles timeout, non-2xx response, and invalid response distinctly enough for debugging.
+3. Add compatibility tests for v1 contract behavior and at least one backward-compatible additive field.
+4. Create `scenarios/phase-3/reporting-timeout.md`, `scenarios/phase-3/reporting-bad-response.md`, and `scenarios/phase-3/mixed-version-contract.md`.
+5. Add `docs/contracts/compatibility-playbook.md` explaining backward-compatible changes, breaking changes, consumer-driven thinking, and why versioned contracts matter.
+6. Add `exercises/phase-3/04-timeouts-and-contracts.md` following `exercises/TEMPLATE.md` and requiring the learner to run a timeout scenario, inspect job status/logs, and explain user-visible impact.
+
+Boundaries:
+- Do not add automatic broad retries across the service boundary unless the design proves it is safe.
+- Do not add a circuit breaker library yet. You may discuss it as a later pattern, but keep implementation simple.
+- Do not add tracing yet.
+- Do not add more services.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run at least one failure mode manually if practical.
+- Confirm failure scenarios tell the learner what to observe before changing code.
+- Confirm compatibility docs include examples of safe and unsafe contract changes.

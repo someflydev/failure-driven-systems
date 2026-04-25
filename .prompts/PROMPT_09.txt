@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: strengthen test discipline, fixtures, and learner verification habits for phase 1 without expanding architecture.
+
+Context:
+- The platform must teach delivery discipline, not just syntax.
+- Tests should be useful, deterministic, and connected to the exercises.
+- The learner should understand the difference between unit tests, API tests, migration checks, and manual operational checks.
+
+First inspect:
+- `scripts/verify.sh`
+- `exercises/TEMPLATE.md`
+- `services/api/tests/`
+- `exercises/phase-1/`
+- API implementation
+- `git status --short`
+
+Work to perform:
+1. Refactor or add test fixtures for API client, database session/test DB, and seed data. Keep them simple and documented.
+2. Add tests covering:
+   - customer email conflict
+   - work request creation for missing customer
+   - status filter/list behavior
+   - pagination bounds for list endpoints
+   - readiness/liveness separation
+3. Add `docs/TESTING_STRATEGY.md` explaining the test layers used now and layers intentionally deferred until Docker/deployment/scenarios exist.
+4. Add `exercises/phase-1/03-test-matrix-and-edge-cases.md` following `exercises/TEMPLATE.md` and requiring the learner to design tests before asking an LLM for additional edge cases.
+5. Add `reviews/checklists/phase-1-api-review.md` with a practical review checklist: validation, database constraints, transaction boundaries, error shape, logs, tests, and no premature complexity.
+6. Ensure `scripts/verify.sh` is the single documented local verification entrypoint.
+
+Boundaries:
+- Do not add property-based testing unless there is a clear small use.
+- Do not add external test services unless already necessary.
+- Do not require Redis, Docker Compose, or k3s.
+- Do not make tests slow enough to discourage frequent use.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm all phase 1 exercises mention verification.
+- Confirm the review checklist references actual implemented API behavior.

@@ -1,0 +1,45 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: introduce k3s as a later orchestration learning path and compare it honestly with Dokku, without making Kubernetes the default.
+
+Context:
+- Dokku was the default early deployment path.
+- k3s is available on the VPS and should teach orchestration concepts: deployments, services, ingress, replicas, rolling updates, config, and operational complexity.
+- The repo should explain when k3s is worth it and when Dokku remains the better choice.
+
+First inspect:
+- `deploy/dokku/`
+- Dockerfiles, Compose, repo-root `pyproject.toml`, and `uv` Python version settings
+- architecture docs
+- ADRs
+- `exercises/TEMPLATE.md`
+- current services: API, worker, reporting service, Postgres, Redis
+- `git status --short`
+
+Work to perform:
+1. Create `deploy/k3s/README.md` explaining the learning goal, prerequisites, resource warnings, and how this differs from Dokku.
+2. Add minimal k3s manifests or templates for:
+   - API deployment/service
+   - worker deployment
+   - reporting service deployment/service
+   - config/secrets placeholders
+   - ingress placeholder if appropriate
+3. Do not require running Postgres/Redis inside k3s unless you deliberately document why. Prefer explaining options: keep VPS-managed services, run in-cluster for learning, or use external managed services in hypothetical cloud.
+4. Create `deploy/k3s/checklist.md` with preflight, deploy, health, logs, rollout, rollback, and resource checks.
+5. Create `docs/deployment/dokku-vs-k3s.md` comparing simplicity, operational cost, scaling, rollback, secrets, networking, observability, and team fit.
+6. Create `exercises/phase-6/04-dokku-vs-k3s-defense.md` following `exercises/TEMPLATE.md`.
+7. Add `interviews/phase-6-deployment-platforms.md`.
+8. Add an ADR for k3s as a learning path, not the default production recommendation.
+
+Boundaries:
+- Do not remove or downgrade Dokku docs.
+- Do not make k3s required for completing earlier phases.
+- Do not add Helm unless there is a strong reason. Plain manifests are better for learning first.
+- Do not include real secrets.
+- Do not expose internal metrics or debug endpoints through ingress by default. Document exposure risk and safer internal access.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Validate YAML syntax if tooling is available.
+- Confirm docs explicitly say k3s is introduced later and is not the default starting path.
+- Confirm resource warnings fit a 4 GB VPS.

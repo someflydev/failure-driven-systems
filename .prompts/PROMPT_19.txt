@@ -1,0 +1,39 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add a small notification side-effect workflow that teaches why side effects, transactions, and background work require careful boundaries.
+
+Context:
+- OpsLedger can notify an operator when a work request is resolved or when a report completes.
+- This feature should teach safe side-effect handling without adding an external email/SMS dependency.
+- The implementation should use a fake/local notification sink or log-backed adapter so learners can test behavior on a VPS without third-party spend.
+
+First inspect:
+- work request status flow
+- report job completion flow
+- worker setup
+- idempotency docs
+- `exercises/TEMPLATE.md`
+- phase 2 exercises
+- tests
+- `git status --short`
+
+Work to perform:
+1. Add a notification attempt model/table with fields like id, target_type, target_id, channel, recipient, status, idempotency_key, error, created_at, sent_at.
+2. Add a local notification adapter that records "sent" notifications deterministically without external services. It can write to the database and logs; do not send real email.
+3. Trigger notification attempts from one bounded workflow, preferably report completion or work request resolved. Choose one and document why.
+4. Ensure notification side effects are idempotent using a durable key.
+5. Add tests for successful notification, duplicate trigger, failed adapter path, and durable status visibility.
+6. Add `docs/async/side-effects-and-outbox.md`. If you implement an outbox-like table, name it carefully and explain why. If not, explain what is intentionally simpler and what risk remains.
+7. Add `exercises/phase-2/06-safe-side-effects.md` following `exercises/TEMPLATE.md` and requiring the learner to explain dual writes, side effects, and what would change with a real email provider.
+
+Boundaries:
+- Do not integrate real email, SMS, Slack, or paid APIs.
+- Do not add a separate notification service yet.
+- Do not hide failure; failed notification attempts should be visible.
+- Do not overbuild a generic event bus.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run a local workflow that creates a notification attempt if practical.
+- Confirm duplicate trigger does not duplicate the durable side effect.
+- Confirm docs explain why local fake notifications are used.

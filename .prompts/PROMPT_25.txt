@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: consolidate phase 3 with design review material, service-boundary critique, and a capstone that requires defending the extraction decision.
+
+Context:
+- Phase 3 introduced internal boundaries, explicit contracts, one stateless extracted reporting service, timeouts, and compatibility scenarios.
+- The core lesson is not "microservices are better"; it is "boundaries are expensive and sometimes justified".
+
+First inspect:
+- `lessons/phase-3/`
+- `exercises/TEMPLATE.md`
+- `exercises/phase-3/`
+- `scenarios/phase-3/`
+- `docs/adr/0001-report-rendering-boundary.md`
+- `docs/contracts/`
+- services and tests
+- `git status --short`
+
+Work to perform:
+1. Complete `lessons/phase-3/README.md` as an ordered path through modular boundaries, contracts, extraction, failure, and defense.
+2. Create `reviews/checklists/phase-3-service-boundary-review.md` covering ownership, contract stability, timeout behavior, retries, deployment cost, debugging, and rollback.
+3. Create `quizzes/phase-3.md` with short-answer questions on modular monoliths, service extraction, contracts, compatibility, timeouts, and partial failure.
+4. Create `interviews/phase-3-distributed-boundaries.md` with mock questions and strong-answer traits.
+5. Create `reviews/rubrics/phase-3-capstone.md`.
+6. Create `exercises/phase-3/05-phase-3-capstone.md` following `exercises/TEMPLATE.md` and requiring:
+   - one backward-compatible contract change
+   - one failure scenario run
+   - one short decision memo defending whether the extraction should stay
+   - one LLM senior-review critique after the learner writes their memo
+7. Update `README.md` and curriculum navigation.
+
+Boundaries:
+- Do not add observability stack yet beyond existing logs/status.
+- Do not add cache/performance work yet.
+- Do not add k3s.
+- Do not add another extracted service.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm phase 3 materials repeatedly state that service extraction has costs.
+- Confirm capstone requires both technical verification and explanation.

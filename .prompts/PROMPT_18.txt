@@ -1,0 +1,43 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: implement idempotency for background report requests and duplicate job execution after the learner has seen retry and duplicate risks.
+
+Context:
+- Phase 2 now has async jobs, durable job status, and bounded retries.
+- Idempotency should be introduced because duplicate execution risk is now concrete.
+- The learner must understand the difference between preventing duplicate requests, tolerating duplicate execution, and avoiding duplicate side effects.
+
+First inspect:
+- report enqueue endpoint
+- worker code
+- retry/failure scenario
+- job/report database models
+- `exercises/TEMPLATE.md`
+- `exercises/phase-2/04-retries-before-idempotency.md`
+- tests
+- `git status --short`
+
+Work to perform:
+1. Add an idempotency mechanism for report enqueue requests. Use an explicit idempotency key or deterministic request fingerprint, and document the tradeoff.
+2. Enforce uniqueness in Postgres so duplicate enqueue attempts return the original job instead of creating duplicate durable records.
+3. Make report generation safe under duplicate worker execution. If the report output already exists for a completed job, the worker should not create conflicting duplicate outputs.
+4. Add tests for:
+   - same idempotency key returns same job
+   - different key creates new job where appropriate
+   - duplicate worker execution does not duplicate durable output
+   - concurrent-ish duplicate attempts if feasible
+5. Add `docs/async/idempotency.md` explaining request idempotency, job idempotency, side-effect idempotency, and why database constraints matter.
+6. Add `exercises/phase-2/05-idempotent-report-jobs.md` following `exercises/TEMPLATE.md` with required reflection and LLM critique instructions.
+
+Boundaries:
+- Do not claim idempotency is solved globally for every future feature.
+- Do not rely only on in-memory locks.
+- Do not make Redis the authority for duplicate prevention.
+- Do not introduce a second durable job-status name if `ReportJob` or an equivalent already exists; keep naming consistent across enqueue, worker, status, and idempotency code.
+- Do not introduce distributed locks unless there is a clear reason and strong explanation.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run duplicate enqueue and duplicate worker execution checks manually if practical.
+- Confirm database migration contains the relevant uniqueness constraint.
+- Confirm docs include "duplicates must be tolerated or prevented consciously".

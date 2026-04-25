@@ -1,0 +1,39 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add database configuration, readiness checks, and migration scaffolding while preserving phase 1 simplicity: one service, one source of truth, synchronous request-response only.
+
+Context:
+- OpsLedger starts as one FastAPI service backed by PostgreSQL.
+- PostgreSQL is the authoritative source of truth.
+- This prompt introduces DB connectivity but not domain CRUD yet.
+- The learner should later experience what happens when the DB is down, so readiness should be explicit and diagnostic rather than hidden.
+
+First inspect:
+- `services/api/`
+- `docs/TECH_STACK.md`
+- `docs/CONSTRAINTS.md`
+- `curriculum/PHASE_PLAN.md`
+- `scripts/verify.sh`
+- `git status --short`
+
+Work to perform:
+1. Add settings for `DATABASE_URL`, environment handling, and safe local defaults where appropriate. Do not write secrets to repo files.
+2. Add SQLAlchemy engine/session setup using SQLAlchemy 2 style.
+3. Add Alembic configuration for migrations. Keep it in a predictable location and document how to create and run migrations.
+4. Add `/health/ready` that checks database connectivity with a lightweight query and returns a useful, sanitized status. Keep `/health/live` independent of the database.
+5. Add tests for health endpoints, including a path that verifies liveness does not require DB connectivity. Use dependency overrides or small seams rather than needing a real DB for every test.
+6. Create `docs/runbooks/DB_CONNECTIVITY.md` explaining how to recognize and troubleshoot DB connection failures locally and on Dokku later.
+7. Update `scripts/verify.sh` so unit tests run consistently.
+
+Boundaries:
+- Do not create OpsLedger domain models yet.
+- Do not add Docker Compose yet unless absolutely necessary for verifying DB connectivity; prefer documenting the local Postgres expectation for now if the repo has not introduced containers.
+- Do not catch all DB exceptions silently. Readiness should fail loudly and explain enough for operators.
+- Do not return or log full `DATABASE_URL` values, credentials, secret env values, or raw exception strings that may include secrets. Prefer sanitized host/status/error-class details.
+- Do not add retries around database startup yet. The early learner should see failure clearly.
+
+Verification:
+- Run the project's formatter/linter/type/test workflow.
+- If a local Postgres URL is available, run the app and confirm `/health/ready`.
+- If no DB is available, ensure tests still pass and document the manual check in the runbook.
+- Search for secrets or real credentials.

@@ -1,0 +1,43 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: choose and document the coherent evolving system domain that all later lessons will build, then connect that domain to the curriculum phases. Do not implement code yet.
+
+Repository context to respect:
+- The repo is a failure-driven systems learning platform for interview readiness.
+- Concepts must appear in the right order: concrete experience first, failure second, terminology and patterns later.
+- One evolving system should carry the learner through the curriculum. Do not design disconnected mini-projects.
+- The target environment remains a small Linux VPS with Dokku early and k3s later.
+
+First inspect:
+- `README.md`
+- `docs/DOCTRINE.md`
+- `docs/REPO_MAP.md`
+- `curriculum/README.md`
+- `git status --short`
+
+Domain decision:
+Adopt the core system domain `OpsLedger`: a small internal operations workflow platform for tracking customer work requests, status changes, operational notes, generated reports, and later notifications.
+
+Why this domain:
+- It supports basic CRUD without domain theatrics.
+- It naturally introduces relational modeling, transactions, status transitions, reporting, background jobs, side effects, failure injection, read models, caching, and service-boundary discussions.
+- It stays understandable for a beginner while still producing interview-relevant tradeoffs.
+
+Work to perform:
+1. Create `docs/DOMAIN.md` explaining OpsLedger, its boundaries, what it deliberately includes, and what it avoids.
+2. Define the initial conceptual entities without implementation details: customers, work requests, status events, operator notes, reports, notification attempts, and derived read models. Mark which appear in which phase.
+3. Create `curriculum/PHASE_PLAN.md` mapping each phase to concrete OpsLedger capabilities, allowed concepts, disallowed concepts, expected failure experiences, and explanation outcomes.
+4. Create `docs/SYSTEM_EVOLUTION.md` showing how OpsLedger evolves from one synchronous service to a worker-backed system, then to one carefully extracted boundary, then to observable/performance-aware operation.
+5. Update `README.md` with a short domain section and a pointer to `docs/DOMAIN.md`.
+6. Update `docs/REPO_MAP.md` if necessary so future directories map to OpsLedger artifacts.
+
+Boundaries:
+- Do not implement schemas, API handlers, Docker, or tests yet.
+- Do not introduce service extraction as an early default.
+- Do not use ecommerce/order examples unless comparing alternatives; OpsLedger is the chosen domain.
+- Do not overfit the domain. The system exists to teach engineering tradeoffs, not operations business details.
+
+Verification:
+- Search the repo for `OpsLedger` and confirm it appears in the right public docs.
+- Search for premature terms like `Kubernetes-first`, `microservices-first`, or `event-driven by default`; remove or rephrase any accidental implication.
+- Confirm every phase in `curriculum/PHASE_PLAN.md` lists allowed and disallowed concepts.

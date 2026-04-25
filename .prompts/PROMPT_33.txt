@@ -1,0 +1,49 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add deliberate Redis caching for one measured hot read path, then consolidate phase 5 with staleness scenarios and performance tradeoff review.
+
+Context:
+- Caching comes after measurement, pagination/indexing, and read-model discussion.
+- Redis already exists for queues, but cache usage must still be justified.
+- Learners should experience stale cache and invalidation tradeoffs, not just "cache makes it faster".
+
+First inspect:
+- performance baseline results/docs
+- pagination/index changes
+- derived read model
+- Redis config
+- metrics
+- phase 5 exercises
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Choose exactly one endpoint to cache. Prefer a read-heavy derived/dashboard endpoint where staleness is acceptable and explain why.
+2. Implement Redis cache with:
+   - explicit TTL
+   - stable cache keys
+   - clear bypass or invalidation behavior if needed
+   - metrics/logs for hit/miss if practical
+3. Add tests for cache hit, cache miss, TTL or invalidation behavior, and stale read risk.
+4. Add `docs/performance/caching.md` explaining why this endpoint was chosen, what can go stale, and why Redis is not authoritative.
+5. Add `scenarios/phase-5/stale-cache.md` and `scenarios/phase-5/redis-cache-unavailable.md`.
+6. Create `exercises/phase-5/04-caching-and-staleness.md` following `exercises/TEMPLATE.md`.
+7. Consolidate phase 5 with:
+   - `quizzes/phase-5.md`
+   - `interviews/phase-5-performance-scaling.md`
+   - `reviews/checklists/phase-5-performance-review.md`
+   - `reviews/rubrics/phase-5-capstone.md`
+   - `exercises/phase-5/05-phase-5-capstone.md` following `exercises/TEMPLATE.md`
+8. Update `lessons/phase-5/README.md` and root navigation.
+
+Boundaries:
+- Cache exactly one endpoint unless the repo already has a documented reason for another.
+- Do not use cache to hide correctness issues.
+- Do not add a new datastore.
+- Do not claim scalability without measured before/after evidence.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run perf smoke before/after if practical and record where results belong.
+- Confirm Redis outage does not corrupt source-of-truth data.
+- Confirm docs discuss invalidation and staleness explicitly.

@@ -1,0 +1,48 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add the early Dokku deployment path for the single-service OpsLedger API and teach operational simplicity before k3s.
+
+Context:
+- Dokku is the default early deployment target.
+- k3s is intentionally deferred until the learner has operated the simpler path.
+- The target server is a modest Linux VPS with 4 GB RAM and 3 vCPUs.
+- Phase 1 deployment should cover config/env vars, Postgres connectivity, migrations, logs, health checks, rollback thinking, and basic troubleshooting.
+
+First inspect:
+- `Dockerfile`
+- `docker-compose.yml`
+- repo-root `pyproject.toml`, `uv` workflow, and Python version documentation
+- API config and health endpoints
+- `docs/CONSTRAINTS.md`
+- `ops/runbooks/phase-1-first-response.md`
+- `exercises/TEMPLATE.md`
+- `README.md`
+- `git status --short`
+
+Work to perform:
+1. Add Dokku-ready process configuration if needed, such as `Procfile` or documented Dockerfile-based deployment. Choose the simplest path that fits the existing repo-root `uv`/Python 3.12 app layout.
+2. Create `deploy/dokku/README.md` with step-by-step deployment:
+   - create app
+   - provision/link Postgres
+   - set env vars
+   - deploy
+   - run migrations
+   - check health endpoints
+   - inspect logs
+   - rollback or revert basics
+3. Add `deploy/dokku/checklist.md` as a concise preflight and post-deploy checklist.
+4. Add `ops/runbooks/dokku-api-incident.md` for common early incidents: bad env var, DB unavailable, migration failure, app boot failure, high memory, and unreadable logs.
+5. Add `exercises/phase-1/06-dokku-first-deploy.md` following `exercises/TEMPLATE.md` and requiring learner deployment, evidence capture, log inspection, and reflection.
+6. Update `README.md` and `curriculum/README.md` to point to the Dokku path.
+
+Boundaries:
+- Do not add k3s manifests.
+- Do not introduce Redis or workers.
+- Do not assume managed cloud Postgres.
+- Do not suggest large-cloud services as the default path. You may add a short "how cloud would differ" note.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Validate Dokku docs for internal consistency with actual app commands and env var names.
+- Search for `k3s` and confirm it is only mentioned as deferred or comparative.
+- If Dokku is not available locally, state that docs were verified against repo artifacts rather than executed.

@@ -1,0 +1,60 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: implement the first synchronous CRUD API for OpsLedger customers and work requests with clear validation, predictable errors, and no premature abstractions.
+
+Context:
+- The learner must experience simple request-response CRUD before queues, caching, or service boundaries exist.
+- PostgreSQL remains the single source of truth.
+- The API should be small but production-flavored: typed schemas, explicit errors, tests, and simple service/repository seams only where useful.
+
+First inspect:
+- `docs/DOMAIN.md`
+- `docs/data-models/phase-1.md`
+- `services/api/opledger_api/`
+- migrations
+- tests
+- `git status --short`
+
+Work to perform:
+1. Add API routes for customers:
+   - create customer
+   - get customer by id
+   - list customers with simple limit/offset
+2. Add API routes for work requests:
+   - create work request for a customer
+   - get work request by id
+   - list work requests with optional status filter and simple limit/offset
+   - update work request status
+3. Implement consistent error responses for not found, duplicate email, invalid status transition if a simple transition rule exists, and validation failures.
+4. Keep layering understandable. Use route functions plus small domain/service helpers if needed, but do not create a maze of abstractions.
+5. Add tests for successful paths and key failures. Prefer fast tests; use a test database if the project already has a pattern, otherwise use dependency seams and document what remains for integration.
+6. Create `exercises/TEMPLATE.md` as the canonical exercise structure for all later exercise files. It must include these sections:
+   - title
+   - phase
+   - concepts
+   - prerequisites
+   - build/change task
+   - constraints
+   - failure modes
+   - expected reasoning
+   - verification
+   - reflection questions
+   - LLM usage
+   - path-specific extensions
+   - deployment/debugging actions if relevant
+7. Add `exercises/phase-1/01-basic-crud.md` following `exercises/TEMPLATE.md`.
+
+Boundaries:
+- No Redis.
+- No background jobs.
+- No caching.
+- No service extraction.
+- No blanket exception handler that hides meaningful DB errors.
+- Do not add authentication yet.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- If a database is available, run migrations and exercise CRUD manually using curl or an HTTP client.
+- Confirm `exercises/TEMPLATE.md` exists and `exercises/phase-1/01-basic-crud.md` follows it.
+- Confirm the exercise forbids queues/caching/service extraction.
+- Confirm error cases are tested or explicitly documented as manual checks.

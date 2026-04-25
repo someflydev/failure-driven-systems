@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: introduce a derived read model for a reporting or dashboard use case so learners experience staleness and update complexity before caching.
+
+Context:
+- Phase 5 can introduce read optimization and derived data patterns after measurement.
+- A read model is not the source of truth. It must be rebuildable or explainably derived from authoritative tables.
+- This is a controlled way to teach eventual consistency without adding more infrastructure.
+
+First inspect:
+- report/job implementation
+- work request/status event schema
+- performance docs
+- phase 5 exercises
+- `docs/async/phase-2-job-lifecycle.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Add a small derived read model such as `WorkRequestSummary` or `CustomerWorkRequestStats` for a dashboard endpoint.
+2. Define how it is updated. Prefer a clear background job or explicit rebuild command rather than magical hidden triggers unless triggers are the lesson and documented.
+3. Add an endpoint to read the derived model and an admin/dev command or script to rebuild it from source-of-truth tables.
+4. Add tests proving:
+   - derived model can be rebuilt from source data
+   - stale data is possible before rebuild/update
+   - source-of-truth endpoints remain correct
+5. Add `docs/performance/read-models.md` explaining read models, staleness, rebuilds, and why this is different from caching.
+6. Add `exercises/phase-5/03-derived-read-models.md` following `exercises/TEMPLATE.md` and requiring the learner to simulate stale data and explain user impact.
+
+Boundaries:
+- Do not replace source-of-truth tables.
+- Do not add a new datastore.
+- Do not hide staleness. Make it visible and discuss it.
+- Do not add cache yet.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run rebuild command if practical.
+- Confirm docs say one owner per authoritative fact.
+- Confirm tests or docs demonstrate stale read behavior.

@@ -1,0 +1,59 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: perform final public-quality polish for the initial complete repository: navigation, consistency, verification, artifact quality, and release readiness.
+
+Context:
+- The repo should now contain an evolving OpsLedger system, six-phase curriculum, exercises, scenarios, deployment docs, operations docs, LLM workflows, review/interview materials, role-path overlays, and prompt-driven development history.
+- The final learner outcome is not "completed exercises"; it is "can reason, build, debug, explain, and defend".
+- This prompt should refine and verify. Avoid adding major new features.
+
+First inspect:
+- `README.md`
+- `AGENT.md`
+- `docs/`
+- `curriculum/`
+- `lessons/`
+- `exercises/TEMPLATE.md`
+- `exercises/`
+- `scenarios/`
+- `services/`
+- `deploy/`
+- `ops/`
+- `reviews/`
+- `quizzes/`
+- `interviews/`
+- `paths/`
+- `.prompts/`
+- `git status --short`
+
+Work to perform:
+1. Rewrite root `README.md` into a polished but concise public entrypoint. It must explain:
+   - what failure-driven systems is
+   - who it is for
+   - OpsLedger as the evolving system
+   - six-phase path
+   - VPS/Dokku/k3s constraints
+   - LLM usage boundaries
+   - how to start
+   - where to find exercises, scenarios, reviews, and role paths
+2. Create or update `docs/NAVIGATION.md` as a single map of major artifacts.
+3. Create `docs/PORTFOLIO_GUIDE.md` explaining how a learner can present this repo publicly: evidence to capture, decision memos, incident writeups, deployment notes, and interview narratives.
+4. Create `RELEASE_CHECKLIST.md` covering tests, docs links, Docker/Dokku/k3s docs, no secrets, internal-only metrics/debug exposure, scenario safety, and public readability.
+5. Run a link/path sanity pass across docs. Fix broken local references where practical.
+6. Run all available verification commands. If some require unavailable infrastructure, document what was skipped and why.
+7. Ensure `.prompts/README.md` accurately reflects the prompt sequence and that prompt numbers are strictly monotonic.
+8. Confirm exercise files follow `exercises/TEMPLATE.md`.
+9. Review for premature complexity claims. Remove wording that implies Kubernetes, microservices, caching, or extra datastores are defaults.
+
+Boundaries:
+- Do not add major app features.
+- Do not rewrite repository history unless explicitly requested.
+- Do not delete learner artifacts.
+- Do not hide known verification gaps.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run any docs/link check available in the repo.
+- Run `find .prompts -maxdepth 1 -name 'PROMPT_*.txt' | sort` and confirm `PROMPT_01.txt` through `PROMPT_40.txt` exist with no gaps.
+- Search for likely secret patterns and accidental `.env` files.
+- Confirm README remains concise.

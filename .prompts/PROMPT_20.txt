@@ -1,0 +1,47 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: consolidate phase 2 with scenario tooling, review materials, and a capstone focused on async work, retries, idempotency, partial failure, and user-visible consistency.
+
+Context:
+- Phase 2 introduced Redis, a worker, async reports, job status, bounded retries, idempotency, and one safe notification side effect.
+- The repo should now let learners deliberately rehearse failures rather than merely read about them.
+- This is still not a service-extraction or k3s phase.
+
+First inspect:
+- `lessons/phase-2/`
+- `exercises/TEMPLATE.md`
+- `exercises/phase-2/`
+- `scenarios/phase-2/`
+- worker/API code
+- Redis/Docker Compose setup
+- async docs
+- tests
+- `git status --short`
+
+Work to perform:
+1. Create or refine `lessons/phase-2/README.md` as a complete phase 2 path in order.
+2. Add scenario docs for:
+   - worker unavailable
+   - duplicate job execution
+   - delayed job completion
+   - failed notification side effect
+   - Redis unavailable, with clear limits on what the app can and cannot do
+3. Add small scenario helper scripts only if they are maintainable and safe, such as `scripts/scenarios/phase2_worker_down.sh` or documented commands. Avoid destructive scripts.
+4. Create `reviews/checklists/phase-2-async-review.md`.
+5. Create `quizzes/phase-2.md` with short-answer questions on async, retries, idempotency, duplicates, Redis vs Postgres, and eventual consistency.
+6. Create `interviews/phase-2-backend-distributed.md` with interview questions and strong-answer traits.
+7. Create `reviews/rubrics/phase-2-capstone.md`.
+8. Create `exercises/phase-2/07-phase-2-capstone.md` following `exercises/TEMPLATE.md` and requiring the learner to run at least two failure scenarios, inspect logs/status, fix or explain one issue, and defend the retry/idempotency design.
+9. Update `README.md` and curriculum navigation.
+
+Boundaries:
+- Do not add extracted services.
+- Do not add Kubernetes.
+- Do not add cache or performance optimization yet.
+- Do not add broad observability stack; basic logs/status are enough until phase 4.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- If local services are available, run at least one phase 2 scenario.
+- Confirm all phase 2 exercises follow `exercises/TEMPLATE.md`.
+- Confirm review/interview docs avoid canned answer-key shortcuts.

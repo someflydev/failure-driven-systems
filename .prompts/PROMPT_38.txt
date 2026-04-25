@@ -1,0 +1,46 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: build the review, quiz, and mock interview layer into a coherent first-class subsystem across all phases.
+
+Context:
+- The platform should prepare learners to explain and defend decisions, not merely complete exercises.
+- Review/interview materials should be usable with or without an LLM.
+- Strong-answer traits are allowed; canned memorized answers should be avoided.
+
+First inspect:
+- `quizzes/`
+- `interviews/`
+- `reviews/`
+- all phase lesson README files
+- `docs/ASSISTANT_WORKFLOW.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Create `reviews/README.md` explaining how to use checklists, rubrics, and LLM templates after learner attempts.
+2. Create `quizzes/README.md` explaining quiz format and how to self-grade.
+3. Create `interviews/README.md` explaining mock interview modes:
+   - backend feature deep dive
+   - distributed failure debugging
+   - operational incident
+   - architecture decision defense
+   - role-track-specific interview
+4. Add a cross-phase review checklist at `reviews/checklists/system-wide-review.md`.
+5. Add `interviews/mock-panels/README.md` and at least three Markdown mock panel scripts/guides:
+   - backend implementation panel
+   - distributed systems/debugging panel
+   - architecture/staff engineer panel
+6. Add `reviews/llm/TEMPLATE_adversarial_architecture_panel.md`.
+7. Create `exercises/phase-6/05-mock-interview-panel.md` following `exercises/TEMPLATE.md` and requiring the learner to run a mock panel and record weak areas.
+8. Update navigation in README and phase docs.
+
+Boundaries:
+- Do not create answer keys that eliminate interview practice.
+- Do not require an LLM; provide human/self-review paths too.
+- Do not add runtime code.
+- Do not let role tracks become separate codebases.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm every phase has at least one quiz, interview, checklist or rubric.
+- Confirm LLM templates require learner artifacts and reasoning before critique.

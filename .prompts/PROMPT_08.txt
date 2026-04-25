@@ -1,0 +1,39 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: deepen phase 1 by adding transactional status history and intentional failure/friction around consistency before introducing any async or distributed patterns.
+
+Context:
+- Phase 1 should teach that relational transactions protect related facts.
+- Learners should see why source-of-truth clarity matters before learning queues or eventual consistency.
+- OpsLedger work requests need a status history to explain "what happened" during a request lifecycle.
+
+First inspect:
+- `services/api/opledger_api/`
+- existing migrations and models
+- `exercises/TEMPLATE.md`
+- `exercises/phase-1/01-basic-crud.md`
+- `docs/data-models/phase-1.md`
+- `curriculum/PHASE_PLAN.md`
+- `git status --short`
+
+Work to perform:
+1. Add a `WorkRequestStatusEvent` model/table with id, work_request_id, old_status, new_status, reason, created_at.
+2. Modify the status update flow so updating a work request status and inserting its status event happen in one transaction.
+3. Add an endpoint to list status events for a work request.
+4. Add tests proving:
+   - status update creates an event
+   - invalid work request id fails cleanly
+   - the API does not create orphan status events
+5. Add `exercises/phase-1/02-transactions-and-history.md` following `exercises/TEMPLATE.md`. It should include a deliberate pre-pattern exercise: ask the learner to reason about what would go wrong if the status update and event insert were separate operations.
+6. Update `docs/data-models/phase-1.md` with transaction reasoning and the phrase "one owner per authoritative fact".
+
+Boundaries:
+- Do not introduce outbox, events, queues, or async workers yet. This is still a local database transaction lesson.
+- Do not add audit logging as an external system.
+- Do not introduce event sourcing terminology as the default framing; this is a simple status history table.
+
+Verification:
+- Run migrations and tests.
+- Run `./scripts/verify.sh`.
+- Search for accidental queue/outbox language that implies phase 2 concepts are implemented.
+- Manually inspect the generated migration for foreign keys and constraints.

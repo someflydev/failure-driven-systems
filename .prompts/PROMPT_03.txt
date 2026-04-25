@@ -1,0 +1,48 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: encode disciplined prompt-driven development and LLM-assisted learning workflows so future sessions and learners use assistants as critics, reviewers, interviewers, and scenario generators instead of hidden solution engines.
+
+Repository context:
+- The repo uses `.prompts/PROMPT_XX.txt` files as standalone implementation prompts.
+- Prompt numbering must be strictly monotonic and never reused.
+- Artifacts in the repo are the source of truth. No session should rely on hidden memory.
+- LLM usage doctrine is struggle first, critique second, explanation third, solution comparison only after a serious attempt.
+
+First inspect:
+- `AGENT.md`
+- `.prompts/README.md` if present
+- `docs/DOCTRINE.md`
+- `docs/DOMAIN.md`
+- `curriculum/PHASE_PLAN.md`
+- `git status --short`
+
+Work to perform:
+1. Create `docs/ASSISTANT_WORKFLOW.md` describing how learners and coding assistants should collaborate across exercises. Include the staged usage model:
+   - phase 1: critique only after completion
+   - phase 2: edge cases, failure analysis, test matrix suggestions
+   - phase 3: design review and contract critique
+   - phase 4: incident analysis and debugging drills
+   - phase 5: performance and tradeoff questioning
+   - phase 6: architecture proposals, mock interviews, and decision defense
+2. Create `reviews/llm/README.md` with reusable reviewer prompt patterns:
+   - harsh implementation review
+   - missed edge cases
+   - retry/idempotency critique
+   - architecture skeptic
+   - incident commander
+   - mock backend interview
+3. Create `reviews/llm/TEMPLATE_review_my_work.md` and `reviews/llm/TEMPLATE_interview_me.md` as learner-facing templates. They must ask the learner to paste relevant files, commands run, failures observed, and their own reasoning before requesting critique.
+4. Update `AGENT.md` with a short section requiring future coding assistants to avoid generating answer-key style learner solutions unless the current prompt explicitly asks for implementation.
+5. Create `docs/COMMIT_DISCIPLINE.md` with grouped multi-line commit style tied to prompt numbers. It should be optimized for easy review: concise subject, grouped body sections, explicit verification section, and clear separation between what changed and how it was checked. Include examples for docs-only work, app-code work, tests, and deployment changes. Examples must use heredoc form such as `git commit -F - <<'EOF'` with real multi-line message content, not command-line message strings with escaped newline sequences that can accidentally appear literally in commit messages.
+6. Update root `README.md` with a short note that LLMs are part of the learning environment but constrained by the doctrine.
+
+Boundaries:
+- Do not create app implementation.
+- Do not create quizzes or interviews yet beyond reusable LLM templates.
+- Do not encourage learners to ask "give me the full solution" before attempting exercises.
+
+Verification:
+- Run `rg "struggle first|critique second|PROMPT_|harsh implementation review|incident commander|COMMIT_DISCIPLINE|git commit -F - <<'EOF'"`.
+- Confirm `AGENT.md` references repo artifacts as source of truth.
+- Confirm templates require learner reasoning before assistant critique.
+- Confirm `docs/COMMIT_DISCIPLINE.md` examples use heredoc commit messages with `EOF` delimiters and grouped sections.

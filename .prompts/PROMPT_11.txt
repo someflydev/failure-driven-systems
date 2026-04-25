@@ -1,0 +1,41 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: introduce local Docker Compose for phase 1 Postgres-backed development and repeatable verification, without adding Redis or worker processes yet.
+
+Context:
+- Phase 1 still has one deployable API service and one Postgres source of truth.
+- Docker is used to make local setup reproducible and to prepare for Dokku deployment thinking.
+- Redis, queues, and workers are phase 2 concepts and must not appear as running services yet.
+
+First inspect:
+- `docs/CONSTRAINTS.md`
+- `docs/TECH_STACK.md`
+- repo-root `pyproject.toml` and `uv` Python version settings
+- API configuration
+- Alembic setup
+- `scripts/verify.sh`
+- `docs/runbooks/DB_CONNECTIVITY.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Add a repo-root `Dockerfile` for the FastAPI API service that follows the repo-root `uv`/Python 3.12 tooling and runs the app from `services/api/`. Keep it production-flavored but simple: non-root user if practical, dependency install, app command, healthcheck only if it is reliable.
+2. Add `docker-compose.yml` for local development with API and Postgres only.
+3. Add `.env.example` documenting required local variables without secrets.
+4. Add `scripts/dev-up.sh`, `scripts/dev-down.sh`, and `scripts/migrate.sh` if they materially simplify local workflows. They should be small wrappers, not opaque orchestration.
+5. Update `README.md` with local Docker workflow: start services, run migrations, verify health, run tests.
+6. Update `docs/runbooks/DB_CONNECTIVITY.md` with Docker Compose checks.
+7. Create `exercises/phase-1/05-local-container-workflow.md` following `exercises/TEMPLATE.md` and requiring the learner to bring up the app, run migrations, hit health endpoints, break DB connectivity, and explain the symptoms.
+
+Boundaries:
+- No Redis service.
+- No worker process.
+- No k3s.
+- Do not hide all complexity behind one magic script. Learners should still see the moving parts.
+- Do not write real `.env` files to the repo.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- If Docker is available, run the Compose stack, apply migrations, and call `/health/live` and `/health/ready`.
+- If Docker is not available, validate config syntax where possible and document the skipped manual check in your final response.
+- Confirm `docker-compose.yml` contains Postgres and API only.

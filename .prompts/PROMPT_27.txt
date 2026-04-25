@@ -1,0 +1,44 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add practical metrics and health/status surfaces that help debug the current system without overbuilding observability.
+
+Context:
+- Phase 4 now has structured logs and correlation IDs.
+- Metrics should answer operational questions: request rate, error rate, latency, job outcomes, worker failures, reporting service failures.
+- The stack must remain light enough for a 4 GB VPS.
+
+First inspect:
+- logging/correlation implementation
+- health endpoints
+- worker/job status code
+- reporting service
+- Docker Compose
+- phase 4 lesson docs
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Add a simple `/metrics` endpoint for API and reporting service using a lightweight Prometheus-compatible library if appropriate.
+2. Track practical metrics:
+   - HTTP request count and latency
+   - API error count
+   - report jobs queued/succeeded/failed
+   - reporting service call latency/failure count
+   - notification attempts succeeded/failed if already implemented
+3. Add worker metrics exposure if practical. If not practical, document the limitation and expose job outcome metrics through durable status queries.
+4. Add `docs/observability/metrics.md` explaining each metric, why it exists, and what question it answers.
+5. Add `ops/dashboards/README.md` with a lightweight dashboard sketch or Prometheus query examples without requiring a heavy stack.
+6. Add `exercises/phase-4/02-meaningful-metrics.md` following `exercises/TEMPLATE.md` and requiring the learner to break a dependency, observe metrics, and explain what changed.
+
+Boundaries:
+- Do not add Grafana/Prometheus containers unless there is a strong lightweight reason. Query examples may be enough.
+- Do not add distributed tracing yet.
+- Do not measure everything. Prefer a few meaningful signals.
+- Do not leak labels with high cardinality such as raw customer IDs.
+- Do not expose `/metrics` publicly by default. Document local/internal access expectations and production exposure risks.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Hit `/metrics` locally if practical.
+- Confirm metric names are stable and documented.
+- Confirm labels avoid high cardinality.

@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: begin phase 4 by adding structured logging and correlation IDs across HTTP requests, worker jobs, and the reporting service.
+
+Context:
+- Logs were enough in phase 1, but service boundaries and workers now make naive logs ambiguous.
+- Phase 4 introduces practical observability: structured logs, request IDs, correlation IDs, metrics later, incidents, and postmortems.
+- Keep the observability stack resource-conscious for a small VPS.
+
+First inspect:
+- API logging middleware
+- worker code
+- reporting service
+- scenarios from phases 2 and 3
+- `ops/runbooks/`
+- `curriculum/PHASE_PLAN.md`
+- `exercises/TEMPLATE.md`
+- `git status --short`
+
+Work to perform:
+1. Standardize structured JSON logs or structured key-value logs across API, worker, and reporting service. Pick one format and document it.
+2. Add request ID generation/propagation for inbound HTTP requests.
+3. Propagate a correlation ID from API enqueue request to job record, worker execution, reporting service request, and final job status where practical.
+4. Ensure log records include useful fields: service, environment, request_id/correlation_id, method/path/status for HTTP, job_id for worker, duration where easy.
+5. Add tests for correlation propagation in code seams where feasible.
+6. Create `docs/observability/logging-and-correlation.md` explaining what problem the added structure solves and what is still missing.
+7. Create `exercises/phase-4/01-follow-a-request-through-logs.md` following `exercises/TEMPLATE.md`.
+8. Create `lessons/phase-4/README.md` with the initial phase 4 path.
+
+Boundaries:
+- Do not add Prometheus or tracing yet.
+- Do not log secrets, full request bodies, sensitive values, full connection strings, or raw exception strings that may include credentials.
+- Do not require a heavy log aggregation stack.
+- Do not turn logging into a complicated framework.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run one report job locally if practical and capture enough logs to confirm correlation.
+- Search for obvious secret logging risks such as full `DATABASE_URL`.
+- Confirm docs explain why this was not introduced in phase 1.

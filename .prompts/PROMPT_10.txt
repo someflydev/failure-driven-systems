@@ -1,0 +1,38 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add phase 1 operational friction: logs, simple runbooks, and a guided "database unavailable" scenario before adding more infrastructure.
+
+Context:
+- Phase 1 teaches logs as the first diagnostic tool.
+- The learner should experience what happens when the database is down before abstracting failure away with retries or queues.
+- The repo should teach operational judgment on a small VPS, not only local coding.
+
+First inspect:
+- API health/readiness code
+- `docs/runbooks/DB_CONNECTIVITY.md`
+- `curriculum/PHASE_PLAN.md`
+- `exercises/TEMPLATE.md`
+- `exercises/phase-1/`
+- `reviews/checklists/phase-1-api-review.md`
+- `git status --short`
+
+Work to perform:
+1. Add basic structured-ish application logging suitable for phase 1. Keep it simple: timestamp, level, request method/path/status if possible, and clear database readiness failure messages.
+2. Add middleware for request logging if it can be done cleanly without a heavy logging stack.
+3. Create `scenarios/phase-1/db-unavailable.md` as a guided scenario. It should include setup, how to break DB connectivity, what to observe, expected symptoms, what not to fix yet, and reflection questions.
+4. Create `ops/runbooks/phase-1-first-response.md` covering first checks: health endpoints, logs, env vars, DB reachability, recent migrations, and rollback thinking.
+5. Add `exercises/phase-1/04-db-down-debugging.md` following `exercises/TEMPLATE.md` and requiring the learner to inspect logs before changing code.
+6. Update README or curriculum links so phase 1 operational docs are discoverable.
+
+Boundaries:
+- Do not add OpenTelemetry, Prometheus, dashboards, tracing, or distributed correlation yet.
+- Do not add retry loops for database failures.
+- Do not hide failures with broad exception handling.
+- Do not add Docker Compose unless already introduced; this scenario can be written for local Postgres and later Dokku.
+- Do not log full connection strings, credentials, secret env values, or full request bodies. Database failure messages should be useful but sanitized.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Start the app and confirm request logs appear if practical.
+- Temporarily point `DATABASE_URL` at an invalid DB and confirm readiness failure is understandable. Do not write env files to the repo.
+- Confirm scenario docs explicitly say retries/queues are not allowed yet.

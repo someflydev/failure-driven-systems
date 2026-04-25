@@ -1,0 +1,39 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: introduce contract thinking inside the monolith by defining explicit report rendering request/response schemas and compatibility tests before any service extraction.
+
+Context:
+- Phase 3 should teach that service boundaries require stable contracts.
+- The report rendering boundary is a good candidate because it can be made mostly stateless.
+- Compatibility should be practiced before network failure is added.
+
+First inspect:
+- `docs/adr/0001-report-rendering-boundary.md`
+- report module code
+- tests
+- `exercises/TEMPLATE.md`
+- `lessons/phase-3/README.md`
+- `git status --short`
+
+Work to perform:
+1. Define explicit schemas for report rendering input and output. Place them where both the current API and future extracted service could share or copy them deliberately.
+2. Refactor report generation so the persistence/job orchestration path calls a rendering boundary function with a clear typed contract.
+3. Add contract tests that validate:
+   - required fields
+   - unknown/extra field behavior
+   - backward-compatible optional fields
+   - deterministic report output for known input
+4. Add `docs/contracts/report-rendering-v1.md` describing the contract, compatibility rules, versioning approach, and what would be a breaking change.
+5. Update the ADR with what was learned from making the contract explicit.
+6. Add `exercises/phase-3/02-contract-before-network.md` following `exercises/TEMPLATE.md` and requiring the learner to change the contract in a backward-compatible way before any HTTP boundary exists.
+
+Boundaries:
+- Do not create a separate service yet.
+- Do not add network calls.
+- Do not add protobuf/Avro/gRPC unless there is a very strong reason. JSON over HTTP later is enough for this lab.
+- Do not move source-of-truth facts out of Postgres.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Confirm contract tests fail if a required contract field is removed.
+- Confirm docs clearly distinguish internal module boundary from deployable service boundary.

@@ -1,0 +1,40 @@
+You are running in a fresh coding-assistant session inside `failure-driven-systems`.
+
+Goal: add first-class job status visibility and user-facing eventual consistency language for background report generation.
+
+Context:
+- Phase 2 now has Redis-backed background work.
+- Users need to know whether a report is queued, running, succeeded, failed, or unavailable.
+- The lesson is not just "add a queue"; it is "once work moves async, state and user expectations must be designed".
+
+First inspect:
+- report worker implementation
+- report/job database models
+- API endpoints for enqueueing reports
+- `exercises/TEMPLATE.md`
+- `exercises/phase-2/02-background-report-worker.md`
+- `docs/TECH_STACK.md`
+- tests
+- `git status --short`
+
+Work to perform:
+1. Add or refine a durable `ReportJob` or equivalent table with statuses such as `queued`, `running`, `succeeded`, `failed`. If no equivalent exists yet, use `ReportJob` consistently for queued report status.
+2. Add API endpoints:
+   - get job status by id
+   - list recent report jobs
+   - fetch completed report output if available
+3. Ensure worker updates durable status transitions clearly.
+4. Add tests for status lifecycle, missing job, failed job representation, and completed report retrieval.
+5. Add `docs/async/phase-2-job-lifecycle.md` explaining the lifecycle, what Redis owns, what Postgres owns, and what a user can safely assume.
+6. Add `exercises/phase-2/03-job-status-and-eventual-consistency.md` following `exercises/TEMPLATE.md`. It should require the learner to explain user-visible consistency and what "accepted" means for an async request.
+
+Boundaries:
+- Do not add retries yet.
+- Do not add idempotency yet.
+- Do not use Redis as durable truth.
+- Do not make the status endpoint lie by reporting success before the durable output exists.
+
+Verification:
+- Run `./scripts/verify.sh`.
+- Run the stack and observe status transitions if practical.
+- Confirm docs explicitly say Redis is ephemeral coordination/queue infrastructure, not the source of truth.
