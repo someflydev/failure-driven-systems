@@ -4,11 +4,11 @@ Failure-Driven Systems is a learning platform for building practical backend,
 data/backend, distributed systems, platform, and architecture judgment through
 constrained, observable practice.
 
-This repository is not a toy tutorial collection and not an application scaffold
-yet. It is the doctrine, curriculum frame, and navigable skeleton for a public
-learning project where concepts are earned through experience: learners hit
-friction, name the failure, recognize the pattern, vary the situation, explain
-the tradeoff, and defend the decision under questioning.
+This repository is not a toy tutorial collection. It is the doctrine,
+curriculum frame, navigable skeleton, and initial OpsLedger API scaffold for a
+public learning project where concepts are earned through experience: learners
+hit friction, name the failure, recognize the pattern, vary the situation,
+explain the tradeoff, and defend the decision under questioning.
 
 ## Who It Is For
 
@@ -55,6 +55,26 @@ module boundaries, observability, read models, caching, and architecture
 defense. See `docs/DOMAIN.md` for the domain boundaries and conceptual
 entities.
 
+## Local Development
+
+The initial OpsLedger API scaffold lives in `services/api/` and uses Python
+3.12 with repo-root `uv` tooling.
+
+```sh
+uv venv --python 3.12
+uv sync
+./scripts/verify.sh
+```
+
+Run the minimal API locally with:
+
+```sh
+uv run uvicorn opledger_api.main:app --app-dir services/api --reload
+```
+
+The liveness endpoint is available at `GET /health/live`. It intentionally does
+not require a database or other external service.
+
 ## Phase Sequence
 
 The curriculum progresses through six phases:
@@ -66,6 +86,6 @@ The curriculum progresses through six phases:
 5. Performance, caching, and read models when justified by measured pressure.
 6. Architecture defense, system design, and interview readiness.
 
-Directories and application code should appear only when later prompts justify
-them. This repository should remain easy to navigate, honest about what exists,
-and strict about teaching judgment before tooling.
+Additional directories and application code should appear only when later
+prompts justify them. This repository should remain easy to navigate, honest
+about what exists, and strict about teaching judgment before tooling.
