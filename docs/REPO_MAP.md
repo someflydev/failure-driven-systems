@@ -11,13 +11,19 @@ below define the intended shape, not current implementation.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
 - `docs/DOCTRINE.md`: durable learning doctrine.
 - `docs/CONSTRAINTS.md`: infrastructure and budget assumptions.
+- `docs/DOMAIN.md`: OpsLedger domain boundaries and conceptual entities.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
+- `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
+  later worker-backed, boundary-aware, observable operation.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
+- `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
+  phase.
 
 ## Intended Layers
 
-- `services/`: application services when implementation begins. Start with a
-  single service and keep module boundaries explicit before extracting anything.
+- `services/`: OpsLedger application services when implementation begins. Start
+  with a single service and keep module boundaries explicit before extracting
+  anything.
 - `curriculum/`: phase-level learning structure, concept timing, and progression
   rules.
 - `lessons/`: individual lesson plans once the curriculum needs concrete

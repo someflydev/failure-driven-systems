@@ -39,6 +39,18 @@ The doctrine favors:
 - Dokku before k3s.
 - LLMs as reviewers, interviewers, and critics, not ghostwriters.
 
+## System Domain
+
+All later lessons build one evolving system: OpsLedger, a small internal
+operations workflow platform for tracking customer work requests, status
+changes, operational notes, generated reports, and later notifications.
+
+OpsLedger is deliberately ordinary. It supports concrete CRUD early, then
+naturally creates pressure for transactions, background jobs, side effects,
+module boundaries, observability, read models, caching, and architecture
+defense. See `docs/DOMAIN.md` for the domain boundaries and conceptual
+entities.
+
 ## Phase Sequence
 
 The curriculum progresses through six phases:
