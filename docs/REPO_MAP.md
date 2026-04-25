@@ -10,6 +10,10 @@ below define the intended shape, not current implementation.
   sequence.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
 - `docs/DOCTRINE.md`: durable learning doctrine.
+- `docs/ASSISTANT_WORKFLOW.md`: staged LLM collaboration rules for learners
+  and coding assistants.
+- `docs/COMMIT_DISCIPLINE.md`: prompt-numbered multi-line commit message
+  guidance and examples.
 - `docs/CONSTRAINTS.md`: infrastructure and budget assumptions.
 - `docs/DOMAIN.md`: OpsLedger domain boundaries and conceptual entities.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
@@ -18,6 +22,11 @@ below define the intended shape, not current implementation.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
+- `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
+- `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
+  template.
+- `reviews/llm/TEMPLATE_interview_me.md`: learner-facing mock interview
+  template.
 
 ## Intended Layers
 

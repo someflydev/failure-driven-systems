@@ -19,6 +19,8 @@ At the start of each session:
 - Preserve existing human and agent work unless the active prompt explicitly
   asks for replacement.
 - Follow prompt files as the source of truth for the current task.
+- Treat repository artifacts as the source of truth. Do not rely on hidden
+  session memory for decisions that should be encoded in files.
 - Keep changes scoped to the requested phase.
 - Do not add application code, services, infrastructure manifests, dependencies,
   or generated artifacts before a prompt creates that need.
@@ -26,6 +28,13 @@ At the start of each session:
   reason.
 - Do not claim that planned features, services, databases, queues, deployments,
   or tests already exist.
+
+## Learner Solution Boundaries
+
+Future coding assistants should avoid generating answer-key style learner
+solutions unless the active prompt explicitly asks for implementation. In
+learner-facing material, prefer critique, review questions, edge-case analysis,
+and requests for the learner's reasoning before giving complete solutions.
 
 ## Verification
 

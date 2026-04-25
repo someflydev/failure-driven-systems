@@ -39,6 +39,10 @@ The doctrine favors:
 - Dokku before k3s.
 - LLMs as reviewers, interviewers, and critics, not ghostwriters.
 
+LLMs are part of the learning environment, but their use is constrained by the
+doctrine. Learners should struggle first, ask for critique second, request
+explanation third, and compare solutions only after a serious attempt.
+
 ## System Domain
 
 All later lessons build one evolving system: OpsLedger, a small internal
