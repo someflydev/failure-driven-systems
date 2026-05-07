@@ -15,5 +15,6 @@ DATABASE_URL=postgresql+psycopg://localhost:5432/opledger \
   uv run alembic -c services/api/alembic.ini upgrade head
 ```
 
-This phase intentionally has no domain tables yet, so `versions/` starts empty.
-The `.gitkeep` file only keeps the directory present for future revisions.
+Phase 1 starts with customers and work requests. Migration files should keep
+deterministic revision identifiers and names so learners can compare schema
+history without generated noise.

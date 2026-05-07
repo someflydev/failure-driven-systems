@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from opledger_api import models  # noqa: F401
 from opledger_api.config import get_settings
 from opledger_api.db import Base, sqlalchemy_database_url
 
