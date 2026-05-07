@@ -10,8 +10,12 @@ The API reads `DATABASE_URL` first and `OPLEDGER_DATABASE_URL` second. If neithe
 is set, local development defaults to:
 
 ```sh
-postgresql+psycopg://localhost:5432/opledger
+postgresql+psycopg://localhost:55432/opledger
 ```
+
+Local examples avoid standard service ports. If you run Postgres in a container
+or local supervisor, bind the host side to `55432` or set `DATABASE_URL` to the
+project-specific port you chose.
 
 Use local credentials you control. Do not commit real passwords, production
 URLs, or shell history snippets that include secrets.
@@ -34,25 +38,25 @@ Common local causes:
 Run the API:
 
 ```sh
-uv run uvicorn opledger_api.main:app --app-dir services/api --reload
+uv run uvicorn opledger_api.main:app --app-dir services/api --host 127.0.0.1 --port 18080 --reload
 ```
 
 Check liveness:
 
 ```sh
-curl -i http://127.0.0.1:8000/health/live
+curl -i http://127.0.0.1:18080/health/live
 ```
 
 Check readiness:
 
 ```sh
-curl -i http://127.0.0.1:8000/health/ready
+curl -i http://127.0.0.1:18080/health/ready
 ```
 
 Run migrations once domain tables exist:
 
 ```sh
-DATABASE_URL=postgresql+psycopg://localhost:5432/opledger \
+DATABASE_URL=postgresql+psycopg://localhost:55432/opledger \
   uv run alembic -c services/api/alembic.ini upgrade head
 ```
 

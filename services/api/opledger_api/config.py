@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     app_name: str = "OpsLedger API"
     environment: str = "local"
     database_url: str = Field(
-        default="postgresql+psycopg://localhost:5432/opledger",
+        default="postgresql+psycopg://localhost:55432/opledger",
         validation_alias=AliasChoices("DATABASE_URL", "OPLEDGER_DATABASE_URL"),
     )
     database_connect_timeout_seconds: int = Field(

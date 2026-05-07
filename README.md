@@ -69,7 +69,7 @@ uv sync
 Run the minimal API locally with:
 
 ```sh
-uv run uvicorn opledger_api.main:app --app-dir services/api --reload
+uv run uvicorn opledger_api.main:app --app-dir services/api --host 127.0.0.1 --port 18080 --reload
 ```
 
 The liveness endpoint is available at `GET /health/live`. It intentionally does

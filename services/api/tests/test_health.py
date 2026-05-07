@@ -36,7 +36,7 @@ def test_ready_health_check_reports_database_available() -> None:
         return {
             "driver": "postgresql+psycopg",
             "host": "localhost",
-            "port": 5432,
+            "port": 55432,
             "database": "opledger",
         }
 
@@ -52,7 +52,7 @@ def test_ready_health_check_reports_database_available() -> None:
             "status": "ok",
             "driver": "postgresql+psycopg",
             "host": "localhost",
-            "port": 5432,
+            "port": 55432,
             "database": "opledger",
         },
     }
@@ -67,7 +67,7 @@ def test_ready_health_check_reports_sanitized_database_failure() -> None:
             {
                 "driver": "postgresql+psycopg",
                 "host": "localhost",
-                "port": 5432,
+                "port": 55432,
                 "database": "opledger",
             },
         )
@@ -85,7 +85,7 @@ def test_ready_health_check_reports_sanitized_database_failure() -> None:
             "error_class": "OperationalError",
             "driver": "postgresql+psycopg",
             "host": "localhost",
-            "port": 5432,
+            "port": 55432,
             "database": "opledger",
         },
     }

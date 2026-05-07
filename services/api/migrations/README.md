@@ -11,7 +11,7 @@ uv run alembic -c services/api/alembic.ini revision --autogenerate -m "describe 
 Run migrations against the configured database:
 
 ```sh
-DATABASE_URL=postgresql+psycopg://localhost:5432/opledger \
+DATABASE_URL=postgresql+psycopg://localhost:55432/opledger \
   uv run alembic -c services/api/alembic.ini upgrade head
 ```
 
