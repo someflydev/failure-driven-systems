@@ -143,3 +143,10 @@ The curriculum progresses through six phases:
 Additional directories and application code should appear only when later
 prompts justify them. This repository should remain easy to navigate, honest
 about what exists, and strict about teaching judgment before tooling.
+
+## Phase 1 Path
+
+Start with `lessons/phase-1/README.md`. It links the OpsLedger API surface,
+hands-on exercises, database failure scenario, runbooks, Dokku deployment docs,
+quiz, mock interview guide, review checklist, and capstone rubric in the
+intended order.

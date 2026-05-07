@@ -46,6 +46,9 @@ implementation.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
+- `lessons/phase-1/README.md`: Phase 1 lesson index linking app features,
+  exercises, scenarios, runbooks, deployment docs, review gates, quiz,
+  interview practice, and capstone in order.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -61,6 +64,9 @@ implementation.
 - `exercises/phase-1/06-dokku-first-deploy.md`: Phase 1 exercise for deploying
   the API to Dokku, linking Postgres, running migrations, checking health,
   inspecting logs, and reflecting on rollback risk.
+- `exercises/phase-1/07-phase-1-capstone.md`: Phase 1 capstone requiring one
+  small CRUD improvement, tests, deployment evidence or blocker notes, database
+  unavailable simulation, tradeoff explanation, and delayed LLM critique.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
@@ -72,11 +78,20 @@ implementation.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
+- `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
+  capstone covering correctness, relational reasoning, operational debugging,
+  deployment evidence, explanation quality, and restraint around premature
+  complexity.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
 - `reviews/llm/TEMPLATE_interview_me.md`: learner-facing mock interview
   template.
+- `quizzes/phase-1.md`: Phase 1 short-answer quiz for HTTP basics, relational
+  modeling, transactions, migrations, health checks, logs, deployment, database
+  failure, and scope control.
+- `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
+  strong-answer traits instead of canned answers.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas, and
