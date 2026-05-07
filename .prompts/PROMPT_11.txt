@@ -21,11 +21,13 @@ First inspect:
 Work to perform:
 1. Add a repo-root `Dockerfile` for the FastAPI API service that follows the repo-root `uv`/Python 3.12 tooling and runs the app from `services/api/`. Keep it production-flavored but simple: non-root user if practical, dependency install, app command, healthcheck only if it is reliable.
 2. Add `docker-compose.yml` for local development with API and Postgres only.
-3. Add `.env.example` documenting required local variables without secrets.
+3. Add `.env.example` documenting required local variables without real secrets. Use local-only placeholder values and make it clear learners should copy or export their own values rather than committing a real `.env`.
 4. Add `scripts/dev-up.sh`, `scripts/dev-down.sh`, and `scripts/migrate.sh` if they materially simplify local workflows. They should be small wrappers, not opaque orchestration.
 5. Update `README.md` with local Docker workflow: start services, run migrations, verify health, run tests.
 6. Update `docs/runbooks/DB_CONNECTIVITY.md` with Docker Compose checks.
-7. Create `exercises/phase-1/05-local-container-workflow.md` following `exercises/TEMPLATE.md` and requiring the learner to bring up the app, run migrations, hit health endpoints, break DB connectivity, and explain the symptoms.
+7. Update `docs/TECH_STACK.md` so Docker Compose is no longer described as deferred after this prompt introduces it. Keep Redis, queues, workers, service extraction, Dokku deployment artifacts, and k3s deferred.
+8. Update `docs/REPO_MAP.md` so new Docker, script, env example, and exercise files are reflected accurately.
+9. Create `exercises/phase-1/05-local-container-workflow.md` following `exercises/TEMPLATE.md` and requiring the learner to bring up the app, run migrations, hit health endpoints, break DB connectivity, and explain the symptoms.
 
 Boundaries:
 - No Redis service.
@@ -39,3 +41,5 @@ Verification:
 - If Docker is available, run the Compose stack, apply migrations, and call `/health/live` and `/health/ready`.
 - If Docker is not available, validate config syntax where possible and document the skipped manual check in your final response.
 - Confirm `docker-compose.yml` contains Postgres and API only.
+- Confirm `.env.example` contains no real secrets and that no real `.env` file was written to the repo.
+- Confirm `docs/TECH_STACK.md` and `docs/REPO_MAP.md` reflect the new Docker Compose workflow accurately.
