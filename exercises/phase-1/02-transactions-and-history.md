@@ -73,7 +73,6 @@ not-found error before relying on the database to reject bad writes.
 ## Verification
 
 - Run the migration against a local database when one is available.
-- Run `uv run pytest services/api/tests/test_crud_api.py`.
 - Run `./scripts/verify.sh`.
 - Confirm a status update creates exactly one status event with the old status,
   new status, reason, and work request id.

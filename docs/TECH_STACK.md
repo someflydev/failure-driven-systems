@@ -16,8 +16,8 @@ Postgres is the default source of truth. The API reads `DATABASE_URL` or
 `OPLEDGER_DATABASE_URL`, with a safe local default for a developer-owned
 Postgres database. Later lessons can use it to make durable state, transactions,
 constraints, migrations, indexing, and ownership boundaries visible. SQLAlchemy
-and Alembic are included now as the standard database and migration tooling, but
-this scaffold does not create domain tables yet.
+and Alembic are included now as the standard database and migration tooling for
+the Phase 1 customer, work request, and status history tables.
 
 ## Python Tooling
 

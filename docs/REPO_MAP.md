@@ -23,6 +23,8 @@ implementation.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
 - `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
   later worker-backed, boundary-aware, observable operation.
+- `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
+  entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
 - `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
@@ -36,6 +38,11 @@ implementation.
   customers and work requests.
 - `exercises/phase-1/02-transactions-and-history.md`: Phase 1 transaction and
   status history exercise for work request status changes.
+- `exercises/phase-1/03-test-matrix-and-edge-cases.md`: Phase 1 exercise for
+  designing a test matrix before using an LLM to review edge cases.
+- `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
+  checklist covering validation, constraints, transactions, errors, health
+  behavior, tests, and scope control.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
