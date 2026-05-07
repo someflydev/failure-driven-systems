@@ -1,3 +1,4 @@
+from collections.abc import Generator
 from functools import lru_cache
 
 from sqlalchemy import create_engine, text
@@ -66,6 +67,11 @@ def get_sessionmaker(settings: Settings | None = None) -> sessionmaker[Session]:
 
 def get_session(settings: Settings | None = None) -> Session:
     return get_sessionmaker(settings)()
+
+
+def get_db_session() -> Generator[Session]:
+    with get_session() as session:
+        yield session
 
 
 def sqlalchemy_database_url(database_url: str) -> str:

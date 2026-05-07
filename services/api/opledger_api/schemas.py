@@ -25,6 +25,12 @@ class CustomerRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CustomerList(BaseModel):
+    items: list[CustomerRead]
+    limit: int
+    offset: int
+
+
 class WorkRequestCreate(BaseModel):
     customer_id: int = Field(gt=0)
     title: str = Field(min_length=1, max_length=200)
@@ -42,3 +48,23 @@ class WorkRequestRead(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class WorkRequestList(BaseModel):
+    items: list[WorkRequestRead]
+    limit: int
+    offset: int
+
+
+class WorkRequestStatusUpdate(BaseModel):
+    status: WorkRequestStatus
+
+
+class ErrorDetail(BaseModel):
+    code: str
+    message: str
+    details: object | None = None
+
+
+class ErrorResponse(BaseModel):
+    error: ErrorDetail
