@@ -1,8 +1,48 @@
-from fastapi import APIRouter
+from typing import Protocol
+
+from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
+
+from opledger_api.db import DatabaseReadinessError, check_database_readiness
 
 router = APIRouter(prefix="/health", tags=["health"])
+
+ReadinessPayload = dict[str, str | int | None]
+
+
+class ReadinessChecker(Protocol):
+    def __call__(self) -> ReadinessPayload: ...
+
+
+def get_readiness_checker() -> ReadinessChecker:
+    return check_database_readiness
+
+
+readiness_dependency = Depends(get_readiness_checker)
 
 
 @router.get("/live")
 def live() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@router.get("/ready", response_model=None)
+def ready(
+    readiness_checker: ReadinessChecker = readiness_dependency,
+) -> dict[str, object] | JSONResponse:
+    try:
+        database = readiness_checker()
+    except DatabaseReadinessError as exc:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "not_ready",
+                "database": {
+                    "status": "unavailable",
+                    "error_class": exc.error_class,
+                    **exc.target,
+                },
+            },
+        )
+
+    return {"status": "ok", "database": {"status": "ok", **database}}
