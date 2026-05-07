@@ -1,9 +1,9 @@
 # Phase 1 Data Model
 
-Phase 1 introduces the first durable OpsLedger relational model: customers and
-work requests. Postgres is the source of truth for these records. Application
-schemas validate request and response shapes, but the database owns the
-constraints that protect persisted data.
+Phase 1 introduces the first durable OpsLedger relational model: customers,
+work requests, and local status history. Postgres is the source of truth for
+these records. Application schemas validate request and response shapes, but the
+database owns the constraints that protect persisted data.
 
 ## Tables
 
@@ -36,23 +36,45 @@ constraints that protect persisted data.
 Allowed work request statuses are `open`, `in_progress`, `resolved`, and
 `cancelled`.
 
+### work_request_status_events
+
+`work_request_status_events` stores the local history of status changes for a
+work request.
+
+| Column | Purpose |
+| --- | --- |
+| `id` | Surrogate primary key for the status event. |
+| `work_request_id` | Required foreign key to `work_requests.id`. |
+| `old_status` | Status before the API accepted the change. |
+| `new_status` | Status after the API accepted the change. |
+| `reason` | Human-readable reason recorded by the status update request. |
+| `created_at` | Database timestamp for when the status event was recorded. |
+
 ## Relational Choices
 
 Customer data is normalized into its own table because multiple work requests
 can belong to the same customer. A work request stores `customer_id` instead of
 duplicating customer name or email, which keeps customer identity in one place.
 
-The work request keeps only its current status in Phase 1. Status event history
-is deliberately not modeled yet; it is introduced later as the transaction
-lesson. This keeps the first model focused on primary keys, foreign keys,
-uniqueness, and check constraints before adding history tables.
+The work request row stores the current status because that is the authoritative
+fact for the current lifecycle state. The status event row stores the history of
+one accepted status change because that is the authoritative fact for explaining
+what happened. This is the phase 1 version of one owner per authoritative fact:
+do not make callers infer history from the current row, and do not make callers
+infer the current status from the history table.
+
+The status update API changes `work_requests.status` and inserts a
+`work_request_status_events` row in one database transaction. If either write
+fails, neither fact should be committed. That transaction boundary matters
+because the system would otherwise be able to say that a request is
+`in_progress` while having no durable explanation for how it got there, or it
+could record a status event for a status change that did not actually happen.
 
 ## Deliberately Not Modeled Yet
 
-The model does not include status events, operator notes, generated reports,
-notification attempts, derived dashboard tables, queues, or caches. Those
-concepts appear only after prompts create the failure pressure that justifies
-them.
+The model does not include operator notes, generated reports, notification
+attempts, derived dashboard tables, queues, or caches. Those concepts appear
+only after prompts create the failure pressure that justifies them.
 
 The model also avoids denormalized read tables. Reads should query the source
 tables until measurement proves that a derived model is needed and a rebuild
@@ -69,3 +91,9 @@ customer.
 The work request status check prevents misspelled or invented lifecycle states
 from becoming durable truth. API validation should catch bad input early, but
 Postgres still rejects invalid persisted state if application code has a bug.
+
+The status event foreign key prevents orphaned history that points at a missing
+work request.
+
+The old and new status checks prevent status history from accepting lifecycle
+states that the current work request row would reject.

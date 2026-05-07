@@ -25,15 +25,17 @@ implementation.
   later worker-backed, boundary-aware, observable operation.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
-- `docs/data-models/phase-1.md`: implemented Phase 1 customer and work request
-  tables, relational choices, deferred entities, and source-of-truth
-  constraints.
+- `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
+  and work request status event tables, relational choices, deferred entities,
+  transaction reasoning, and source-of-truth constraints.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
+- `exercises/phase-1/02-transactions-and-history.md`: Phase 1 transaction and
+  status history exercise for work request status changes.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
@@ -42,11 +44,12 @@ implementation.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas, and
-  the first synchronous customer/work-request CRUD routes.
+  synchronous customer/work-request CRUD and status history routes.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
-  Phase 1 migration for customers and work requests.
-- `services/api/tests/`: API scaffold, CRUD route, model, and schema tests.
+  Phase 1 migrations for customers, work requests, and status events.
+- `services/api/tests/`: API scaffold, CRUD route, status history, model, and
+  schema tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.
