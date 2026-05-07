@@ -75,6 +75,14 @@ uv run uvicorn opledger_api.main:app --app-dir services/api --host 127.0.0.1 --p
 The liveness endpoint is available at `GET /health/live`. It intentionally does
 not require a database or other external service.
 
+For Phase 1 operational practice, use:
+
+- `docs/runbooks/DB_CONNECTIVITY.md` for database readiness troubleshooting.
+- `ops/runbooks/phase-1-first-response.md` for first-response checks.
+- `scenarios/phase-1/db-unavailable.md` for a guided database outage drill.
+- `exercises/phase-1/04-db-down-debugging.md` for the learner exercise tied to
+  that drill.
+
 ## Phase Sequence
 
 The curriculum progresses through six phases:

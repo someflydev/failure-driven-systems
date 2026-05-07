@@ -50,6 +50,9 @@ updates, status history, liveness, and readiness.
 - `GET /health/ready` checks database reachability.
 - Readiness failures expose the error class and sanitized database target, not
   credentials.
+- Request logs include timestamp, level, method, path, status, and enough timing
+  context to debug the Phase 1 scenario.
+- Database readiness failure logs are useful and sanitized.
 - Manual operational checks use the current health endpoints and one CRUD path.
 
 ## Tests

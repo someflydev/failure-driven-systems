@@ -28,6 +28,8 @@ Expected failure experiences:
 - Invalid input, missing constraints, confusing status changes, failed
   migrations, weak logs, bad configuration, and basic deploy or rollback
   mistakes.
+- A guided database unavailable scenario where learners inspect health
+  endpoints and logs before changing code.
 
 Explanation outcomes:
 

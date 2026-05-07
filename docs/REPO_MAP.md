@@ -40,6 +40,13 @@ implementation.
   status history exercise for work request status changes.
 - `exercises/phase-1/03-test-matrix-and-edge-cases.md`: Phase 1 exercise for
   designing a test matrix before using an LLM to review edge cases.
+- `exercises/phase-1/04-db-down-debugging.md`: Phase 1 exercise for debugging
+  database unavailability from logs and health endpoints before changing code.
+- `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
+  for observing live-but-not-ready behavior.
+- `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
+  endpoints, logs, environment, database reachability, migrations, and rollback
+  thinking.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
@@ -51,7 +58,8 @@ implementation.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas, and
-  synchronous customer/work-request CRUD and status history routes.
+  synchronous customer/work-request CRUD, status history routes, and simple
+  request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   Phase 1 migrations for customers, work requests, and status events.
