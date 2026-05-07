@@ -82,6 +82,13 @@ class WorkRequestStatusEventList(BaseModel):
     offset: int
 
 
+class WorkRequestSummaryReport(BaseModel):
+    generated_at: datetime
+    total_work_requests: int
+    by_status: dict[WorkRequestStatus, int]
+    status_event_count: int
+
+
 class ErrorDetail(BaseModel):
     code: str
     message: str

@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -5,8 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_db_session
 from opledger_api.models import Customer, WorkRequest, WorkRequestStatusEvent
+from opledger_api.reports import build_work_request_summary_report
 from opledger_api.schemas import (
     CustomerCreate,
     CustomerList,
@@ -18,11 +21,13 @@ from opledger_api.schemas import (
     WorkRequestStatus,
     WorkRequestStatusEventList,
     WorkRequestStatusUpdate,
+    WorkRequestSummaryReport,
 )
 
 router = APIRouter(tags=["opsledger"])
 
 SessionDependency = Annotated[Session, Depends(get_db_session)]
+SettingsDependency = Annotated[Settings, Depends(get_settings)]
 LimitQuery = Annotated[int, Query(ge=1, le=100)]
 OffsetQuery = Annotated[int, Query(ge=0)]
 
@@ -214,3 +219,18 @@ def list_work_request_status_events(
         .offset(offset)
     ).all()
     return {"items": events, "limit": limit, "offset": offset}
+
+
+@router.post(
+    "/reports/work-requests/summary",
+    response_model=WorkRequestSummaryReport,
+)
+def create_work_request_summary_report(
+    session: SessionDependency,
+    settings: SettingsDependency,
+    delay_seconds: Annotated[int, Query(ge=0, le=30)] = 0,
+) -> dict[str, object]:
+    if settings.report_delay_enabled and delay_seconds > 0:
+        sleep(min(delay_seconds, settings.report_max_delay_seconds))
+
+    return build_work_request_summary_report(session)

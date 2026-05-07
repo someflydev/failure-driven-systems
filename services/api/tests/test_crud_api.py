@@ -1,9 +1,11 @@
 from collections.abc import Callable
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from opledger_api import routes
 from opledger_api.models import WorkRequestStatusEvent
 
 JsonObject = dict[str, object]
@@ -251,3 +253,50 @@ def test_terminal_status_cannot_transition(
         "message": "Resolved or cancelled work requests cannot change status.",
         "details": {"from": "resolved", "to": "open"},
     }
+
+
+def test_work_request_summary_report_counts_existing_data(
+    client: TestClient,
+    create_customer: Callable[[str], JsonObject],
+    create_work_request: Callable[[int, str, str], JsonObject],
+) -> None:
+    first_customer = create_customer("summary-one@example.com")
+    second_customer = create_customer("summary-two@example.com")
+    open_request = create_work_request(
+        resource_id(first_customer), "open", "Inspect router"
+    )
+    create_work_request(resource_id(second_customer), "resolved", "Replace cable")
+    status_response = client.patch(
+        f"/work-requests/{open_request['id']}/status",
+        json={"status": "in_progress", "reason": "Technician accepted dispatch."},
+    )
+
+    response = client.post("/reports/work-requests/summary")
+
+    assert status_response.status_code == 200
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total_work_requests"] == 2
+    assert body["by_status"] == {
+        "open": 0,
+        "in_progress": 1,
+        "resolved": 1,
+        "cancelled": 0,
+    }
+    assert body["status_event_count"] == 1
+    assert body["generated_at"]
+
+
+def test_work_request_summary_report_does_not_delay_by_default(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_sleep(_seconds: int) -> None:
+        raise AssertionError("report delay should be disabled by default")
+
+    monkeypatch.setattr(routes, "sleep", fail_sleep)
+
+    response = client.post("/reports/work-requests/summary?delay_seconds=1")
+
+    assert response.status_code == 200
+    assert response.json()["total_work_requests"] == 0

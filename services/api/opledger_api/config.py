@@ -20,6 +20,22 @@ class Settings(BaseSettings):
             "OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS",
         ),
     )
+    report_delay_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "REPORT_DELAY_ENABLED",
+            "OPLEDGER_REPORT_DELAY_ENABLED",
+        ),
+    )
+    report_max_delay_seconds: int = Field(
+        default=5,
+        ge=0,
+        le=30,
+        validation_alias=AliasChoices(
+            "REPORT_MAX_DELAY_SECONDS",
+            "OPLEDGER_REPORT_MAX_DELAY_SECONDS",
+        ),
+    )
 
     model_config = SettingsConfigDict(env_prefix="OPLEDGER_", populate_by_name=True)
 
