@@ -18,12 +18,16 @@ implementation.
 - `docs/COMMIT_DISCIPLINE.md`: prompt-numbered multi-line commit message
   guidance and examples.
 - `docs/CONSTRAINTS.md`: infrastructure and budget assumptions.
-- `docs/DOMAIN.md`: OpsLedger domain boundaries and conceptual entities.
+- `docs/DOMAIN.md`: OpsLedger domain boundaries, conceptual entities, and the
+  pointer to the implemented Phase 1 relational model.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
 - `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
   later worker-backed, boundary-aware, observable operation.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
+- `docs/data-models/phase-1.md`: implemented Phase 1 customer and work request
+  tables, relational choices, deferred entities, and source-of-truth
+  constraints.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
@@ -33,12 +37,12 @@ implementation.
 - `reviews/llm/TEMPLATE_interview_me.md`: learner-facing mock interview
   template.
 - `services/api/opledger_api/`: FastAPI package with app creation,
-  configuration, database engine/session setup, dependency-free liveness, and
-  database-backed readiness.
+  configuration, database engine/session setup, dependency-free liveness,
+  database-backed readiness, Phase 1 SQLAlchemy models, and Pydantic schemas.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
-- `services/api/migrations/`: Alembic migration environment; `versions/` is
-  empty until domain models are introduced.
-- `services/api/tests/`: API scaffold tests.
+- `services/api/migrations/`: Alembic migration environment and deterministic
+  Phase 1 migration for customers and work requests.
+- `services/api/tests/`: API scaffold, model, and schema tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.

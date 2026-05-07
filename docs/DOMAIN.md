@@ -64,6 +64,11 @@ In Phase 1, OpsLedger is one synchronous service. Learners handle customers,
 work requests, status events, and notes through direct request/response flows
 and a clear Postgres source of truth.
 
+The first implemented relational model is intentionally narrower than the full
+Phase 1 concept list: it includes customers and work requests only. See
+`docs/data-models/phase-1.md` for the source-of-truth tables, constraints, and
+deferred entities.
+
 In Phase 2, report generation and notification attempts create pressure that
 does not fit well inside user-facing requests. Learners experience latency,
 retry hazards, and partial failure before introducing background work.
