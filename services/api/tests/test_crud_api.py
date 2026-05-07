@@ -1,70 +1,12 @@
-from collections.abc import Generator
-from typing import cast
+from collections.abc import Callable
 
-import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import StaticPool
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from opledger_api.db import Base, get_db_session
-from opledger_api.main import create_app
 from opledger_api.models import WorkRequestStatusEvent
 
 JsonObject = dict[str, object]
-
-
-@pytest.fixture()
-def client() -> Generator[TestClient]:
-    engine = create_engine(
-        "sqlite+pysqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-    SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-    Base.metadata.create_all(engine)
-
-    app = create_app()
-
-    def override_session() -> Generator[Session]:
-        with SessionLocal() as session:
-            yield session
-
-    app.dependency_overrides[get_db_session] = override_session
-
-    with TestClient(app) as test_client:
-        yield test_client
-
-    Base.metadata.drop_all(engine)
-
-
-def create_customer(
-    client: TestClient, email: str = "ops@example.com"
-) -> dict[str, object]:
-    response = client.post(
-        "/customers",
-        json={"name": "Acme Operations", "email": email},
-    )
-    assert response.status_code == 201
-    return cast(JsonObject, response.json())
-
-
-def create_work_request(
-    client: TestClient,
-    customer_id: int,
-    status: str = "open",
-) -> dict[str, object]:
-    response = client.post(
-        "/work-requests",
-        json={
-            "customer_id": customer_id,
-            "title": "Replace scanner",
-            "description": "Warehouse scanner stopped booting.",
-            "status": status,
-        },
-    )
-    assert response.status_code == 201
-    return cast(JsonObject, response.json())
 
 
 def resource_id(resource: JsonObject) -> int:
@@ -73,8 +15,11 @@ def resource_id(resource: JsonObject) -> int:
     return value
 
 
-def test_customer_create_get_and_list(client: TestClient) -> None:
-    created = create_customer(client)
+def test_customer_create_get_and_list(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+) -> None:
+    created = create_customer()
 
     get_response = client.get(f"/customers/{created['id']}")
     list_response = client.get("/customers?limit=10&offset=0")
@@ -87,8 +32,11 @@ def test_customer_create_get_and_list(client: TestClient) -> None:
     assert list_response.json()["offset"] == 0
 
 
-def test_duplicate_customer_email_returns_conflict(client: TestClient) -> None:
-    create_customer(client)
+def test_duplicate_customer_email_returns_conflict(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+) -> None:
+    create_customer()
 
     response = client.post(
         "/customers",
@@ -125,9 +73,11 @@ def test_validation_failure_uses_consistent_error_shape(client: TestClient) -> N
 
 def test_work_request_create_get_list_filter_and_status_update(
     client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int], JsonObject],
 ) -> None:
-    customer = create_customer(client)
-    work_request = create_work_request(client, resource_id(customer))
+    customer = create_customer()
+    work_request = create_work_request(resource_id(customer))
 
     get_response = client.get(f"/work-requests/{work_request['id']}")
     list_response = client.get("/work-requests?status=open&limit=5&offset=0")
@@ -148,9 +98,64 @@ def test_work_request_create_get_list_filter_and_status_update(
     assert update_response.json()["status"] == "in_progress"
 
 
-def test_status_update_creates_status_event(client: TestClient) -> None:
-    customer = create_customer(client)
-    work_request = create_work_request(client, resource_id(customer))
+def test_status_filter_returns_only_matching_work_requests(
+    client: TestClient,
+    create_customer: Callable[[str], JsonObject],
+    create_work_request: Callable[[int, str, str], JsonObject],
+) -> None:
+    first_customer = create_customer("ops-one@example.com")
+    second_customer = create_customer("ops-two@example.com")
+    open_request = create_work_request(resource_id(first_customer), "open", "Open work")
+    in_progress_request = create_work_request(
+        resource_id(second_customer), "in_progress", "Active work"
+    )
+
+    open_response = client.get("/work-requests?status=open&limit=10&offset=0")
+    active_response = client.get("/work-requests?status=in_progress&limit=10&offset=0")
+
+    assert open_response.status_code == 200
+    assert active_response.status_code == 200
+    assert [item["id"] for item in open_response.json()["items"]] == [
+        open_request["id"]
+    ]
+    assert [item["id"] for item in active_response.json()["items"]] == [
+        in_progress_request["id"]
+    ]
+
+
+def test_list_endpoints_reject_pagination_out_of_bounds(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int], JsonObject],
+) -> None:
+    customer = create_customer()
+    work_request = create_work_request(resource_id(customer))
+
+    paths = [
+        "/customers?limit=0",
+        "/customers?limit=101",
+        "/customers?offset=-1",
+        "/work-requests?limit=0",
+        "/work-requests?limit=101",
+        "/work-requests?offset=-1",
+        f"/work-requests/{work_request['id']}/status-events?limit=0",
+        f"/work-requests/{work_request['id']}/status-events?limit=101",
+        f"/work-requests/{work_request['id']}/status-events?offset=-1",
+    ]
+
+    for path in paths:
+        response = client.get(path)
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "validation_failed"
+
+
+def test_status_update_creates_status_event(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int], JsonObject],
+) -> None:
+    customer = create_customer()
+    work_request = create_work_request(resource_id(customer))
 
     update_response = client.patch(
         f"/work-requests/{work_request['id']}/status",
@@ -199,37 +204,18 @@ def test_status_event_list_for_missing_work_request_fails_cleanly(
     assert response.json()["error"]["code"] == "work_request_not_found"
 
 
-def test_missing_work_request_status_update_does_not_create_orphan_events() -> None:
-    engine = create_engine(
-        "sqlite+pysqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
+def test_missing_work_request_status_update_does_not_create_orphan_events(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    response = client.patch(
+        "/work-requests/999/status",
+        json={"status": "in_progress", "reason": "Technician started work."},
     )
-    SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-    Base.metadata.create_all(engine)
+    status_events = db_session.scalars(select(WorkRequestStatusEvent)).all()
 
-    app = create_app()
-
-    def override_session() -> Generator[Session]:
-        with SessionLocal() as session:
-            yield session
-
-    app.dependency_overrides[get_db_session] = override_session
-
-    try:
-        with TestClient(app) as test_client:
-            response = test_client.patch(
-                "/work-requests/999/status",
-                json={"status": "in_progress", "reason": "Technician started work."},
-            )
-
-        with SessionLocal() as session:
-            status_events = session.scalars(select(WorkRequestStatusEvent)).all()
-
-        assert response.status_code == 404
-        assert status_events == []
-    finally:
-        Base.metadata.drop_all(engine)
+    assert response.status_code == 404
+    assert status_events == []
 
 
 def test_work_request_requires_existing_customer(client: TestClient) -> None:
@@ -246,9 +232,13 @@ def test_work_request_requires_existing_customer(client: TestClient) -> None:
     assert response.json()["error"]["code"] == "customer_not_found"
 
 
-def test_terminal_status_cannot_transition(client: TestClient) -> None:
-    customer = create_customer(client)
-    work_request = create_work_request(client, resource_id(customer), status="resolved")
+def test_terminal_status_cannot_transition(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int, str], JsonObject],
+) -> None:
+    customer = create_customer()
+    work_request = create_work_request(resource_id(customer), "resolved")
 
     response = client.patch(
         f"/work-requests/{work_request['id']}/status",
