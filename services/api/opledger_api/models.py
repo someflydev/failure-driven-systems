@@ -59,3 +59,39 @@ class WorkRequest(Base):
     )
 
     customer: Mapped[Customer] = relationship(back_populates="work_requests")
+    status_events: Mapped[list["WorkRequestStatusEvent"]] = relationship(
+        back_populates="work_request",
+        cascade="all, delete-orphan",
+    )
+
+
+class WorkRequestStatusEvent(Base):
+    __tablename__ = "work_request_status_events"
+    __table_args__ = (
+        CheckConstraint(
+            "old_status in ('open', 'in_progress', 'resolved', 'cancelled')",
+            name="ck_work_request_status_events_old_status",
+        ),
+        CheckConstraint(
+            "new_status in ('open', 'in_progress', 'resolved', 'cancelled')",
+            name="ck_work_request_status_events_new_status",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    work_request_id: Mapped[int] = mapped_column(
+        ForeignKey(
+            "work_requests.id",
+            name="fk_work_request_status_events_work_request_id_work_requests",
+        ),
+        nullable=False,
+    )
+    old_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    new_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    work_request: Mapped[WorkRequest] = relationship(back_populates="status_events")

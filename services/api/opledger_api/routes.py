@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from opledger_api.db import get_db_session
-from opledger_api.models import Customer, WorkRequest
+from opledger_api.models import Customer, WorkRequest, WorkRequestStatusEvent
 from opledger_api.schemas import (
     CustomerCreate,
     CustomerList,
@@ -16,6 +16,7 @@ from opledger_api.schemas import (
     WorkRequestList,
     WorkRequestRead,
     WorkRequestStatus,
+    WorkRequestStatusEventList,
     WorkRequestStatusUpdate,
 )
 
@@ -178,7 +179,38 @@ def update_work_request_status(
             {"from": work_request.status, "to": payload.status},
         )
 
+    old_status = work_request.status
     work_request.status = payload.status
+    session.add(
+        WorkRequestStatusEvent(
+            work_request_id=work_request.id,
+            old_status=old_status,
+            new_status=payload.status,
+            reason=payload.reason,
+        )
+    )
     session.commit()
     session.refresh(work_request)
     return work_request
+
+
+@router.get(
+    "/work-requests/{work_request_id}/status-events",
+    response_model=WorkRequestStatusEventList,
+    responses={404: {"model": ErrorResponse}},
+)
+def list_work_request_status_events(
+    work_request_id: int,
+    session: SessionDependency,
+    limit: LimitQuery = 50,
+    offset: OffsetQuery = 0,
+) -> dict[str, object]:
+    get_work_request_or_404(work_request_id, session)
+    events = session.scalars(
+        select(WorkRequestStatusEvent)
+        .where(WorkRequestStatusEvent.work_request_id == work_request_id)
+        .order_by(WorkRequestStatusEvent.id)
+        .limit(limit)
+        .offset(offset)
+    ).all()
+    return {"items": events, "limit": limit, "offset": offset}

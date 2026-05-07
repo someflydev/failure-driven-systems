@@ -58,6 +58,28 @@ class WorkRequestList(BaseModel):
 
 class WorkRequestStatusUpdate(BaseModel):
     status: WorkRequestStatus
+    reason: str = Field(
+        default="Status updated through API.",
+        min_length=1,
+        max_length=500,
+    )
+
+
+class WorkRequestStatusEventRead(BaseModel):
+    id: int
+    work_request_id: int
+    old_status: WorkRequestStatus
+    new_status: WorkRequestStatus
+    reason: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class WorkRequestStatusEventList(BaseModel):
+    items: list[WorkRequestStatusEventRead]
+    limit: int
+    offset: int
 
 
 class ErrorDetail(BaseModel):
