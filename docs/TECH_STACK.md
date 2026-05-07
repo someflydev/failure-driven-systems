@@ -24,6 +24,11 @@ repo-root `docker-compose.yml` runs only the API and Postgres so learners can
 practice container startup, explicit migrations, health checks, and database
 connectivity failures without introducing phase 2 infrastructure.
 
+Dokku is the default early deployment target for Phase 1. The root `Dockerfile`
+is the deployment artifact for the single API service, and Dokku Postgres
+provides `DATABASE_URL` through service linking. Migrations remain explicit
+operator actions.
+
 ## Python Tooling
 
 Python tooling is rooted at the repository top level and managed with `uv`.
@@ -42,9 +47,9 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-Redis, background workers, queues, Dokku deployment artifacts, k3s manifests,
-caching, and service extraction are deferred. They should appear only after
-later prompts create a concrete failure, operational need, or teaching moment.
+Redis, background workers, queues, k3s manifests, caching, and service
+extraction are deferred. They should appear only after later prompts create a
+concrete failure, operational need, or teaching moment.
 
 ## Later Language Discussions
 

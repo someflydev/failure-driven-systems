@@ -131,7 +131,7 @@ want a clean database:
 ./scripts/dev-down.sh -v
 ```
 
-## Dokku Later
+## Dokku
 
 On Dokku, attach Postgres so the deployed app receives `DATABASE_URL` from the
 platform. Treat Dokku config output as sensitive because it may include
