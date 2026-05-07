@@ -93,6 +93,13 @@ DATABASE_URL=postgresql+psycopg://localhost:55432/opledger \
   uv run alembic -c services/api/alembic.ini upgrade head
 ```
 
+For the Phase 1 Docker Compose workflow, run migrations inside the API
+container:
+
+```sh
+./scripts/migrate.sh --compose
+```
+
 Use only local credentials you control.
 
 ## Rollback Thinking
@@ -117,7 +124,6 @@ queues, retries, dashboards, or orchestration to solve an unclear first failure.
 - Retry loops for database failures
 - Queues and background workers
 - Redis
-- Docker Compose unless a later prompt introduces it
 - k3s
 - OpenTelemetry, Prometheus, dashboards, and tracing
 - Broad exception handling that hides database failures

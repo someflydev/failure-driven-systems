@@ -73,7 +73,46 @@ uv run uvicorn opledger_api.main:app --app-dir services/api --host 127.0.0.1 --p
 ```
 
 The liveness endpoint is available at `GET /health/live`. It intentionally does
-not require a database or other external service.
+not require a database or other external service. The readiness endpoint at
+`GET /health/ready` checks Postgres connectivity.
+
+### Local Docker Compose
+
+Phase 1 local container development uses Docker Compose with only the API and
+Postgres:
+
+```sh
+cp .env.example .env
+./scripts/dev-up.sh
+```
+
+The `.env.example` values are local placeholders. Replace them for your own
+machine and do not commit a real `.env` file.
+
+In another shell, apply migrations explicitly:
+
+```sh
+./scripts/migrate.sh --compose
+```
+
+Then check the service:
+
+```sh
+curl -i http://127.0.0.1:18080/health/live
+curl -i http://127.0.0.1:18080/health/ready
+```
+
+Run the repository verification gate from the host:
+
+```sh
+./scripts/verify.sh
+```
+
+Stop the local containers with:
+
+```sh
+./scripts/dev-down.sh
+```
 
 For Phase 1 operational practice, use:
 
@@ -82,6 +121,8 @@ For Phase 1 operational practice, use:
 - `scenarios/phase-1/db-unavailable.md` for a guided database outage drill.
 - `exercises/phase-1/04-db-down-debugging.md` for the learner exercise tied to
   that drill.
+- `exercises/phase-1/05-local-container-workflow.md` for the Compose workflow
+  exercise.
 
 ## Phase Sequence
 

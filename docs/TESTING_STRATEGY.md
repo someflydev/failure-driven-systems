@@ -50,10 +50,13 @@ Manual operational checks are also intentionally small: start the API, call
 path plus one predictable failure path. These checks prove the service wiring
 works outside the in-process test client.
 
-## Deferred Layers
+Docker Compose checks are now part of Phase 1 local operational verification:
+build and start the API plus Postgres stack, run Alembic migrations explicitly,
+and confirm both health endpoints from the host. Keep these checks focused on
+the two-service local workflow; they are not a substitute for later deployment
+smoke tests.
 
-Docker Compose checks are deferred until the curriculum introduces containerized
-local operations.
+## Deferred Layers
 
 Deployment smoke tests are deferred until Dokku or another concrete deployment
 target exists in the repository.

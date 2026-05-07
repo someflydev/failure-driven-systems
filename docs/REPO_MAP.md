@@ -10,6 +10,14 @@ implementation.
 - `README.md`: public positioning, audience, differentiators, and phase
   sequence, plus the current local development workflow.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
+- `Dockerfile`: production-flavored local image definition for the FastAPI API
+  service using repo-root `uv` tooling and Python 3.12.
+- `.dockerignore`: Docker build-context exclusions for local env files,
+  virtualenvs, caches, and generated artifacts.
+- `docker-compose.yml`: Phase 1 local development stack with API and Postgres
+  only.
+- `.env.example`: local placeholder environment values for Compose and health
+  tuning; real `.env` files must remain uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
@@ -42,6 +50,9 @@ implementation.
   designing a test matrix before using an LLM to review edge cases.
 - `exercises/phase-1/04-db-down-debugging.md`: Phase 1 exercise for debugging
   database unavailability from logs and health endpoints before changing code.
+- `exercises/phase-1/05-local-container-workflow.md`: Phase 1 exercise for
+  bringing up the Docker Compose stack, running migrations, checking health,
+  breaking database connectivity, and explaining the symptoms.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
@@ -66,8 +77,12 @@ implementation.
 - `services/api/tests/`: API scaffold, CRUD route, status history, model, and
   schema tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
-  guide for database readiness failures.
+  guide for database readiness failures, including Docker Compose checks.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.
+- `scripts/dev-up.sh`: small wrapper around `docker compose up --build`.
+- `scripts/dev-down.sh`: small wrapper around `docker compose down`.
+- `scripts/migrate.sh`: explicit Alembic migration wrapper for host or Compose
+  execution.
 
 ## Intended Layers
 
@@ -88,7 +103,8 @@ implementation.
 - `ops/`: runbooks, incident response notes, operational checks, and maintenance
   guidance when those materials become concrete.
 - `scripts/`: small automation scripts that support verified workflows. The
-  current verification entry point is `scripts/verify.sh`.
+  current entries cover verification, local Compose startup/shutdown, and
+  explicit database migrations.
 - `tests/`: repository or application tests once there is behavior to verify.
 - `data/`: sample data, fixtures, or generated learner outputs when required by
   exercises.
@@ -96,8 +112,8 @@ implementation.
 ## Population Rules
 
 - Do not create empty implementation directories just to match the map.
-- Do not add Docker, databases, Redis, queues, k3s manifests, or app code before
-  the curriculum creates a concrete need.
+- Do not add Redis, queues, k3s manifests, new databases, or app code before the
+  curriculum creates a concrete need.
 - Keep planned material clearly labeled as planned.
 - Keep current-state claims accurate.
 - Prefer narrow, durable documents over broad placeholders.

@@ -70,6 +70,67 @@ Create future migrations after SQLAlchemy models are added:
 uv run alembic -c services/api/alembic.ini revision --autogenerate -m "describe change"
 ```
 
+## Docker Compose Checks
+
+The repo-root `docker-compose.yml` runs only Postgres and the API. Start both
+services with:
+
+```sh
+docker compose up --build
+```
+
+Or use the small wrapper:
+
+```sh
+./scripts/dev-up.sh
+```
+
+Confirm the declared services stay scoped to Phase 1:
+
+```sh
+docker compose config --services
+```
+
+The expected output is `postgres` and `api` only.
+
+Apply migrations explicitly after the containers are running:
+
+```sh
+./scripts/migrate.sh --compose
+```
+
+Check the API from the host:
+
+```sh
+curl -i http://127.0.0.1:18080/health/live
+curl -i http://127.0.0.1:18080/health/ready
+```
+
+Inside Compose, the API uses `postgres` as the database host because that is the
+service name on the Compose network. From the host, Postgres is published on
+port `55432` by default.
+
+Useful local diagnostics:
+
+```sh
+docker compose ps
+docker compose logs api
+docker compose logs postgres
+```
+
+Stop containers without deleting the database volume:
+
+```sh
+./scripts/dev-down.sh
+```
+
+Stop containers and delete the local Postgres volume only when you intentionally
+want a clean database:
+
+```sh
+./scripts/dev-down.sh -v
+```
+
 ## Dokku Later
 
 On Dokku, attach Postgres so the deployed app receives `DATABASE_URL` from the

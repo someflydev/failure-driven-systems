@@ -19,6 +19,11 @@ constraints, migrations, indexing, and ownership boundaries visible. SQLAlchemy
 and Alembic are included now as the standard database and migration tooling for
 the Phase 1 customer, work request, and status history tables.
 
+Docker Compose is the default local container workflow for Phase 1. The
+repo-root `docker-compose.yml` runs only the API and Postgres so learners can
+practice container startup, explicit migrations, health checks, and database
+connectivity failures without introducing phase 2 infrastructure.
+
 ## Python Tooling
 
 Python tooling is rooted at the repository top level and managed with `uv`.
@@ -37,10 +42,9 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-Redis, background workers, queues, Docker Compose, Dokku deployment artifacts,
-k3s manifests, caching, and service extraction are deferred. They should appear
-only after later prompts create a concrete failure, operational need, or
-teaching moment.
+Redis, background workers, queues, Dokku deployment artifacts, k3s manifests,
+caching, and service extraction are deferred. They should appear only after
+later prompts create a concrete failure, operational need, or teaching moment.
 
 ## Later Language Discussions
 
