@@ -49,6 +49,9 @@ implementation.
 - `lessons/phase-1/README.md`: Phase 1 lesson index linking app features,
   exercises, scenarios, runbooks, deployment docs, review gates, quiz,
   interview practice, and capstone in order.
+- `lessons/phase-2/README.md`: Phase 2 starter lesson index with only the
+  synchronous report pain exercise linked and an explicit warning to observe
+  request-path pain before adding a queue.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -67,6 +70,9 @@ implementation.
 - `exercises/phase-1/07-phase-1-capstone.md`: Phase 1 capstone requiring one
   small CRUD improvement, tests, deployment evidence or blocker notes, database
   unavailable simulation, tradeoff explanation, and delayed LLM critique.
+- `exercises/phase-2/01-synchronous-report-pain.md`: first Phase 2 exercise
+  requiring synchronous report measurement, controlled local delay, blocked
+  caller observation, and before/after expectations before asynchronous work.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
@@ -94,9 +100,10 @@ implementation.
   strong-answer traits instead of canned answers.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
-  database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas, and
-  synchronous customer/work-request CRUD, status history routes, and simple
-  request/readiness logging.
+  database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
+  synchronous customer/work-request CRUD, status history routes, synchronous
+  work request summary reporting helpers with opt-in local route delay, and
+  simple request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   Phase 1 migrations for customers, work requests, and status events.
