@@ -12,11 +12,12 @@ request/response API model, strong type-hinted request and response shapes,
 OpenAPI documentation, and a production-relevant ecosystem while keeping early
 application code small.
 
-Postgres is the default source of truth. Later lessons can use it to make
-durable state, transactions, constraints, migrations, indexing, and ownership
-boundaries visible. SQLAlchemy and Alembic are included now as the standard
-database and migration tooling, but this scaffold does not create tables or
-database-dependent endpoints yet.
+Postgres is the default source of truth. The API reads `DATABASE_URL` or
+`OPLEDGER_DATABASE_URL`, with a safe local default for a developer-owned
+Postgres database. Later lessons can use it to make durable state, transactions,
+constraints, migrations, indexing, and ownership boundaries visible. SQLAlchemy
+and Alembic are included now as the standard database and migration tooling, but
+this scaffold does not create domain tables yet.
 
 ## Python Tooling
 

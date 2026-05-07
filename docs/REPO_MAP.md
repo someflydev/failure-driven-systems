@@ -32,9 +32,15 @@ implementation.
   template.
 - `reviews/llm/TEMPLATE_interview_me.md`: learner-facing mock interview
   template.
-- `services/api/opledger_api/`: minimal FastAPI package with app creation,
-  configuration, and a dependency-free liveness endpoint.
+- `services/api/opledger_api/`: FastAPI package with app creation,
+  configuration, database engine/session setup, dependency-free liveness, and
+  database-backed readiness.
+- `services/api/alembic.ini`: Alembic entry point for API database migrations.
+- `services/api/migrations/`: Alembic migration environment; `versions/` is
+  empty until domain models are introduced.
 - `services/api/tests/`: API scaffold tests.
+- `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
+  guide for database readiness failures.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.
 
 ## Intended Layers
