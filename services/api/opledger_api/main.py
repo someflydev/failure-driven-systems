@@ -4,12 +4,16 @@ from fastapi.responses import JSONResponse
 
 from opledger_api.config import get_settings
 from opledger_api.health import router as health_router
+from opledger_api.logging import configure_logging, log_request
 from opledger_api.routes import router as opsledger_router
 
 
 def create_app() -> FastAPI:
+    configure_logging()
     settings = get_settings()
     app = FastAPI(title=settings.app_name)
+
+    app.middleware("http")(log_request)
 
     app.include_router(health_router)
     app.include_router(opsledger_router)
