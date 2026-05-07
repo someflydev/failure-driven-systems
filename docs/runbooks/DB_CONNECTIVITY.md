@@ -26,6 +26,10 @@ When Postgres is unavailable, `/health/live` should still return `200` with
 `{"status":"ok"}`. `/health/ready` should return `503` with a sanitized database
 status and an error class, not a raw connection string or password.
 
+The API should also log `event=database_readiness_failed` with the error class
+and sanitized target fields. Use that log line with request logs from the same
+time window before changing code.
+
 Common local causes:
 
 - Postgres is not running.
@@ -81,3 +85,7 @@ Useful checks later:
 requires new tables.
 
 Do not paste full Dokku database URLs into issues, runbooks, commits, or chat.
+
+For the broader Phase 1 response flow, see
+`ops/runbooks/phase-1-first-response.md`. For a guided local drill, see
+`scenarios/phase-1/db-unavailable.md`.
