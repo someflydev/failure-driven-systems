@@ -116,12 +116,17 @@ Stop the local containers with:
 
 For Phase 1 operational practice, use:
 
+- `deploy/dokku/README.md` for the first VPS deployment path.
+- `deploy/dokku/checklist.md` for deploy preflight and post-deploy checks.
 - `docs/runbooks/DB_CONNECTIVITY.md` for database readiness troubleshooting.
 - `ops/runbooks/phase-1-first-response.md` for first-response checks.
+- `ops/runbooks/dokku-api-incident.md` for Dokku API incidents.
 - `scenarios/phase-1/db-unavailable.md` for a guided database outage drill.
 - `exercises/phase-1/04-db-down-debugging.md` for the learner exercise tied to
   that drill.
 - `exercises/phase-1/05-local-container-workflow.md` for the Compose workflow
+  exercise.
+- `exercises/phase-1/06-dokku-first-deploy.md` for the first Dokku deployment
   exercise.
 
 ## Phase Sequence

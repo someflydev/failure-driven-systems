@@ -16,6 +16,11 @@ implementation.
   virtualenvs, caches, and generated artifacts.
 - `docker-compose.yml`: Phase 1 local development stack with API and Postgres
   only.
+- `deploy/dokku/README.md`: Phase 1 Dokku deployment path for the single
+  Dockerfile-based API service, including app creation, Postgres linking,
+  config, deploy, migrations, health checks, logs, and rollback basics.
+- `deploy/dokku/checklist.md`: concise Dokku deployment preflight and
+  post-deploy checklist.
 - `.env.example`: local placeholder environment values for Compose and health
   tuning; real `.env` files must remain uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
@@ -53,11 +58,17 @@ implementation.
 - `exercises/phase-1/05-local-container-workflow.md`: Phase 1 exercise for
   bringing up the Docker Compose stack, running migrations, checking health,
   breaking database connectivity, and explaining the symptoms.
+- `exercises/phase-1/06-dokku-first-deploy.md`: Phase 1 exercise for deploying
+  the API to Dokku, linking Postgres, running migrations, checking health,
+  inspecting logs, and reflecting on rollback risk.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
+- `ops/runbooks/dokku-api-incident.md`: Dokku API incident runbook for bad env
+  vars, unavailable Postgres, failed migrations, boot failures, memory pressure,
+  and unreadable logs.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
@@ -98,8 +109,9 @@ implementation.
   prompts.
 - `reviews/`: review rubrics, critique prompts, and expected reasoning checks.
 - `interviews/`: architecture defense and interview simulation materials.
-- `deploy/`: deployment configuration when a prompt introduces real deployment
-  artifacts. Dokku should appear before k3s.
+- `deploy/`: deployment configuration and operator-facing deployment docs. The
+  current concrete path is Dokku for the single-service API; k3s remains
+  deferred.
 - `ops/`: runbooks, incident response notes, operational checks, and maintenance
   guidance when those materials become concrete.
 - `scripts/`: small automation scripts that support verified workflows. The

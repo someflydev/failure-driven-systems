@@ -10,6 +10,13 @@ Start with one deployable service and Postgres as the source of truth. The
 learner should practice request handling, validation, persistence, transactions,
 migrations, logs, configuration, and simple deployment through Dokku.
 
+Phase 1 deployment materials:
+
+- `deploy/dokku/README.md`
+- `deploy/dokku/checklist.md`
+- `ops/runbooks/dokku-api-incident.md`
+- `exercises/phase-1/06-dokku-first-deploy.md`
+
 Boundaries:
 
 - Do not introduce queues yet.
