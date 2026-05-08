@@ -60,6 +60,11 @@ The current report output is stored on the `report_jobs` row. That makes the
 duplicate-execution guard small: do not create a second result when the first
 durable result already exists.
 
+OpsLedger's first concrete side effect is a local report completion
+notification. It uses a `notification_attempts` row with a durable
+`report_job:{report_job_id}:completed` key so duplicate triggers return the
+existing attempt instead of writing another durable side effect.
+
 Future effects need their own duplicate strategy. Examples:
 
 - notification sends need a stable notification identity or send ledger

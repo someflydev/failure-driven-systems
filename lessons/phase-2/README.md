@@ -14,13 +14,16 @@ Inspect these files before starting the first lesson:
 - `services/api/opledger_api/config.py`
 - `services/api/tests/test_crud_api.py`
 - `services/api/tests/test_report_jobs.py`
+- `services/api/tests/test_notifications.py`
 
 The current service can generate a work request summary report synchronously and
 can enqueue the same report for a Redis/RQ worker. The report is derived from
 `work_requests` and `work_request_status_events`; durable report job status is
 stored in Postgres through `report_jobs`. Duplicate report enqueue requests can
 be tied to an explicit idempotency key. Redis carries queued work but is not the
-system of record.
+system of record. Completed queued reports also create local notification
+attempts in Postgres; the local adapter writes durable attempt status and logs
+instead of contacting an external provider.
 
 ## Learning Path
 
@@ -39,9 +42,15 @@ system of record.
 5. `exercises/phase-2/05-idempotent-report-jobs.md`: add database-backed
    request idempotency for report enqueueing, protect completed report output
    from duplicate worker execution, and explain remaining side-effect risks.
+6. `exercises/phase-2/06-safe-side-effects.md`: inspect the local report
+   completion notification workflow, confirm duplicate triggers do not create
+   duplicate attempts, and explain the remaining gap before a full outbox
+   dispatcher.
 
 ## Important Boundary
 
 Do not add cache layers or a separate reporting service in Phase 2 yet.
-Idempotency is currently scoped to work request summary report jobs; future
-side effects still need their own duplicate-prevention design.
+Idempotency is scoped explicitly: report enqueue requests, duplicate completed
+report execution, and the local report completion notification each have their
+own durable key. Future side effects still need their own duplicate-prevention
+design.

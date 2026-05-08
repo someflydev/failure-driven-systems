@@ -60,8 +60,10 @@ RQ retries are now explicitly bounded for Phase 2 report work. The default is
 three total attempts: the original worker execution plus two retries, with
 backoff intervals of 1 and 5 seconds. Retry attempts update durable
 `report_jobs` metadata in Postgres so learners can inspect attempt counts and
-errors. Duplicate execution handling, idempotency, and dead-letter workflows
-remain later lessons.
+errors. Report jobs now include completed-output duplicate execution handling
+and explicit database-backed idempotency. Local report completion notifications
+also use a durable idempotency key, while dead-letter workflows remain later
+lessons.
 
 ## Python Tooling
 
@@ -81,9 +83,9 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-k3s manifests, caching, and service extraction are deferred. Idempotency,
-duplicate execution handling, and dead-letter workflows are also deferred until
-later prompts create the concrete failure or teaching moment.
+k3s manifests, caching, service extraction, dead-letter workflows, and a full
+outbox dispatcher are deferred until later prompts create the concrete failure
+or teaching moment.
 
 ## Later Language Discussions
 

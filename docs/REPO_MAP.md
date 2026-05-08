@@ -48,6 +48,10 @@ implementation.
 - `docs/async/idempotency.md`: Phase 2 report job idempotency guide separating
   request idempotency, job idempotency, side-effect idempotency, and the
   Postgres uniqueness constraint that prevents duplicate enqueue records.
+- `docs/async/side-effects-and-outbox.md`: Phase 2 side-effect guide for local
+  report completion notifications, durable notification attempt identity,
+  visible failed attempts, and the remaining gap before a full outbox
+  dispatcher.
 - `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
   and work request status event tables, relational choices, deferred entities,
   transaction reasoning, and source-of-truth constraints.
@@ -96,6 +100,9 @@ implementation.
 - `exercises/phase-2/05-idempotent-report-jobs.md`: Phase 2 exercise for
   database-backed report enqueue idempotency, duplicate worker execution
   safety, and reflection on remaining side-effect risks.
+- `exercises/phase-2/06-safe-side-effects.md`: Phase 2 exercise for local
+  report completion notifications, duplicate side-effect prevention, failed
+  attempt visibility, and reasoning about what changes with a real provider.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/report-retry-failure.md`: guided local report worker
@@ -132,11 +139,13 @@ implementation.
   Redis/RQ-backed report job enqueueing with explicit idempotency keys, recent
   job listing, durable job status and result endpoints, a worker entrypoint with
   bounded retries, completed-output duplicate execution protection, local/test
-  failure injection, durable report job state with attempt metadata, and simple
-  request/readiness logging.
+  failure injection, durable report job state with attempt metadata, local
+  report completion notification attempts with idempotent durable keys and
+  status listing, and simple request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
-  Phase 1 migrations for customers, work requests, and status events.
+  migrations for customers, work requests, status events, report jobs, and
+  notification attempts.
 - `services/api/tests/`: API scaffold, CRUD route, status history, report job
   endpoint and worker lifecycle, model, and schema tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
