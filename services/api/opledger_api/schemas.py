@@ -94,6 +94,7 @@ class ReportJobRead(BaseModel):
     id: int
     report_type: str
     status: ReportJobStatus
+    idempotency_key: str | None = None
     redis_job_id: str | None = None
     result_json: dict[str, object] | None = None
     error_message: str | None = None

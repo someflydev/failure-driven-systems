@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from time import sleep
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -37,6 +37,10 @@ SessionDependency = Annotated[Session, Depends(get_db_session)]
 SettingsDependency = Annotated[Settings, Depends(get_settings)]
 LimitQuery = Annotated[int, Query(ge=1, le=100)]
 OffsetQuery = Annotated[int, Query(ge=0)]
+IdempotencyKeyHeader = Annotated[
+    str | None,
+    Header(alias="Idempotency-Key", min_length=1, max_length=191),
+]
 
 TERMINAL_WORK_REQUEST_STATUSES: set[WorkRequestStatus] = {"resolved", "cancelled"}
 
@@ -252,10 +256,38 @@ def create_work_request_summary_report(
 def enqueue_work_request_summary_report_job(
     session: SessionDependency,
     settings: SettingsDependency,
+    idempotency_key: IdempotencyKeyHeader = None,
 ) -> ReportJob:
-    report_job = ReportJob(report_type=WORK_REQUEST_SUMMARY_REPORT, status="queued")
+    if idempotency_key is not None:
+        existing_report_job = session.scalar(
+            select(ReportJob).where(
+                ReportJob.report_type == WORK_REQUEST_SUMMARY_REPORT,
+                ReportJob.idempotency_key == idempotency_key,
+            )
+        )
+        if existing_report_job is not None:
+            return existing_report_job
+
+    report_job = ReportJob(
+        report_type=WORK_REQUEST_SUMMARY_REPORT,
+        status="queued",
+        idempotency_key=idempotency_key,
+    )
     session.add(report_job)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        if idempotency_key is not None:
+            existing_report_job = session.scalar(
+                select(ReportJob).where(
+                    ReportJob.report_type == WORK_REQUEST_SUMMARY_REPORT,
+                    ReportJob.idempotency_key == idempotency_key,
+                )
+            )
+            if existing_report_job is not None:
+                return existing_report_job
+        raise
     session.refresh(report_job)
 
     try:

@@ -101,6 +101,8 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
         report_job = session.get(ReportJob, report_job_id)
         if report_job is None:
             raise RuntimeError(f"ReportJob {report_job_id} was not found.")
+        if report_job.status == "succeeded" and report_job.result_json is not None:
+            return
 
         report_job.status = "running"
         report_job.attempt_count += 1

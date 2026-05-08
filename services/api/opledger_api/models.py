@@ -113,12 +113,18 @@ class ReportJob(Base):
             "status in ('queued', 'running', 'succeeded', 'failed')",
             name="ck_report_jobs_status",
         ),
+        UniqueConstraint(
+            "report_type",
+            "idempotency_key",
+            name="uq_report_jobs_report_type_idempotency_key",
+        ),
         UniqueConstraint("redis_job_id", name="uq_report_jobs_redis_job_id"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     report_type: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued")
+    idempotency_key: Mapped[str | None] = mapped_column(String(191), nullable=True)
     redis_job_id: Mapped[str | None] = mapped_column(String(191), nullable=True)
     result_json: Mapped[dict[str, object] | None] = mapped_column(JSON, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
