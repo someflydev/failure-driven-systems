@@ -40,6 +40,9 @@ implementation.
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
+- `docs/async/phase-2-job-lifecycle.md`: Phase 2 async report job lifecycle,
+  durable Postgres ownership, ephemeral Redis queue ownership, and safe
+  user-facing assumptions for status and result endpoints.
 - `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
   and work request status event tables, relational choices, deferred entities,
   transaction reasoning, and source-of-truth constraints.
@@ -77,6 +80,10 @@ implementation.
   enqueueing report generation, running the worker, inspecting durable
   `report_jobs` state, and comparing queued behavior with the synchronous
   report path.
+- `exercises/phase-2/03-job-status-and-eventual-consistency.md`: Phase 2
+  exercise for explaining `202 Accepted`, polling durable report job status,
+  fetching completed output only when available, and designing user-visible
+  eventual consistency language.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
@@ -107,13 +114,14 @@ implementation.
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   synchronous customer/work-request CRUD, status history routes, synchronous
   work request summary reporting helpers with opt-in local route delay,
-  Redis/RQ-backed report job enqueueing, a worker entrypoint, durable report job
-  state, and simple request/readiness logging.
+  Redis/RQ-backed report job enqueueing, recent job listing, durable job status
+  and result endpoints, a worker entrypoint, durable report job state, and
+  simple request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   Phase 1 migrations for customers, work requests, and status events.
-- `services/api/tests/`: API scaffold, CRUD route, status history, model, and
-  schema tests.
+- `services/api/tests/`: API scaffold, CRUD route, status history, report job
+  endpoint and worker lifecycle, model, and schema tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures, including Docker Compose checks.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.

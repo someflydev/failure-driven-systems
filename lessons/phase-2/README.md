@@ -13,6 +13,7 @@ Inspect these files before starting the first lesson:
 - `services/api/opledger_api/schemas.py`
 - `services/api/opledger_api/config.py`
 - `services/api/tests/test_crud_api.py`
+- `services/api/tests/test_report_jobs.py`
 
 The current service can generate a work request summary report synchronously and
 can enqueue the same report for a Redis/RQ worker. The report is derived from
@@ -28,6 +29,9 @@ the system of record.
 2. `exercises/phase-2/02-background-report-worker.md`: enqueue the report,
    run the worker, inspect persisted job status, stop the worker, and compare
    queued behavior with the synchronous route.
+3. `exercises/phase-2/03-job-status-and-eventual-consistency.md`: inspect job
+   status and result endpoints, explain `202 Accepted`, and describe what users
+   can safely assume while report generation is eventually consistent.
 
 ## Important Boundary
 

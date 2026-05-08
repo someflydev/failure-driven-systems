@@ -33,7 +33,7 @@ Generate the work request summary report through the queued path instead of the
 synchronous request path. Start Postgres, Redis, the API, and the worker. Seed
 customers and work requests, enqueue a report with
 `POST /reports/work-requests/summary/jobs`, and use the returned job identifier
-with `GET /reports/jobs/{report_job_id}` until the job reaches `finished`.
+with `GET /reports/jobs/{report_job_id}` until the job reaches `succeeded`.
 
 Compare this with the synchronous `POST /reports/work-requests/summary` route.
 Record the HTTP response time for enqueueing, the later completion state, and
@@ -80,7 +80,7 @@ extracting a reporting service.
   response.
 - Call `POST /reports/work-requests/summary/jobs` and record the returned job
   id and response time.
-- Call `GET /reports/jobs/{report_job_id}` until the job is `finished` and
+- Call `GET /reports/jobs/{report_job_id}` until the job is `succeeded` and
   confirm `result_json` contains the report.
 - Stop only the worker, enqueue another report, and confirm the job remains
   `queued` until a worker is running again.
