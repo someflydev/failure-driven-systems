@@ -32,10 +32,12 @@ the system of record.
 3. `exercises/phase-2/03-job-status-and-eventual-consistency.md`: inspect job
    status and result endpoints, explain `202 Accepted`, and describe what users
    can safely assume while report generation is eventually consistent.
+4. `exercises/phase-2/04-retries-before-idempotency.md`: trigger controlled
+   report worker failure, inspect retry attempts, and identify duplicate
+   side-effect risks before implementing idempotency.
 
 ## Important Boundary
 
-Do not add retries, idempotency, duplicate suppression, cache layers, or a
-separate reporting service in Phase 2 yet. The current queue is only enough to
-move report generation out of the request path and make worker operation
-observable.
+Do not add idempotency, duplicate suppression, cache layers, or a separate
+reporting service in Phase 2 yet. Retries are now present only as bounded,
+observable pressure that makes the next idempotency discussion concrete.

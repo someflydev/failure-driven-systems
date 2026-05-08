@@ -29,7 +29,13 @@ database per test, override the API database dependency, and seed customers or
 work requests through HTTP so tests exercise the same validation and route code
 as callers. These tests cover customer creation, duplicate email conflict,
 missing records, work request creation, status filters, pagination bounds,
-status transitions, and status history.
+status transitions, status history, durable report job status, and report
+result availability.
+
+Report worker tests exercise the worker function directly against the isolated
+test database. They cover running, success, failed attempts, controlled local
+failure injection, attempt counts, persisted error evidence, and bounded RQ
+retry configuration without requiring a live Redis server.
 
 Database utility tests cover database URL normalization and sanitized readiness
 target reporting. They protect operational behavior without requiring a real
@@ -64,8 +70,8 @@ target exists in the repository.
 Scenario and incident tests are deferred until Phase 1 has enough operational
 surface area to make scenario work meaningful.
 
-Redis, queue, worker, cache, and k3s tests are deferred until later phases
-create those components through a demonstrated need.
+Cache and k3s tests are deferred until later phases create those components
+through a demonstrated need.
 
 Property-based tests are deferred unless a small, clear invariant appears that
 would be better taught through generated examples than through a few readable

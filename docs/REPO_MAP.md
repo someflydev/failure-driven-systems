@@ -22,7 +22,8 @@ implementation.
 - `deploy/dokku/checklist.md`: concise Dokku deployment preflight and
   post-deploy checklist.
 - `.env.example`: local placeholder environment values for Compose, Redis, and
-  health tuning; real `.env` files must remain uncommitted.
+  health tuning, plus disabled-by-default report retry and local/test failure
+  injection settings; real `.env` files must remain uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
@@ -41,8 +42,9 @@ implementation.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
 - `docs/async/phase-2-job-lifecycle.md`: Phase 2 async report job lifecycle,
-  durable Postgres ownership, ephemeral Redis queue ownership, and safe
-  user-facing assumptions for status and result endpoints.
+  durable Postgres ownership, ephemeral Redis queue ownership, bounded retry
+  behavior, local/test report failure injection, and safe user-facing
+  assumptions for status and result endpoints.
 - `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
   and work request status event tables, relational choices, deferred entities,
   transaction reasoning, and source-of-truth constraints.
@@ -84,8 +86,15 @@ implementation.
   exercise for explaining `202 Accepted`, polling durable report job status,
   fetching completed output only when available, and designing user-visible
   eventual consistency language.
+- `exercises/phase-2/04-retries-before-idempotency.md`: Phase 2 exercise for
+  observing controlled report worker failure, bounded retries, persisted
+  attempt evidence, and duplicate side-effect risks before implementing
+  idempotency.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
+- `scenarios/phase-2/report-retry-failure.md`: guided local report worker
+  failure scenario for triggering bounded retries, inspecting durable attempt
+  state, and explaining duplicate side-effect risk.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
@@ -115,8 +124,9 @@ implementation.
   synchronous customer/work-request CRUD, status history routes, synchronous
   work request summary reporting helpers with opt-in local route delay,
   Redis/RQ-backed report job enqueueing, recent job listing, durable job status
-  and result endpoints, a worker entrypoint, durable report job state, and
-  simple request/readiness logging.
+  and result endpoints, a worker entrypoint with bounded retries and local/test
+  failure injection, durable report job state with attempt metadata, and simple
+  request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   Phase 1 migrations for customers, work requests, and status events.
