@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from opledger_api import routes
-from opledger_api.models import WorkRequestStatusEvent
+from opledger_api.models import ReportJob, WorkRequestStatusEvent
 
 JsonObject = dict[str, object]
 
@@ -300,3 +300,65 @@ def test_work_request_summary_report_does_not_delay_by_default(
 
     assert response.status_code == 200
     assert response.json()["total_work_requests"] == 0
+
+
+def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
+    client: TestClient,
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_enqueue(report_job_id: int, _settings: object) -> str:
+        return f"rq-job-{report_job_id}"
+
+    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+
+    enqueue_response = client.post("/reports/work-requests/summary/jobs")
+
+    assert enqueue_response.status_code == 202
+    body = enqueue_response.json()
+    assert body["id"] == 1
+    assert body["report_type"] == "work_request_summary"
+    assert body["status"] == "queued"
+    assert body["redis_job_id"] == "rq-job-1"
+    assert body["result_json"] is None
+
+    report_job = db_session.get(ReportJob, 1)
+    assert report_job is not None
+    assert report_job.status == "queued"
+    assert report_job.redis_job_id == "rq-job-1"
+
+    get_response = client.get("/reports/jobs/1")
+
+    assert get_response.status_code == 200
+    assert get_response.json()["redis_job_id"] == "rq-job-1"
+
+
+def test_report_queue_failure_is_persisted_and_reported(
+    client: TestClient,
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_enqueue(_report_job_id: int, _settings: object) -> str:
+        raise ConnectionError("redis unavailable")
+
+    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fail_enqueue)
+
+    response = client.post("/reports/work-requests/summary/jobs")
+
+    assert response.status_code == 503
+    assert response.json()["error"] == {
+        "code": "report_queue_unavailable",
+        "message": "Report queue is unavailable.",
+        "details": {"report_job_id": 1},
+    }
+    report_job = db_session.get(ReportJob, 1)
+    assert report_job is not None
+    assert report_job.status == "failed"
+    assert report_job.error_message == "ConnectionError"
+
+
+def test_missing_report_job_returns_consistent_not_found(client: TestClient) -> None:
+    response = client.get("/reports/jobs/999")
+
+    assert response.status_code == 404
+    assert response.json()["error"]["code"] == "report_job_not_found"
