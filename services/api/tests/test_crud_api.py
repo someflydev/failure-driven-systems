@@ -325,6 +325,8 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     assert body["status"] == "queued"
     assert body["redis_job_id"] == "rq-job-1"
     assert body["result_json"] is None
+    assert body["attempt_count"] == 0
+    assert body["last_error"] is None
 
     report_job = db_session.get(ReportJob, 1)
     assert report_job is not None
@@ -433,6 +435,8 @@ def test_report_queue_failure_is_persisted_and_reported(
     assert report_job is not None
     assert report_job.status == "failed"
     assert report_job.error_message == "ConnectionError"
+    assert report_job.last_error == "ConnectionError"
+    assert report_job.last_failed_at is not None
 
 
 def test_failed_report_job_representation_includes_error(
@@ -452,6 +456,8 @@ def test_failed_report_job_representation_includes_error(
     assert response.status_code == 200
     assert response.json()["status"] == "failed"
     assert response.json()["error_message"] == "RuntimeError"
+    assert response.json()["last_error"] is None
+    assert response.json()["attempt_count"] == 0
     assert response.json()["result_json"] is None
 
 
