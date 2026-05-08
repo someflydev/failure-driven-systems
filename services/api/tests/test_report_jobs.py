@@ -143,6 +143,49 @@ def test_report_worker_retry_attempt_count_changes_after_failure(
     assert report_job.result_json is not None
 
 
+def test_duplicate_report_worker_execution_keeps_existing_output(
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report_job = ReportJob(report_type="work_request_summary", status="queued")
+    db_session.add(report_job)
+    db_session.commit()
+    patch_report_job_session(monkeypatch, db_session)
+
+    build_calls = 0
+
+    def fake_build_report(_session: Session) -> dict[str, object]:
+        nonlocal build_calls
+        build_calls += 1
+        return {
+            "generated_at": datetime(2026, 1, 1, tzinfo=UTC),
+            "total_work_requests": 0,
+            "by_status": {
+                "open": 0,
+                "in_progress": 0,
+                "resolved": 0,
+                "cancelled": 0,
+            },
+            "status_event_count": 0,
+        }
+
+    monkeypatch.setattr(
+        report_jobs, "build_work_request_summary_report", fake_build_report
+    )
+
+    report_jobs.generate_work_request_summary_report_job(report_job.id)
+    db_session.refresh(report_job)
+    original_result = report_job.result_json
+
+    report_jobs.generate_work_request_summary_report_job(report_job.id)
+    db_session.refresh(report_job)
+
+    assert build_calls == 1
+    assert report_job.status == "succeeded"
+    assert report_job.attempt_count == 1
+    assert report_job.result_json == original_result
+
+
 def test_report_failure_injection_records_error(
     db_session: Session,
     monkeypatch: pytest.MonkeyPatch,

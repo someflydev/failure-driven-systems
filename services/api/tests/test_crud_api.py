@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from opledger_api import routes
@@ -337,6 +338,85 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
 
     assert get_response.status_code == 200
     assert get_response.json()["redis_job_id"] == "rq-job-1"
+
+
+def test_same_report_idempotency_key_returns_same_job(
+    client: TestClient,
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    enqueue_calls: list[int] = []
+
+    def fake_enqueue(report_job_id: int, _settings: object) -> str:
+        enqueue_calls.append(report_job_id)
+        return f"rq-job-{report_job_id}"
+
+    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+
+    first_response = client.post(
+        "/reports/work-requests/summary/jobs",
+        headers={"Idempotency-Key": "summary-request-1"},
+    )
+    second_response = client.post(
+        "/reports/work-requests/summary/jobs",
+        headers={"Idempotency-Key": "summary-request-1"},
+    )
+
+    assert first_response.status_code == 202
+    assert second_response.status_code == 202
+    assert second_response.json() == first_response.json()
+    assert enqueue_calls == [1]
+    report_jobs = db_session.scalars(select(ReportJob)).all()
+    assert len(report_jobs) == 1
+    assert report_jobs[0].idempotency_key == "summary-request-1"
+
+
+def test_different_report_idempotency_key_creates_new_job(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_enqueue(report_job_id: int, _settings: object) -> str:
+        return f"rq-job-{report_job_id}"
+
+    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+
+    first_response = client.post(
+        "/reports/work-requests/summary/jobs",
+        headers={"Idempotency-Key": "summary-request-1"},
+    )
+    second_response = client.post(
+        "/reports/work-requests/summary/jobs",
+        headers={"Idempotency-Key": "summary-request-2"},
+    )
+
+    assert first_response.status_code == 202
+    assert second_response.status_code == 202
+    assert first_response.json()["id"] == 1
+    assert second_response.json()["id"] == 2
+    assert first_response.json()["idempotency_key"] == "summary-request-1"
+    assert second_response.json()["idempotency_key"] == "summary-request-2"
+
+
+def test_report_job_idempotency_is_enforced_by_database(
+    db_session: Session,
+) -> None:
+    first = ReportJob(
+        report_type="work_request_summary",
+        status="queued",
+        idempotency_key="same-request",
+    )
+    duplicate = ReportJob(
+        report_type="work_request_summary",
+        status="queued",
+        idempotency_key="same-request",
+    )
+    db_session.add(first)
+    db_session.commit()
+
+    db_session.add(duplicate)
+    with pytest.raises(IntegrityError):
+        db_session.commit()
+    db_session.rollback()
 
 
 def test_recent_report_jobs_are_listed_newest_first(
