@@ -97,10 +97,13 @@ class ReportJobRead(BaseModel):
     redis_job_id: str | None = None
     result_json: dict[str, object] | None = None
     error_message: str | None = None
+    last_error: str | None = None
+    attempt_count: int
     created_at: datetime
     updated_at: datetime
     started_at: datetime | None = None
     finished_at: datetime | None = None
+    last_failed_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

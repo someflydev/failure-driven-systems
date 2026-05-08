@@ -1,7 +1,14 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ReportFailureInjectionStage = Literal[
+    "none",
+    "before_generation",
+    "after_partial_progress",
+]
 
 
 class Settings(BaseSettings):
@@ -45,6 +52,36 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices(
             "REPORT_QUEUE_NAME",
             "OPLEDGER_REPORT_QUEUE_NAME",
+        ),
+    )
+    report_job_max_attempts: int = Field(
+        default=3,
+        ge=2,
+        le=10,
+        validation_alias=AliasChoices(
+            "REPORT_JOB_MAX_ATTEMPTS",
+            "OPLEDGER_REPORT_JOB_MAX_ATTEMPTS",
+        ),
+    )
+    report_job_retry_backoff_seconds: str = Field(
+        default="1,5",
+        validation_alias=AliasChoices(
+            "REPORT_JOB_RETRY_BACKOFF_SECONDS",
+            "OPLEDGER_REPORT_JOB_RETRY_BACKOFF_SECONDS",
+        ),
+    )
+    report_failure_injection_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "REPORT_FAILURE_INJECTION_ENABLED",
+            "OPLEDGER_REPORT_FAILURE_INJECTION_ENABLED",
+        ),
+    )
+    report_failure_injection_stage: ReportFailureInjectionStage = Field(
+        default="none",
+        validation_alias=AliasChoices(
+            "REPORT_FAILURE_INJECTION_STAGE",
+            "OPLEDGER_REPORT_FAILURE_INJECTION_STAGE",
         ),
     )
 

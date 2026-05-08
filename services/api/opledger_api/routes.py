@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from time import sleep
 from typing import Annotated
 
@@ -260,8 +261,12 @@ def enqueue_work_request_summary_report_job(
     try:
         redis_job_id = enqueue_work_request_summary_report(report_job.id, settings)
     except Exception as exc:
+        now = datetime.now(UTC)
         report_job.status = "failed"
         report_job.error_message = exc.__class__.__name__
+        report_job.last_error = exc.__class__.__name__
+        report_job.finished_at = now
+        report_job.last_failed_at = now
         session.commit()
         raise error_response(
             status.HTTP_503_SERVICE_UNAVAILABLE,

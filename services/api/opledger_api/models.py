@@ -122,6 +122,8 @@ class ReportJob(Base):
     redis_job_id: Mapped[str | None] = mapped_column(String(191), nullable=True)
     result_json: Mapped[dict[str, object] | None] = mapped_column(JSON, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    attempt_count: Mapped[int] = mapped_column(nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
         nullable=False,
@@ -133,3 +135,4 @@ class ReportJob(Base):
     )
     started_at: Mapped[datetime | None] = mapped_column(nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    last_failed_at: Mapped[datetime | None] = mapped_column(nullable=True)
