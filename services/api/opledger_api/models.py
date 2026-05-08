@@ -15,6 +15,7 @@ from opledger_api.db import Base
 
 WORK_REQUEST_STATUSES = ("open", "in_progress", "resolved", "cancelled")
 REPORT_JOB_STATUSES = ("queued", "running", "succeeded", "failed")
+NOTIFICATION_ATTEMPT_STATUSES = ("pending", "sent", "failed")
 
 
 class Customer(Base):
@@ -142,3 +143,39 @@ class ReportJob(Base):
     started_at: Mapped[datetime | None] = mapped_column(nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(nullable=True)
     last_failed_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+
+class NotificationAttempt(Base):
+    __tablename__ = "notification_attempts"
+    __table_args__ = (
+        CheckConstraint(
+            "target_type in ('report_job')",
+            name="ck_notification_attempts_target_type",
+        ),
+        CheckConstraint(
+            "channel in ('local_log')",
+            name="ck_notification_attempts_channel",
+        ),
+        CheckConstraint(
+            "status in ('pending', 'sent', 'failed')",
+            name="ck_notification_attempts_status",
+        ),
+        UniqueConstraint(
+            "idempotency_key",
+            name="uq_notification_attempts_idempotency_key",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    target_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    target_id: Mapped[int] = mapped_column(nullable=False)
+    channel: Mapped[str] = mapped_column(String(64), nullable=False)
+    recipient: Mapped[str] = mapped_column(String(320), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    idempotency_key: Mapped[str] = mapped_column(String(191), nullable=False)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        nullable=False,
+    )
+    sent_at: Mapped[datetime | None] = mapped_column(nullable=True)

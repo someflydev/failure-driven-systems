@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 WorkRequestStatus = Literal["open", "in_progress", "resolved", "cancelled"]
 ReportJobStatus = Literal["queued", "running", "succeeded", "failed"]
+NotificationAttemptStatus = Literal["pending", "sent", "failed"]
 EmailText = Annotated[
     str,
     Field(min_length=3, max_length=320, pattern=r"^[^@\s]+@[^@\s]+$"),
@@ -111,6 +112,27 @@ class ReportJobRead(BaseModel):
 
 class ReportJobList(BaseModel):
     items: list[ReportJobRead]
+    limit: int
+    offset: int
+
+
+class NotificationAttemptRead(BaseModel):
+    id: int
+    target_type: str
+    target_id: int
+    channel: str
+    recipient: EmailText
+    status: NotificationAttemptStatus
+    idempotency_key: str
+    error: str | None = None
+    created_at: datetime
+    sent_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NotificationAttemptList(BaseModel):
+    items: list[NotificationAttemptRead]
     limit: int
     offset: int
 

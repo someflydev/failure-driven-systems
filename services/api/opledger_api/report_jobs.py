@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_session
 from opledger_api.models import ReportJob
+from opledger_api.notifications import notify_report_completed
 from opledger_api.reports import build_work_request_summary_report
 
 WORK_REQUEST_SUMMARY_REPORT = "work_request_summary"
@@ -123,3 +124,5 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
         except Exception as exc:
             mark_report_job_failed(report_job, session, exc.__class__.__name__)
             raise
+
+        notify_report_completed(session, report_job)

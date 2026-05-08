@@ -9,7 +9,13 @@ from sqlalchemy.orm import Session
 
 from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_db_session
-from opledger_api.models import Customer, ReportJob, WorkRequest, WorkRequestStatusEvent
+from opledger_api.models import (
+    Customer,
+    NotificationAttempt,
+    ReportJob,
+    WorkRequest,
+    WorkRequestStatusEvent,
+)
 from opledger_api.report_jobs import (
     WORK_REQUEST_SUMMARY_REPORT,
     enqueue_work_request_summary_report,
@@ -20,6 +26,7 @@ from opledger_api.schemas import (
     CustomerList,
     CustomerRead,
     ErrorResponse,
+    NotificationAttemptList,
     ReportJobList,
     ReportJobRead,
     WorkRequestCreate,
@@ -368,3 +375,26 @@ def get_report_job_result(
             {"report_job_id": report_job.id, "status": report_job.status},
         )
     return report_job.result_json
+
+
+@router.get("/notification-attempts", response_model=NotificationAttemptList)
+def list_notification_attempts(
+    session: SessionDependency,
+    target_type: Annotated[str | None, Query(max_length=64)] = None,
+    target_id: Annotated[int | None, Query(gt=0)] = None,
+    limit: LimitQuery = 20,
+    offset: OffsetQuery = 0,
+) -> dict[str, object]:
+    statement = (
+        select(NotificationAttempt)
+        .order_by(NotificationAttempt.created_at.desc(), NotificationAttempt.id.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    if target_type is not None:
+        statement = statement.where(NotificationAttempt.target_type == target_type)
+    if target_id is not None:
+        statement = statement.where(NotificationAttempt.target_id == target_id)
+
+    attempts = session.scalars(statement).all()
+    return {"items": attempts, "limit": limit, "offset": offset}

@@ -148,6 +148,9 @@ def test_list_endpoints_reject_pagination_out_of_bounds(
         "/reports/jobs?limit=0",
         "/reports/jobs?limit=101",
         "/reports/jobs?offset=-1",
+        "/notification-attempts?limit=0",
+        "/notification-attempts?limit=101",
+        "/notification-attempts?offset=-1",
     ]
 
     for path in paths:
