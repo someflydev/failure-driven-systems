@@ -18,8 +18,9 @@ Inspect these files before starting the first lesson:
 The current service can generate a work request summary report synchronously and
 can enqueue the same report for a Redis/RQ worker. The report is derived from
 `work_requests` and `work_request_status_events`; durable report job status is
-stored in Postgres through `report_jobs`. Redis carries queued work but is not
-the system of record.
+stored in Postgres through `report_jobs`. Duplicate report enqueue requests can
+be tied to an explicit idempotency key. Redis carries queued work but is not the
+system of record.
 
 ## Learning Path
 
@@ -35,9 +36,12 @@ the system of record.
 4. `exercises/phase-2/04-retries-before-idempotency.md`: trigger controlled
    report worker failure, inspect retry attempts, and identify duplicate
    side-effect risks before implementing idempotency.
+5. `exercises/phase-2/05-idempotent-report-jobs.md`: add database-backed
+   request idempotency for report enqueueing, protect completed report output
+   from duplicate worker execution, and explain remaining side-effect risks.
 
 ## Important Boundary
 
-Do not add idempotency, duplicate suppression, cache layers, or a separate
-reporting service in Phase 2 yet. Retries are now present only as bounded,
-observable pressure that makes the next idempotency discussion concrete.
+Do not add cache layers or a separate reporting service in Phase 2 yet.
+Idempotency is currently scoped to work request summary report jobs; future
+side effects still need their own duplicate-prevention design.

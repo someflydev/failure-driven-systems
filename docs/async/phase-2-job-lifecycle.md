@@ -28,6 +28,7 @@ Postgres owns durable user-visible state:
 
 - report job id
 - report type
+- idempotency key for duplicate enqueue prevention, when the caller provides one
 - current status
 - Redis job id, when enqueueing reached Redis
 - attempt count
@@ -51,7 +52,8 @@ requested and did not reach `succeeded`.
 Users can safely assume:
 
 - `POST /reports/work-requests/summary/jobs` creates an inspectable job record
-  before returning.
+  before returning. When the caller provides an `Idempotency-Key`, a repeated
+  request for the same report type returns the original job.
 - `GET /reports/jobs/{report_job_id}` reports the durable job state from
   Postgres.
 - `GET /reports/jobs` lists recent durable report jobs.
@@ -64,6 +66,7 @@ Users should not assume:
 - `queued` means Redis still has a deliverable job.
 - an RQ job id is a durable user-facing status handle.
 - a worker crash or Redis loss will be hidden by the status API.
+- idempotency means every future side effect is automatically safe.
 
 The result endpoint must not report success early. Until Postgres contains the
 completed report output, the API should tell the caller the result is
@@ -99,9 +102,12 @@ Every worker attempt persists evidence before report generation begins:
 - `last_error` records the exception class from the most recent failed attempt
   and is cleared on success.
 
-This state is intentionally not enough to make retries idempotent. A retry can
-run report code more than once. Before adding duplicate suppression, learners
-should inspect which side effects could be repeated.
+This state alone is intentionally not enough to make retries idempotent. A retry
+can run report code more than once, so completed report output is guarded
+separately and future side effects still need concrete duplicate analysis.
+
+See `docs/async/idempotency.md` for the current Phase 2 duplicate-prevention
+boundary.
 
 ## Local Failure Injection
 

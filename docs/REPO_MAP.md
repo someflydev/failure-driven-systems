@@ -45,6 +45,9 @@ implementation.
   durable Postgres ownership, ephemeral Redis queue ownership, bounded retry
   behavior, local/test report failure injection, and safe user-facing
   assumptions for status and result endpoints.
+- `docs/async/idempotency.md`: Phase 2 report job idempotency guide separating
+  request idempotency, job idempotency, side-effect idempotency, and the
+  Postgres uniqueness constraint that prevents duplicate enqueue records.
 - `docs/data-models/phase-1.md`: implemented Phase 1 customer, work request,
   and work request status event tables, relational choices, deferred entities,
   transaction reasoning, and source-of-truth constraints.
@@ -90,6 +93,9 @@ implementation.
   observing controlled report worker failure, bounded retries, persisted
   attempt evidence, and duplicate side-effect risks before implementing
   idempotency.
+- `exercises/phase-2/05-idempotent-report-jobs.md`: Phase 2 exercise for
+  database-backed report enqueue idempotency, duplicate worker execution
+  safety, and reflection on remaining side-effect risks.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/report-retry-failure.md`: guided local report worker
@@ -123,8 +129,9 @@ implementation.
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   synchronous customer/work-request CRUD, status history routes, synchronous
   work request summary reporting helpers with opt-in local route delay,
-  Redis/RQ-backed report job enqueueing, recent job listing, durable job status
-  and result endpoints, a worker entrypoint with bounded retries and local/test
+  Redis/RQ-backed report job enqueueing with explicit idempotency keys, recent
+  job listing, durable job status and result endpoints, a worker entrypoint with
+  bounded retries, completed-output duplicate execution protection, local/test
   failure injection, durable report job state with attempt metadata, and simple
   request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
