@@ -19,6 +19,7 @@ from opledger_api.schemas import (
     CustomerList,
     CustomerRead,
     ErrorResponse,
+    ReportJobList,
     ReportJobRead,
     WorkRequestCreate,
     WorkRequestList,
@@ -276,10 +277,23 @@ def enqueue_work_request_summary_report_job(
 
 
 @router.get(
-    "/reports/jobs/{report_job_id}",
-    response_model=ReportJobRead,
-    responses={404: {"model": ErrorResponse}},
+    "/reports/jobs",
+    response_model=ReportJobList,
 )
+def list_report_jobs(
+    session: SessionDependency,
+    limit: LimitQuery = 20,
+    offset: OffsetQuery = 0,
+) -> dict[str, object]:
+    report_jobs = session.scalars(
+        select(ReportJob)
+        .order_by(ReportJob.created_at.desc(), ReportJob.id.desc())
+        .limit(limit)
+        .offset(offset)
+    ).all()
+    return {"items": report_jobs, "limit": limit, "offset": offset}
+
+
 def get_report_job(report_job_id: int, session: SessionDependency) -> ReportJob:
     report_job = session.get(ReportJob, report_job_id)
     if report_job is None:
@@ -289,3 +303,31 @@ def get_report_job(report_job_id: int, session: SessionDependency) -> ReportJob:
             "Report job was not found.",
         )
     return report_job
+
+
+@router.get(
+    "/reports/jobs/{report_job_id}",
+    response_model=ReportJobRead,
+    responses={404: {"model": ErrorResponse}},
+)
+def get_report_job_status(report_job_id: int, session: SessionDependency) -> ReportJob:
+    return get_report_job(report_job_id, session)
+
+
+@router.get(
+    "/reports/jobs/{report_job_id}/result",
+    response_model=WorkRequestSummaryReport,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+)
+def get_report_job_result(
+    report_job_id: int, session: SessionDependency
+) -> dict[str, object]:
+    report_job = get_report_job(report_job_id, session)
+    if report_job.status != "succeeded" or report_job.result_json is None:
+        raise error_response(
+            status.HTTP_409_CONFLICT,
+            "report_result_unavailable",
+            "Report result is not available yet.",
+            {"report_job_id": report_job.id, "status": report_job.status},
+        )
+    return report_job.result_json

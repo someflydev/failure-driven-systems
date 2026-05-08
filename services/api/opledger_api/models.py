@@ -14,7 +14,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from opledger_api.db import Base
 
 WORK_REQUEST_STATUSES = ("open", "in_progress", "resolved", "cancelled")
-REPORT_JOB_STATUSES = ("queued", "started", "finished", "failed")
+REPORT_JOB_STATUSES = ("queued", "running", "succeeded", "failed")
 
 
 class Customer(Base):
@@ -110,7 +110,7 @@ class ReportJob(Base):
     __tablename__ = "report_jobs"
     __table_args__ = (
         CheckConstraint(
-            "status in ('queued', 'started', 'finished', 'failed')",
+            "status in ('queued', 'running', 'succeeded', 'failed')",
             name="ck_report_jobs_status",
         ),
         UniqueConstraint("redis_job_id", name="uq_report_jobs_redis_job_id"),

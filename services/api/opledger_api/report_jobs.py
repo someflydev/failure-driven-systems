@@ -64,14 +64,14 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
         if report_job is None:
             raise RuntimeError(f"ReportJob {report_job_id} was not found.")
 
-        report_job.status = "started"
+        report_job.status = "running"
         report_job.started_at = datetime.now(UTC)
         session.commit()
 
         try:
             report = build_work_request_summary_report(session)
             report_job.result_json = report_result_json(report)
-            report_job.status = "finished"
+            report_job.status = "succeeded"
             report_job.finished_at = datetime.now(UTC)
             report_job.error_message = None
             session.commit()
