@@ -19,15 +19,46 @@ constraints, migrations, indexing, and ownership boundaries visible. SQLAlchemy
 and Alembic are included now as the standard database and migration tooling for
 the Phase 1 customer, work request, and status history tables.
 
-Docker Compose is the default local container workflow for Phase 1. The
-repo-root `docker-compose.yml` runs only the API and Postgres so learners can
-practice container startup, explicit migrations, health checks, and database
-connectivity failures without introducing phase 2 infrastructure.
+Docker Compose is the default local container workflow. In Phase 1 it ran only
+the API and Postgres. In Phase 2 it also runs Redis and an API-codebase worker
+so learners can compare synchronous report generation with queued background
+work without extracting a separate service.
 
 Dokku is the default early deployment target for Phase 1. The root `Dockerfile`
 is the deployment artifact for the single API service, and Dokku Postgres
 provides `DATABASE_URL` through service linking. Migrations remain explicit
 operator actions.
+
+## Background Work
+
+RQ is the default Python job library for Phase 2 report work. It is intentionally
+small: one Redis-backed queue, one worker process, and jobs that call functions
+inside the existing API codebase. This keeps the architecture as one core
+service plus one worker process while making the request path visibly shorter.
+
+Redis is now justified as a queue transport because the synchronous report
+exercise creates observable request-path pain. Redis is not the system of
+record. Report job requests, status, errors, and finished report payloads are
+stored in Postgres through the `report_jobs` table so users can inspect what
+happened even if Redis is restarted or flushed. Pending Redis jobs may be lost
+when Redis is ephemeral; the durable Postgres row makes that loss visible
+instead of silently erasing the fact that work was requested.
+
+Local host worker command:
+
+```sh
+./scripts/worker.sh
+```
+
+Local Docker Compose runs the worker alongside the API, Postgres, and Redis:
+
+```sh
+./scripts/dev-up.sh
+```
+
+RQ retries are not configured for Phase 2. Jobs are enqueued without an explicit
+retry policy, so retry behavior, duplicate execution handling, idempotency, and
+dead-letter workflows remain later lessons.
 
 ## Python Tooling
 
@@ -47,9 +78,9 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-Redis, background workers, queues, k3s manifests, caching, and service
-extraction are deferred. They should appear only after later prompts create a
-concrete failure, operational need, or teaching moment.
+k3s manifests, caching, and service extraction are deferred. Retries,
+idempotency, duplicate execution handling, and dead-letter workflows are also
+deferred until later prompts create the concrete failure or teaching moment.
 
 ## Later Language Discussions
 

@@ -14,15 +14,15 @@ implementation.
   service using repo-root `uv` tooling and Python 3.12.
 - `.dockerignore`: Docker build-context exclusions for local env files,
   virtualenvs, caches, and generated artifacts.
-- `docker-compose.yml`: Phase 1 local development stack with API and Postgres
-  only.
+- `docker-compose.yml`: local development stack with API, Postgres, Redis, and
+  a worker process for Phase 2 background report generation.
 - `deploy/dokku/README.md`: Phase 1 Dokku deployment path for the single
   Dockerfile-based API service, including app creation, Postgres linking,
   config, deploy, migrations, health checks, logs, and rollback basics.
 - `deploy/dokku/checklist.md`: concise Dokku deployment preflight and
   post-deploy checklist.
-- `.env.example`: local placeholder environment values for Compose and health
-  tuning; real `.env` files must remain uncommitted.
+- `.env.example`: local placeholder environment values for Compose, Redis, and
+  health tuning; real `.env` files must remain uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
@@ -73,6 +73,10 @@ implementation.
 - `exercises/phase-2/01-synchronous-report-pain.md`: first Phase 2 exercise
   requiring synchronous report measurement, controlled local delay, blocked
   caller observation, and before/after expectations before asynchronous work.
+- `exercises/phase-2/02-background-report-worker.md`: Phase 2 exercise for
+  enqueueing report generation, running the worker, inspecting durable
+  `report_jobs` state, and comparing queued behavior with the synchronous
+  report path.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
@@ -102,8 +106,9 @@ implementation.
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   synchronous customer/work-request CRUD, status history routes, synchronous
-  work request summary reporting helpers with opt-in local route delay, and
-  simple request/readiness logging.
+  work request summary reporting helpers with opt-in local route delay,
+  Redis/RQ-backed report job enqueueing, a worker entrypoint, durable report job
+  state, and simple request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   Phase 1 migrations for customers, work requests, and status events.
@@ -112,6 +117,7 @@ implementation.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures, including Docker Compose checks.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.
+- `scripts/worker.sh`: host-local RQ worker entrypoint for report jobs.
 - `scripts/dev-up.sh`: small wrapper around `docker compose up --build`.
 - `scripts/dev-down.sh`: small wrapper around `docker compose down`.
 - `scripts/migrate.sh`: explicit Alembic migration wrapper for host or Compose
@@ -146,8 +152,8 @@ implementation.
 ## Population Rules
 
 - Do not create empty implementation directories just to match the map.
-- Do not add Redis, queues, k3s manifests, new databases, or app code before the
-  curriculum creates a concrete need.
+- Do not add k3s manifests, new databases, service extraction, retries, or
+  idempotency before the curriculum creates a concrete need.
 - Keep planned material clearly labeled as planned.
 - Keep current-state claims accurate.
 - Prefer narrow, durable documents over broad placeholders.

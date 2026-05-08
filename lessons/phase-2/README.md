@@ -14,19 +14,24 @@ Inspect these files before starting the first lesson:
 - `services/api/opledger_api/config.py`
 - `services/api/tests/test_crud_api.py`
 
-The current service can generate a work request summary report synchronously.
-The report is derived from `work_requests` and `work_request_status_events`.
-No report table, worker, Redis dependency, background process, or cache exists
-yet.
+The current service can generate a work request summary report synchronously and
+can enqueue the same report for a Redis/RQ worker. The report is derived from
+`work_requests` and `work_request_status_events`; durable report job status is
+stored in Postgres through `report_jobs`. Redis carries queued work but is not
+the system of record.
 
 ## Learning Path
 
 1. `exercises/phase-2/01-synchronous-report-pain.md`: measure a synchronous
    report request, enable a controlled local delay, observe the user-facing
    wait, and explain why request-path work can become a problem.
+2. `exercises/phase-2/02-background-report-worker.md`: enqueue the report,
+   run the worker, inspect persisted job status, stop the worker, and compare
+   queued behavior with the synchronous route.
 
 ## Important Boundary
 
-Do not add a queue before completing the first exercise. The queue comes after
-the learner has measured the slow request, recorded the user impact, and formed
-a concrete expectation for what should improve.
+Do not add retries, idempotency, duplicate suppression, cache layers, or a
+separate reporting service in Phase 2 yet. The current queue is only enough to
+move report generation out of the request path and make worker operation
+observable.
