@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -143,6 +144,9 @@ def test_list_endpoints_reject_pagination_out_of_bounds(
         f"/work-requests/{work_request['id']}/status-events?limit=0",
         f"/work-requests/{work_request['id']}/status-events?limit=101",
         f"/work-requests/{work_request['id']}/status-events?offset=-1",
+        "/reports/jobs?limit=0",
+        "/reports/jobs?limit=101",
+        "/reports/jobs?offset=-1",
     ]
 
     for path in paths:
@@ -333,6 +337,80 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     assert get_response.json()["redis_job_id"] == "rq-job-1"
 
 
+def test_recent_report_jobs_are_listed_newest_first(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    first = ReportJob(report_type="work_request_summary", status="queued")
+    second = ReportJob(report_type="work_request_summary", status="failed")
+    db_session.add_all([first, second])
+    db_session.commit()
+
+    response = client.get("/reports/jobs?limit=10&offset=0")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert [item["id"] for item in body["items"]] == [2, 1]
+    assert body["limit"] == 10
+    assert body["offset"] == 0
+
+
+def test_completed_report_output_can_be_fetched_when_durable_result_exists(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    generated_at = datetime.now(UTC).isoformat()
+    report_job = ReportJob(
+        report_type="work_request_summary",
+        status="succeeded",
+        result_json={
+            "generated_at": generated_at,
+            "total_work_requests": 3,
+            "by_status": {
+                "open": 1,
+                "in_progress": 1,
+                "resolved": 1,
+                "cancelled": 0,
+            },
+            "status_event_count": 2,
+        },
+    )
+    db_session.add(report_job)
+    db_session.commit()
+
+    response = client.get("/reports/jobs/1/result")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert datetime.fromisoformat(body["generated_at"].replace("Z", "+00:00"))
+    assert body["total_work_requests"] == 3
+    assert body["by_status"] == {
+        "open": 1,
+        "in_progress": 1,
+        "resolved": 1,
+        "cancelled": 0,
+    }
+    assert body["status_event_count"] == 2
+
+
+def test_report_output_is_unavailable_until_succeeded_with_result(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    report_job = ReportJob(report_type="work_request_summary", status="running")
+    db_session.add(report_job)
+    db_session.commit()
+
+    response = client.get("/reports/jobs/1/result")
+
+    assert response.status_code == 409
+    assert response.json()["error"] == {
+        "code": "report_result_unavailable",
+        "message": "Report result is not available yet.",
+        "details": {"report_job_id": 1, "status": "running"},
+    }
+
+
 def test_report_queue_failure_is_persisted_and_reported(
     client: TestClient,
     db_session: Session,
@@ -355,6 +433,26 @@ def test_report_queue_failure_is_persisted_and_reported(
     assert report_job is not None
     assert report_job.status == "failed"
     assert report_job.error_message == "ConnectionError"
+
+
+def test_failed_report_job_representation_includes_error(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    report_job = ReportJob(
+        report_type="work_request_summary",
+        status="failed",
+        error_message="RuntimeError",
+    )
+    db_session.add(report_job)
+    db_session.commit()
+
+    response = client.get("/reports/jobs/1")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "failed"
+    assert response.json()["error_message"] == "RuntimeError"
+    assert response.json()["result_json"] is None
 
 
 def test_missing_report_job_returns_consistent_not_found(client: TestClient) -> None:
