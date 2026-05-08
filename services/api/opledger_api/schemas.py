@@ -4,6 +4,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 WorkRequestStatus = Literal["open", "in_progress", "resolved", "cancelled"]
+ReportJobStatus = Literal["queued", "started", "finished", "failed"]
 EmailText = Annotated[
     str,
     Field(min_length=3, max_length=320, pattern=r"^[^@\s]+@[^@\s]+$"),
@@ -87,6 +88,21 @@ class WorkRequestSummaryReport(BaseModel):
     total_work_requests: int
     by_status: dict[WorkRequestStatus, int]
     status_event_count: int
+
+
+class ReportJobRead(BaseModel):
+    id: int
+    report_type: str
+    status: ReportJobStatus
+    redis_job_id: str | None = None
+    result_json: dict[str, object] | None = None
+    error_message: str | None = None
+    created_at: datetime
+    updated_at: datetime
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ErrorDetail(BaseModel):

@@ -1,11 +1,20 @@
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, ForeignKey, String, Text, UniqueConstraint, func
+from sqlalchemy import (
+    JSON,
+    CheckConstraint,
+    ForeignKey,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from opledger_api.db import Base
 
 WORK_REQUEST_STATUSES = ("open", "in_progress", "resolved", "cancelled")
+REPORT_JOB_STATUSES = ("queued", "started", "finished", "failed")
 
 
 class Customer(Base):
@@ -95,3 +104,32 @@ class WorkRequestStatusEvent(Base):
     )
 
     work_request: Mapped[WorkRequest] = relationship(back_populates="status_events")
+
+
+class ReportJob(Base):
+    __tablename__ = "report_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            "status in ('queued', 'started', 'finished', 'failed')",
+            name="ck_report_jobs_status",
+        ),
+        UniqueConstraint("redis_job_id", name="uq_report_jobs_redis_job_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    report_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued")
+    redis_job_id: Mapped[str | None] = mapped_column(String(191), nullable=True)
+    result_json: Mapped[dict[str, object] | None] = mapped_column(JSON, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        nullable=False,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+    started_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    finished_at: Mapped[datetime | None] = mapped_column(nullable=True)

@@ -36,6 +36,17 @@ class Settings(BaseSettings):
             "OPLEDGER_REPORT_MAX_DELAY_SECONDS",
         ),
     )
+    redis_url: str = Field(
+        default="redis://localhost:6379/0",
+        validation_alias=AliasChoices("REDIS_URL", "OPLEDGER_REDIS_URL"),
+    )
+    report_queue_name: str = Field(
+        default="reports",
+        validation_alias=AliasChoices(
+            "REPORT_QUEUE_NAME",
+            "OPLEDGER_REPORT_QUEUE_NAME",
+        ),
+    )
 
     model_config = SettingsConfigDict(env_prefix="OPLEDGER_", populate_by_name=True)
 
