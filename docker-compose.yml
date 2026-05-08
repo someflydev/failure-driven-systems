@@ -15,6 +15,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-56379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build:
       context: .
@@ -22,11 +34,30 @@ services:
       OPLEDGER_ENVIRONMENT: local-docker
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-opledger}:${POSTGRES_PASSWORD:-opledger_local_password}@postgres:5432/${POSTGRES_DB:-opledger}
       OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS: ${OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS:-3}
+      OPLEDGER_REDIS_URL: redis://redis:6379/0
     ports:
       - "${API_PORT:-18080}:8000"
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+    command: ["uv", "run", "--no-sync", "python", "-m", "opledger_api.worker"]
+    environment:
+      OPLEDGER_ENVIRONMENT: local-docker
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-opledger}:${POSTGRES_PASSWORD:-opledger_local_password}@postgres:5432/${POSTGRES_DB:-opledger}
+      OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS: ${OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS:-3}
+      OPLEDGER_REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   postgres-data:
+  redis-data:
