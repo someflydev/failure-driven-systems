@@ -61,9 +61,10 @@ implementation.
 - `lessons/phase-1/README.md`: Phase 1 lesson index linking app features,
   exercises, scenarios, runbooks, deployment docs, review gates, quiz,
   interview practice, and capstone in order.
-- `lessons/phase-2/README.md`: Phase 2 starter lesson index with only the
-  synchronous report pain exercise linked and an explicit warning to observe
-  request-path pain before adding a queue.
+- `lessons/phase-2/README.md`: complete Phase 2 lesson path linking
+  synchronous report pain, Redis/RQ worker flow, durable job status, retries,
+  idempotency, safe side effects, scenario drills, review checklist, quiz,
+  interview practice, capstone exercise, and capstone rubric.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -103,11 +104,30 @@ implementation.
 - `exercises/phase-2/06-safe-side-effects.md`: Phase 2 exercise for local
   report completion notifications, duplicate side-effect prevention, failed
   attempt visibility, and reasoning about what changes with a real provider.
+- `exercises/phase-2/07-phase-2-capstone.md`: Phase 2 capstone requiring at
+  least two failure scenarios, durable status and side-effect inspection, one
+  small fix or concrete issue explanation, and a defense of retry/idempotency
+  design.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
+- `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
+  the worker, enqueueing a report, inspecting queued status, restarting the
+  worker, and explaining accepted-but-incomplete work.
+- `scenarios/phase-2/duplicate-job-execution.md`: guided local scenario for
+  triggering duplicate completed job execution and confirming completed output
+  and notification attempts are not duplicated.
+- `scenarios/phase-2/delayed-job-completion.md`: guided local scenario for
+  delaying completion by holding the worker down and writing honest
+  user-facing eventual-consistency language.
 - `scenarios/phase-2/report-retry-failure.md`: guided local report worker
   failure scenario for triggering bounded retries, inspecting durable attempt
   state, and explaining duplicate side-effect risk.
+- `scenarios/phase-2/failed-notification-side-effect.md`: guided scenario for
+  forcing deterministic local notification failure and inspecting the durable
+  failed attempt.
+- `scenarios/phase-2/redis-unavailable.md`: guided local scenario for stopping
+  Redis, observing enqueue failure, and stating what the app can and cannot do
+  without queue coordination.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
@@ -117,10 +137,17 @@ implementation.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
+- `reviews/checklists/phase-2-async-review.md`: practical Phase 2 async review
+  checklist covering job API behavior, Redis/Postgres ownership, retries,
+  idempotency, side effects, scenario evidence, and scope control.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature
   complexity.
+- `reviews/rubrics/phase-2-capstone.md`: scoring rubric for the Phase 2
+  capstone covering scenario execution, async state reasoning,
+  retry/idempotency design, Redis/Postgres ownership, fix or explanation
+  quality, and scope control.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
@@ -129,8 +156,14 @@ implementation.
 - `quizzes/phase-1.md`: Phase 1 short-answer quiz for HTTP basics, relational
   modeling, transactions, migrations, health checks, logs, deployment, database
   failure, and scope control.
+- `quizzes/phase-2.md`: Phase 2 short-answer quiz for async work, retries,
+  idempotency, duplicates, Redis versus Postgres, side effects, and eventual
+  consistency.
 - `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
   strong-answer traits instead of canned answers.
+- `interviews/phase-2-backend-distributed.md`: Phase 2 backend and distributed
+  systems mock interview prompts with strong-answer traits for async jobs,
+  queue coordination, retries, idempotency, side effects, and scope control.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
@@ -156,6 +189,12 @@ implementation.
 - `scripts/dev-down.sh`: small wrapper around `docker compose down`.
 - `scripts/migrate.sh`: explicit Alembic migration wrapper for host or Compose
   execution.
+- `scripts/scenarios/phase2_worker_down.sh`: small helper for stopping,
+  starting, or inspecting only the Compose worker during Phase 2 worker-down
+  drills.
+- `scripts/scenarios/phase2_redis_down.sh`: small helper for stopping,
+  starting, or inspecting Redis and the worker during Phase 2 Redis-down
+  drills.
 
 ## Intended Layers
 

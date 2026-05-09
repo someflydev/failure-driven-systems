@@ -36,6 +36,26 @@ Concepts may include background jobs, idempotency, retries, dead-letter thinking
 outbox-style reasoning, and backpressure. The learner must be able to explain
 what failed in the synchronous design before naming the async pattern.
 
+Phase 2 concrete path:
+
+- `lessons/phase-2/README.md`
+- `docs/async/phase-2-job-lifecycle.md`
+- `docs/async/idempotency.md`
+- `docs/async/side-effects-and-outbox.md`
+- `scenarios/phase-2/`
+- `reviews/checklists/phase-2-async-review.md`
+- `quizzes/phase-2.md`
+- `interviews/phase-2-backend-distributed.md`
+- `reviews/rubrics/phase-2-capstone.md`
+
+Boundaries:
+
+- Do not extract services yet.
+- Do not introduce Kubernetes or k3s yet.
+- Do not add caching or read-model optimization yet.
+- Do not add a broad observability stack; durable status, logs, tests, and
+  focused scenario evidence are enough.
+
 ## Phase 3: Careful Boundaries
 
 Teach module boundaries, data ownership, interfaces, and coupling before any

@@ -41,8 +41,10 @@ Explanation outcomes:
 OpsLedger capability:
 
 - Generate reports from work request history.
-- Record notification attempts for status changes or report readiness.
-- Move slow or retry-prone work out of user-facing request paths.
+- Record local notification attempts for report readiness.
+- Move slow or retry-prone report work out of user-facing request paths.
+- Rehearse worker unavailable, duplicate execution, delayed completion, failed
+  notification, retry failure, and Redis unavailable scenarios.
 
 Allowed concepts:
 
@@ -60,6 +62,8 @@ Expected failure experiences:
 - Slow report requests, duplicate notification attempts, partial completion,
   retry hazards, worker crashes, stuck jobs, and user confusion after a request
   succeeds but follow-up work fails.
+- Redis unavailable while Postgres-backed status remains the durable inspection
+  surface.
 
 Explanation outcomes:
 

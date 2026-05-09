@@ -46,6 +46,46 @@ instead of contacting an external provider.
    completion notification workflow, confirm duplicate triggers do not create
    duplicate attempts, and explain the remaining gap before a full outbox
    dispatcher.
+7. `exercises/phase-2/07-phase-2-capstone.md`: run at least two failure
+   scenarios, inspect durable status and logs, fix or explain one issue, and
+   defend the retry/idempotency design.
+
+## Scenario Drills
+
+Use these drills after the matching exercise introduces the behavior. They are
+practice material, not replacement instructions for the exercises.
+
+- `scenarios/phase-2/worker-unavailable.md`: stop the worker, enqueue a report,
+  and explain why durable status can be inspectable while work is not
+  progressing.
+- `scenarios/phase-2/duplicate-job-execution.md`: run the same completed job
+  path more than once and verify that completed output and notification attempts
+  are not duplicated.
+- `scenarios/phase-2/delayed-job-completion.md`: hold the worker down, observe
+  delayed `queued` or `running` status, and write user-facing language for
+  eventual consistency.
+- `scenarios/phase-2/report-retry-failure.md`: inject worker failure, observe
+  bounded retries, and explain why attempts are evidence rather than safety.
+- `scenarios/phase-2/failed-notification-side-effect.md`: force the local
+  notification adapter failure path and inspect the durable failed attempt.
+- `scenarios/phase-2/redis-unavailable.md`: stop Redis, observe enqueue
+  failure, and state what the app can and cannot do without queue
+  coordination.
+
+Small helper scripts live under `scripts/scenarios/` for common local drills.
+Read each scenario first; the scripts are shortcuts for Compose commands, not
+hidden setup.
+
+## Review And Assessment
+
+- `reviews/checklists/phase-2-async-review.md`: review checklist for async job
+  behavior, Redis/Postgres ownership, retries, idempotency, side effects, and
+  user-visible consistency.
+- `quizzes/phase-2.md`: short-answer quiz on async work, retries, duplicates,
+  Redis versus Postgres, and eventual consistency.
+- `interviews/phase-2-backend-distributed.md`: mock interview prompts with
+  strong-answer traits.
+- `reviews/rubrics/phase-2-capstone.md`: capstone scoring guide.
 
 ## Important Boundary
 

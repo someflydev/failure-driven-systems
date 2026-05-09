@@ -150,3 +150,15 @@ Start with `lessons/phase-1/README.md`. It links the OpsLedger API surface,
 hands-on exercises, database failure scenario, runbooks, Dokku deployment docs,
 quiz, mock interview guide, review checklist, and capstone rubric in the
 intended order.
+
+## Phase 2 Path
+
+Start with `lessons/phase-2/README.md` after completing Phase 1. It links the
+synchronous report pain exercise, Redis/RQ worker flow, durable job status,
+bounded retries, idempotency, local notification side effects, failure
+scenarios, async review checklist, quiz, interview practice, and capstone
+rubric in order.
+
+Phase 2 keeps Postgres as the source of truth and uses Redis only for queue
+coordination. It does not introduce service extraction, k3s, caching, or a
+broad observability stack.
