@@ -74,8 +74,10 @@ does not fit well inside user-facing requests. Learners experience latency,
 retry hazards, and partial failure before introducing background work.
 
 In Phase 3, the same system is reorganized around explicit internal boundaries:
-request intake, workflow state, reporting, and notification concerns. These are
-module boundaries first, not separate services by default.
+request intake, workflow state, reporting, and notification concerns. Reporting
+is then extracted as one stateless learning service while the core API/Postgres
+keeps ownership of source-of-truth facts and durable job state. Other
+boundaries remain modules by default.
 
 In Phase 4, OpsLedger becomes an operational system. Learners investigate bad
 deploys, confusing logs, stuck work, failed notifications, and incomplete

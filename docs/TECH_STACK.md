@@ -22,7 +22,8 @@ the Phase 1 customer, work request, and status history tables.
 Docker Compose is the default local container workflow. In Phase 1 it ran only
 the API and Postgres. In Phase 2 it also runs Redis and an API-codebase worker
 so learners can compare synchronous report generation with queued background
-work without extracting a separate service.
+work. In Phase 3 it adds one stateless reporting service so learners can see
+the cost of a narrow HTTP extraction.
 
 Dokku is the default early deployment target for Phase 1. The root `Dockerfile`
 is the deployment artifact for the single API service, and Dokku Postgres
@@ -50,7 +51,8 @@ Local host worker command:
 ./scripts/worker.sh
 ```
 
-Local Docker Compose runs the worker alongside the API, Postgres, and Redis:
+Local Docker Compose runs the worker alongside the API, Postgres, Redis, and
+the stateless reporting service:
 
 ```sh
 ./scripts/dev-up.sh
@@ -64,6 +66,22 @@ errors. Report jobs now include completed-output duplicate execution handling
 and explicit database-backed idempotency. Local report completion notifications
 also use a durable idempotency key, while dead-letter workflows remain later
 lessons.
+
+## Reporting Service
+
+Phase 3 extracts exactly one service: a stateless FastAPI report renderer under
+`services/reporting/`. It accepts the versioned report-rendering contract over
+HTTP and returns derived report output. It does not connect to Postgres or
+Redis; the API and worker remain responsible for source-of-truth reads, durable
+job state, retries, and persisted results.
+
+The worker uses the reporting service only when
+`OPLEDGER_REPORT_RENDERING_SERVICE_URL` is configured. Local host development
+defaults to the in-process renderer so learners can run tests and the worker
+without a second process. Docker Compose sets the worker URL to
+`http://reporting:8001` and uses
+`OPLEDGER_REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS` to keep remote rendering
+bounded.
 
 ## Python Tooling
 
@@ -83,9 +101,9 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-k3s manifests, caching, service extraction, dead-letter workflows, and a full
-outbox dispatcher are deferred until later prompts create the concrete failure
-or teaching moment.
+k3s manifests, caching, additional service extraction, dead-letter workflows,
+and a full outbox dispatcher are deferred until later prompts create the
+concrete failure or teaching moment.
 
 ## Later Language Discussions
 

@@ -11,19 +11,21 @@ implementation.
   sequence, plus the current local development workflow.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
 - `Dockerfile`: production-flavored local image definition for the FastAPI API
-  service using repo-root `uv` tooling and Python 3.12.
+  service and stateless reporting service using repo-root `uv` tooling and
+  Python 3.12.
 - `.dockerignore`: Docker build-context exclusions for local env files,
   virtualenvs, caches, and generated artifacts.
-- `docker-compose.yml`: local development stack with API, Postgres, Redis, and
-  a worker process for Phase 2 background report generation.
+- `docker-compose.yml`: local development stack with API, Postgres, Redis, a
+  worker process, and the stateless reporting service used by the worker.
 - `deploy/dokku/README.md`: Phase 1 Dokku deployment path for the single
   Dockerfile-based API service, including app creation, Postgres linking,
   config, deploy, migrations, health checks, logs, and rollback basics.
 - `deploy/dokku/checklist.md`: concise Dokku deployment preflight and
   post-deploy checklist.
-- `.env.example`: local placeholder environment values for Compose, Redis, and
-  health tuning, plus disabled-by-default report retry and local/test failure
-  injection settings; real `.env` files must remain uncommitted.
+- `.env.example`: local placeholder environment values for Compose, Redis,
+  reporting service ports and timeouts, and health tuning, plus
+  disabled-by-default report retry and local/test failure injection settings;
+  real `.env` files must remain uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
@@ -40,13 +42,12 @@ implementation.
 - `docs/architecture/modular-monolith.md`: Phase 3 modular monolith guide
   naming current internal module ownership, why service boundaries are
   expensive, and why report rendering is studied before extraction.
-- `docs/adr/0001-report-rendering-boundary.md`: exploratory ADR draft weighing
-  arguments for and against later report rendering extraction while keeping the
-  current decision inside the API process, updated with lessons from making the
-  v1 rendering contract explicit.
+- `docs/adr/0001-report-rendering-boundary.md`: accepted-for-learning ADR
+  explaining the narrow stateless report-rendering service extraction and why
+  the same extraction may be unjustified in a small production system.
 - `docs/contracts/report-rendering-v1.md`: Phase 3 report rendering request and
-  response contract, compatibility rules, versioning approach, and distinction
-  between an internal module boundary and a future deployable service boundary.
+  response contract, HTTP endpoint, compatibility rules, versioning approach,
+  and stateless ownership boundary.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -127,6 +128,9 @@ implementation.
 - `exercises/phase-3/02-contract-before-network.md`: Phase 3 exercise requiring
   learners to make a backward-compatible report rendering contract change
   before adding any HTTP or deployable service boundary.
+- `exercises/phase-3/03-extract-reporting-service.md`: Phase 3 exercise for
+  extracting the stateless report renderer, wiring bounded worker calls, and
+  defending the educational value against small-system production cost.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -187,16 +191,20 @@ implementation.
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   explicit internal modules for customers, work requests, versioned report
-  rendering contracts, report rendering, async report job state, notification
-  attempts, shared route dependencies, a worker entrypoint with bounded
-  retries, completed-output duplicate execution protection, local/test failure
-  injection, and simple request/readiness logging.
+  rendering contracts, local report rendering, a bounded reporting-service
+  client, async report job state, notification attempts, shared route
+  dependencies, a worker entrypoint with bounded retries, completed-output
+  duplicate execution protection, local/test failure injection, and simple
+  request/readiness logging.
+- `services/reporting/reporting_service/`: stateless FastAPI report-rendering
+  service that implements `report-rendering.v1` without database ownership.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and
   notification attempts.
 - `services/api/tests/`: API scaffold, CRUD route, status history, report job
-  endpoint and worker lifecycle, model, and schema tests.
+  endpoint and worker lifecycle, reporting client, model, and schema tests.
+- `services/reporting/tests/`: reporting service contract tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures, including Docker Compose checks.
 - `scripts/verify.sh`: repo-root verification gate run through `uv`.
