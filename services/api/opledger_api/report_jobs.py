@@ -8,10 +8,16 @@ from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_session
 from opledger_api.models import ReportJob
 from opledger_api.notifications import notify_report_completed
-from opledger_api.report_contracts import WorkRequestSummaryReport
+from opledger_api.report_contracts import (
+    WorkRequestSummaryRenderRequest,
+    WorkRequestSummaryReport,
+)
+from opledger_api.report_renderer import (
+    render_work_request_summary_report as render_work_request_summary_report_local,
+)
+from opledger_api.reporting_client import render_work_request_summary_report_remote
 from opledger_api.reports import (
     build_work_request_summary_render_request,
-    render_work_request_summary_report,
 )
 
 LOCAL_FAILURE_INJECTION_ENVIRONMENTS = {"local", "test"}
@@ -84,6 +90,19 @@ def mark_report_job_failed(
 
 def report_result_json(report: WorkRequestSummaryReport) -> dict[str, object]:
     return report.model_dump(mode="json")
+
+
+def render_work_request_summary_report(
+    request: WorkRequestSummaryRenderRequest,
+) -> WorkRequestSummaryReport:
+    settings = get_settings()
+    if settings.report_rendering_service_url:
+        return render_work_request_summary_report_remote(
+            request,
+            base_url=settings.report_rendering_service_url,
+            timeout_seconds=settings.report_rendering_service_timeout_seconds,
+        )
+    return render_work_request_summary_report_local(request)
 
 
 def maybe_inject_report_failure(settings: Settings, stage: str) -> None:

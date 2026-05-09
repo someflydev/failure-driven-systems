@@ -84,6 +84,22 @@ class Settings(BaseSettings):
             "OPLEDGER_REPORT_FAILURE_INJECTION_STAGE",
         ),
     )
+    report_rendering_service_url: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "REPORT_RENDERING_SERVICE_URL",
+            "OPLEDGER_REPORT_RENDERING_SERVICE_URL",
+        ),
+    )
+    report_rendering_service_timeout_seconds: float = Field(
+        default=2.0,
+        gt=0,
+        le=30,
+        validation_alias=AliasChoices(
+            "REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS",
+            "OPLEDGER_REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS",
+        ),
+    )
 
     model_config = SettingsConfigDict(env_prefix="OPLEDGER_", populate_by_name=True)
 
