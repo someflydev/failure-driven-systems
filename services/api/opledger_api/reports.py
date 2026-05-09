@@ -18,6 +18,9 @@ from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
 )
+from opledger_api.report_renderer import (
+    render_work_request_summary_report as render_work_request_summary_report_local,
+)
 from opledger_api.shared import SessionDependency, SettingsDependency
 
 router = APIRouter(tags=["opsledger"])
@@ -53,7 +56,7 @@ def build_work_request_summary_render_request(
 def render_work_request_summary_report(
     request: WorkRequestSummaryRenderRequest,
 ) -> WorkRequestSummaryReport:
-    return WorkRequestSummaryReport(**request.model_dump(exclude={"requested_by"}))
+    return render_work_request_summary_report_local(request)
 
 
 def build_work_request_summary_report(session: Session) -> WorkRequestSummaryReport:

@@ -27,13 +27,13 @@ dev = [
 package = false
 
 [tool.pytest.ini_options]
-testpaths = ["services/api/tests"]
-pythonpath = ["services/api"]
+testpaths = ["services/api/tests", "services/reporting/tests"]
+pythonpath = ["services/api", "services/reporting"]
 
 [tool.ruff]
 target-version = "py312"
 line-length = 88
-src = ["services/api"]
+src = ["services/api", "services/reporting"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
@@ -41,5 +41,10 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-mypy_path = ["services/api"]
-files = ["services/api/opledger_api", "services/api/tests"]
+mypy_path = ["services/api", "services/reporting"]
+files = [
+    "services/api/opledger_api",
+    "services/api/tests",
+    "services/reporting/reporting_service",
+    "services/reporting/tests",
+]
