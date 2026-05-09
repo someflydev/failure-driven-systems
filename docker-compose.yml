@@ -43,19 +43,40 @@ services:
       redis:
         condition: service_healthy
 
+  reporting:
+    build:
+      context: .
+    command: ["uv", "run", "--no-sync", "uvicorn", "reporting_service.main:app", "--app-dir", "services/reporting", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      OPLEDGER_ENVIRONMENT: local-docker
+    ports:
+      - "${REPORTING_PORT:-18081}:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health/live', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
   worker:
     build:
       context: .
     command: ["uv", "run", "--no-sync", "python", "-m", "opledger_api.worker"]
+    healthcheck:
+      disable: true
     environment:
       OPLEDGER_ENVIRONMENT: local-docker
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-opledger}:${POSTGRES_PASSWORD:-opledger_local_password}@postgres:5432/${POSTGRES_DB:-opledger}
       OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS: ${OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS:-3}
       OPLEDGER_REDIS_URL: redis://redis:6379/0
+      OPLEDGER_REPORT_RENDERING_SERVICE_URL: ${OPLEDGER_REPORT_RENDERING_SERVICE_URL:-http://reporting:8001}
+      OPLEDGER_REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS: ${OPLEDGER_REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS:-2}
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      reporting:
         condition: service_healthy
 
 volumes:

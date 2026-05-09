@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/services/api \
+    PYTHONPATH=/app/services/api:/app/services/reporting \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
@@ -11,6 +11,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev --no-install-project
 
 COPY services/api ./services/api
+COPY services/reporting ./services/reporting
 
 RUN groupadd --system opledger \
     && useradd --system --gid opledger --home-dir /app --shell /usr/sbin/nologin opledger \
