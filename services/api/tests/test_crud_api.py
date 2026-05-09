@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from opledger_api import routes
+from opledger_api import async_jobs, reports
 from opledger_api.models import ReportJob, WorkRequestStatusEvent
 
 JsonObject = dict[str, object]
@@ -302,7 +302,7 @@ def test_work_request_summary_report_does_not_delay_by_default(
     def fail_sleep(_seconds: int) -> None:
         raise AssertionError("report delay should be disabled by default")
 
-    monkeypatch.setattr(routes, "sleep", fail_sleep)
+    monkeypatch.setattr(reports, "sleep", fail_sleep)
 
     response = client.post("/reports/work-requests/summary?delay_seconds=1")
 
@@ -318,7 +318,7 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     def fake_enqueue(report_job_id: int, _settings: object) -> str:
         return f"rq-job-{report_job_id}"
 
-    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+    monkeypatch.setattr(async_jobs, "enqueue_work_request_summary_report", fake_enqueue)
 
     enqueue_response = client.post("/reports/work-requests/summary/jobs")
 
@@ -354,7 +354,7 @@ def test_same_report_idempotency_key_returns_same_job(
         enqueue_calls.append(report_job_id)
         return f"rq-job-{report_job_id}"
 
-    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+    monkeypatch.setattr(async_jobs, "enqueue_work_request_summary_report", fake_enqueue)
 
     first_response = client.post(
         "/reports/work-requests/summary/jobs",
@@ -381,7 +381,7 @@ def test_different_report_idempotency_key_creates_new_job(
     def fake_enqueue(report_job_id: int, _settings: object) -> str:
         return f"rq-job-{report_job_id}"
 
-    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fake_enqueue)
+    monkeypatch.setattr(async_jobs, "enqueue_work_request_summary_report", fake_enqueue)
 
     first_response = client.post(
         "/reports/work-requests/summary/jobs",
@@ -504,7 +504,7 @@ def test_report_queue_failure_is_persisted_and_reported(
     def fail_enqueue(_report_job_id: int, _settings: object) -> str:
         raise ConnectionError("redis unavailable")
 
-    monkeypatch.setattr(routes, "enqueue_work_request_summary_report", fail_enqueue)
+    monkeypatch.setattr(async_jobs, "enqueue_work_request_summary_report", fail_enqueue)
 
     response = client.post("/reports/work-requests/summary/jobs")
 

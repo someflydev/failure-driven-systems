@@ -1,5 +1,9 @@
-from datetime import UTC, datetime
+"""Reports boundary: pure report rendering over existing source-of-truth data."""
 
+from datetime import UTC, datetime
+from time import sleep
+
+from fastapi import APIRouter, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -8,6 +12,10 @@ from opledger_api.models import (
     WorkRequest,
     WorkRequestStatusEvent,
 )
+from opledger_api.schemas import WorkRequestSummaryReport
+from opledger_api.shared import SessionDependency, SettingsDependency
+
+router = APIRouter(tags=["opsledger"])
 
 
 def build_work_request_summary_report(session: Session) -> dict[str, object]:
@@ -31,3 +39,18 @@ def build_work_request_summary_report(session: Session) -> dict[str, object]:
         "by_status": status_counts,
         "status_event_count": status_event_count,
     }
+
+
+@router.post(
+    "/reports/work-requests/summary",
+    response_model=WorkRequestSummaryReport,
+)
+def create_work_request_summary_report(
+    session: SessionDependency,
+    settings: SettingsDependency,
+    delay_seconds: int = Query(default=0, ge=0, le=30),
+) -> dict[str, object]:
+    if settings.report_delay_enabled and delay_seconds > 0:
+        sleep(min(delay_seconds, settings.report_max_delay_seconds))
+
+    return build_work_request_summary_report(session)

@@ -1,16 +1,22 @@
+"""Notification boundary: durable side-effect attempts and local delivery adapter."""
+
 import logging
 from datetime import UTC, datetime
 
+from fastapi import APIRouter, Query
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from opledger_api.models import NotificationAttempt, ReportJob
+from opledger_api.schemas import NotificationAttemptList
+from opledger_api.shared import LimitQuery, OffsetQuery, SessionDependency
 
 REPORT_COMPLETED_NOTIFICATION_RECIPIENT = "operator@example.com"
 LOCAL_LOG_NOTIFICATION_CHANNEL = "local_log"
 LOCAL_NOTIFICATION_FAILURE_RECIPIENT = "fail-notification@example.com"
 
+router = APIRouter(tags=["opsledger"])
 logger = logging.getLogger("opledger_api.notifications")
 
 
@@ -105,3 +111,26 @@ def notify_report_completed(
     session.commit()
     session.refresh(attempt)
     return attempt
+
+
+@router.get("/notification-attempts", response_model=NotificationAttemptList)
+def list_notification_attempts(
+    session: SessionDependency,
+    target_type: str | None = Query(default=None, max_length=64),
+    target_id: int | None = Query(default=None, gt=0),
+    limit: LimitQuery = 20,
+    offset: OffsetQuery = 0,
+) -> dict[str, object]:
+    statement = (
+        select(NotificationAttempt)
+        .order_by(NotificationAttempt.created_at.desc(), NotificationAttempt.id.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    if target_type is not None:
+        statement = statement.where(NotificationAttempt.target_type == target_type)
+    if target_id is not None:
+        statement = statement.where(NotificationAttempt.target_id == target_id)
+
+    attempts = session.scalars(statement).all()
+    return {"items": attempts, "limit": limit, "offset": offset}
