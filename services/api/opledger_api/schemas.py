@@ -3,7 +3,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-WorkRequestStatus = Literal["open", "in_progress", "resolved", "cancelled"]
+from opledger_api.report_contracts import WorkRequestStatus as WorkRequestStatus
+
 ReportJobStatus = Literal["queued", "running", "succeeded", "failed"]
 NotificationAttemptStatus = Literal["pending", "sent", "failed"]
 EmailText = Annotated[
@@ -82,13 +83,6 @@ class WorkRequestStatusEventList(BaseModel):
     items: list[WorkRequestStatusEventRead]
     limit: int
     offset: int
-
-
-class WorkRequestSummaryReport(BaseModel):
-    generated_at: datetime
-    total_work_requests: int
-    by_status: dict[WorkRequestStatus, int]
-    status_event_count: int
 
 
 class ReportJobRead(BaseModel):

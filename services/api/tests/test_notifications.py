@@ -14,20 +14,21 @@ from opledger_api.notifications import (
     notify_report_completed,
     report_completed_notification_key,
 )
+from opledger_api.report_contracts import WorkRequestSummaryReport
 
 
-def successful_report() -> dict[str, object]:
-    return {
-        "generated_at": datetime.now(UTC),
-        "total_work_requests": 0,
-        "by_status": {
+def successful_report() -> WorkRequestSummaryReport:
+    return WorkRequestSummaryReport(
+        generated_at=datetime.now(UTC),
+        total_work_requests=0,
+        by_status={
             "open": 0,
             "in_progress": 0,
             "resolved": 0,
             "cancelled": 0,
         },
-        "status_event_count": 0,
-    }
+        status_event_count=0,
+    )
 
 
 def patch_report_job_session(
@@ -50,8 +51,8 @@ def test_report_completion_creates_sent_notification_attempt(
     patch_report_job_session(monkeypatch, db_session)
     monkeypatch.setattr(
         report_jobs,
-        "build_work_request_summary_report",
-        lambda _session: successful_report(),
+        "render_work_request_summary_report",
+        lambda _request: successful_report(),
     )
 
     report_jobs.generate_work_request_summary_report_job(report_job.id)

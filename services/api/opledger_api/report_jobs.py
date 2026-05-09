@@ -8,9 +8,12 @@ from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_session
 from opledger_api.models import ReportJob
 from opledger_api.notifications import notify_report_completed
-from opledger_api.reports import build_work_request_summary_report
+from opledger_api.report_contracts import WorkRequestSummaryReport
+from opledger_api.reports import (
+    build_work_request_summary_render_request,
+    render_work_request_summary_report,
+)
 
-WORK_REQUEST_SUMMARY_REPORT = "work_request_summary"
 LOCAL_FAILURE_INJECTION_ENVIRONMENTS = {"local", "test"}
 
 
@@ -79,12 +82,8 @@ def mark_report_job_failed(
     session.commit()
 
 
-def report_result_json(report: dict[str, object]) -> dict[str, object]:
-    result = dict(report)
-    generated_at = result.get("generated_at")
-    if isinstance(generated_at, datetime):
-        result["generated_at"] = generated_at.isoformat()
-    return result
+def report_result_json(report: WorkRequestSummaryReport) -> dict[str, object]:
+    return report.model_dump(mode="json")
 
 
 def maybe_inject_report_failure(settings: Settings, stage: str) -> None:
@@ -113,7 +112,8 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
 
         try:
             maybe_inject_report_failure(settings, "before_generation")
-            report = build_work_request_summary_report(session)
+            render_request = build_work_request_summary_render_request(session)
+            report = render_work_request_summary_report(render_request)
             maybe_inject_report_failure(settings, "after_partial_progress")
             report_job.result_json = report_result_json(report)
             report_job.status = "succeeded"

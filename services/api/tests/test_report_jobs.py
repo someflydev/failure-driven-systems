@@ -9,6 +9,10 @@ from sqlalchemy.orm import Session
 from opledger_api import report_jobs
 from opledger_api.config import Settings
 from opledger_api.models import ReportJob
+from opledger_api.report_contracts import (
+    WorkRequestSummaryRenderRequest,
+    WorkRequestSummaryReport,
+)
 
 
 def patch_report_job_session(
@@ -30,26 +34,28 @@ def test_report_worker_marks_job_running_then_succeeded_with_result(
     db_session.commit()
     patch_report_job_session(monkeypatch, db_session)
 
-    def fake_build_report(_session: Session) -> dict[str, object]:
+    def fake_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+    ) -> WorkRequestSummaryReport:
         running_job = db_session.get(ReportJob, report_job.id)
         assert running_job is not None
         assert running_job.status == "running"
         assert running_job.started_at is not None
         assert running_job.attempt_count == 1
-        return {
-            "generated_at": datetime.now(UTC),
-            "total_work_requests": 0,
-            "by_status": {
+        return WorkRequestSummaryReport(
+            generated_at=datetime.now(UTC),
+            total_work_requests=0,
+            by_status={
                 "open": 0,
                 "in_progress": 0,
                 "resolved": 0,
                 "cancelled": 0,
             },
-            "status_event_count": 0,
-        }
+            status_event_count=0,
+        )
 
     monkeypatch.setattr(
-        report_jobs, "build_work_request_summary_report", fake_build_report
+        report_jobs, "render_work_request_summary_report", fake_render_report
     )
 
     report_jobs.generate_work_request_summary_report_job(report_job.id)
@@ -74,11 +80,11 @@ def test_report_worker_marks_job_failed_when_generation_raises(
     db_session.commit()
     patch_report_job_session(monkeypatch, db_session)
 
-    def fail_build_report(_session: Session) -> dict[str, object]:
+    def fail_render_report(_request: WorkRequestSummaryRenderRequest) -> object:
         raise ValueError("report failed")
 
     monkeypatch.setattr(
-        report_jobs, "build_work_request_summary_report", fail_build_report
+        report_jobs, "render_work_request_summary_report", fail_render_report
     )
 
     with pytest.raises(ValueError, match="report failed"):
@@ -105,25 +111,27 @@ def test_report_worker_retry_attempt_count_changes_after_failure(
 
     build_calls = 0
 
-    def flaky_build_report(_session: Session) -> dict[str, object]:
+    def flaky_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+    ) -> WorkRequestSummaryReport:
         nonlocal build_calls
         build_calls += 1
         if build_calls == 1:
             raise ValueError("first attempt failed")
-        return {
-            "generated_at": datetime.now(UTC),
-            "total_work_requests": 0,
-            "by_status": {
+        return WorkRequestSummaryReport(
+            generated_at=datetime.now(UTC),
+            total_work_requests=0,
+            by_status={
                 "open": 0,
                 "in_progress": 0,
                 "resolved": 0,
                 "cancelled": 0,
             },
-            "status_event_count": 0,
-        }
+            status_event_count=0,
+        )
 
     monkeypatch.setattr(
-        report_jobs, "build_work_request_summary_report", flaky_build_report
+        report_jobs, "render_work_request_summary_report", flaky_render_report
     )
 
     with pytest.raises(ValueError, match="first attempt failed"):
@@ -154,23 +162,25 @@ def test_duplicate_report_worker_execution_keeps_existing_output(
 
     build_calls = 0
 
-    def fake_build_report(_session: Session) -> dict[str, object]:
+    def fake_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+    ) -> WorkRequestSummaryReport:
         nonlocal build_calls
         build_calls += 1
-        return {
-            "generated_at": datetime(2026, 1, 1, tzinfo=UTC),
-            "total_work_requests": 0,
-            "by_status": {
+        return WorkRequestSummaryReport(
+            generated_at=datetime(2026, 1, 1, tzinfo=UTC),
+            total_work_requests=0,
+            by_status={
                 "open": 0,
                 "in_progress": 0,
                 "resolved": 0,
                 "cancelled": 0,
             },
-            "status_event_count": 0,
-        }
+            status_event_count=0,
+        )
 
     monkeypatch.setattr(
-        report_jobs, "build_work_request_summary_report", fake_build_report
+        report_jobs, "render_work_request_summary_report", fake_render_report
     )
 
     report_jobs.generate_work_request_summary_report_job(report_job.id)

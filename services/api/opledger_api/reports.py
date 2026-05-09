@@ -2,6 +2,7 @@
 
 from datetime import UTC, datetime
 from time import sleep
+from typing import cast
 
 from fastapi import APIRouter, Query
 from sqlalchemy import func, select
@@ -12,15 +13,23 @@ from opledger_api.models import (
     WorkRequest,
     WorkRequestStatusEvent,
 )
-from opledger_api.schemas import WorkRequestSummaryReport
+from opledger_api.report_contracts import (
+    WorkRequestStatus,
+    WorkRequestSummaryRenderRequest,
+    WorkRequestSummaryReport,
+)
 from opledger_api.shared import SessionDependency, SettingsDependency
 
 router = APIRouter(tags=["opsledger"])
 
 
-def build_work_request_summary_report(session: Session) -> dict[str, object]:
+def build_work_request_summary_render_request(
+    session: Session,
+) -> WorkRequestSummaryRenderRequest:
     total_work_requests = session.scalar(select(func.count(WorkRequest.id))) or 0
-    status_counts = dict.fromkeys(WORK_REQUEST_STATUSES, 0)
+    status_counts = cast(
+        dict[WorkRequestStatus, int], dict.fromkeys(WORK_REQUEST_STATUSES, 0)
+    )
     status_rows = session.execute(
         select(WorkRequest.status, func.count(WorkRequest.id)).group_by(
             WorkRequest.status
@@ -33,12 +42,24 @@ def build_work_request_summary_report(session: Session) -> dict[str, object]:
         session.scalar(select(func.count(WorkRequestStatusEvent.id))) or 0
     )
 
-    return {
-        "generated_at": datetime.now(UTC),
-        "total_work_requests": total_work_requests,
-        "by_status": status_counts,
-        "status_event_count": status_event_count,
-    }
+    return WorkRequestSummaryRenderRequest(
+        generated_at=datetime.now(UTC),
+        total_work_requests=total_work_requests,
+        by_status=status_counts,
+        status_event_count=status_event_count,
+    )
+
+
+def render_work_request_summary_report(
+    request: WorkRequestSummaryRenderRequest,
+) -> WorkRequestSummaryReport:
+    return WorkRequestSummaryReport(**request.model_dump(exclude={"requested_by"}))
+
+
+def build_work_request_summary_report(session: Session) -> WorkRequestSummaryReport:
+    return render_work_request_summary_report(
+        build_work_request_summary_render_request(session)
+    )
 
 
 @router.post(
@@ -49,7 +70,7 @@ def create_work_request_summary_report(
     session: SessionDependency,
     settings: SettingsDependency,
     delay_seconds: int = Query(default=0, ge=0, le=30),
-) -> dict[str, object]:
+) -> WorkRequestSummaryReport:
     if settings.report_delay_enabled and delay_seconds > 0:
         sleep(min(delay_seconds, settings.report_max_delay_seconds))
 

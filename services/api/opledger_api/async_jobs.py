@@ -7,15 +7,17 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from opledger_api.models import ReportJob
-from opledger_api.report_jobs import (
+from opledger_api.report_contracts import (
     WORK_REQUEST_SUMMARY_REPORT,
+    WorkRequestSummaryReport,
+)
+from opledger_api.report_jobs import (
     enqueue_work_request_summary_report,
 )
 from opledger_api.schemas import (
     ErrorResponse,
     ReportJobList,
     ReportJobRead,
-    WorkRequestSummaryReport,
 )
 from opledger_api.shared import (
     IdempotencyKeyHeader,
