@@ -32,18 +32,20 @@ backpressure.
 Postgres remains the source of truth. Background work must be inspectable,
 repairable, and explainable.
 
-## Stage 3: One Carefully Extracted Boundary
+## Stage 3: Modular Boundaries Before Extraction
 
 Before any service extraction, OpsLedger is organized into clearer internal
-modules: request intake, workflow state, reporting, and notifications. The
-default remains one deployable service because separate deployment adds real
-operational cost.
+modules: customer identity, workflow state, report rendering, async job state,
+notifications, health, and shared infrastructure. The default remains one
+deployable service because separate deployment adds real operational cost.
+Service boundaries are expensive.
 
 If a later failure justifies extraction, only one boundary is considered
-carefully. A defensible candidate is the notification boundary, because it has
-external side effects, retry behavior, and operational concerns that may differ
-from core workflow writes. Extraction is not assumed. The learner must compare
-the cost of a split with the cost of improving the modular monolith.
+carefully. The first candidate to study is report rendering, because it can be
+treated as pure computation over existing source-of-truth data without moving
+customer, work request, report job, or notification ownership. Extraction is
+not assumed. The learner must compare the cost of a split with the cost of
+improving the modular monolith.
 
 The point is to practice boundary reasoning, not to accumulate services.
 

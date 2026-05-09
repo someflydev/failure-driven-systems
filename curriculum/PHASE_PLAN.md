@@ -78,11 +78,15 @@ OpsLedger capability:
 - Separate internal modules for request intake, workflow state, reporting, and
   notifications while preserving one deployable service by default.
 - Define ownership and interfaces around data changes and side effects.
+- Study report rendering as the first possible extraction candidate because it
+  is derived computation rather than source-of-truth ownership.
 
 Allowed concepts:
 
 - Module boundaries, dependency direction, data ownership, internal APIs,
   transaction boundaries, integration contracts, and consistency boundaries.
+- The idea that service boundaries are expensive and must be justified by
+  evidence, not taste.
 
 Disallowed concepts:
 
