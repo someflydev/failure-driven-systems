@@ -49,3 +49,18 @@ from either synchronous routes or background jobs. Callers should depend on the
 report contract, not on incidental query details. Future prompts may revisit
 extraction only if measured operational evidence shows the modular monolith is
 the wrong boundary.
+
+Making `report-rendering.v1` explicit showed that most of the rendering
+boundary can be modeled as pure computation over a caller-provided snapshot:
+the database query path assembles counts and timestamps, then the renderer
+returns a deterministic response for that typed request. This is useful
+internal design even before service extraction because the worker no longer
+depends on incidental report query details.
+
+The exercise also exposed costs that would exist before any HTTP boundary:
+required fields, extra-field behavior, optional-field compatibility, persisted
+result shape, and versioning all need tests. Those contract concerns are
+separate from network concerns. A later service extraction would still need
+timeouts, retries, deployment isolation, observability, and runbook updates in
+addition to the schema contract described in
+`docs/contracts/report-rendering-v1.md`.

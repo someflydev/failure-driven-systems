@@ -42,7 +42,11 @@ implementation.
   expensive, and why report rendering is studied before extraction.
 - `docs/adr/0001-report-rendering-boundary.md`: exploratory ADR draft weighing
   arguments for and against later report rendering extraction while keeping the
-  current decision inside the API process.
+  current decision inside the API process, updated with lessons from making the
+  v1 rendering contract explicit.
+- `docs/contracts/report-rendering-v1.md`: Phase 3 report rendering request and
+  response contract, compatibility rules, versioning approach, and distinction
+  between an internal module boundary and a future deployable service boundary.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -120,6 +124,9 @@ implementation.
 - `exercises/phase-3/01-modular-monolith-boundaries.md`: first Phase 3
   exercise requiring learners to identify coupling, ownership of facts, and
   what would break if each module were extracted.
+- `exercises/phase-3/02-contract-before-network.md`: Phase 3 exercise requiring
+  learners to make a backward-compatible report rendering contract change
+  before adding any HTTP or deployable service boundary.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -179,11 +186,11 @@ implementation.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
-  explicit internal modules for customers, work requests, report rendering,
-  async report job state, notification attempts, shared route dependencies, a
-  worker entrypoint with bounded retries, completed-output duplicate execution
-  protection, local/test failure injection, and simple request/readiness
-  logging.
+  explicit internal modules for customers, work requests, versioned report
+  rendering contracts, report rendering, async report job state, notification
+  attempts, shared route dependencies, a worker entrypoint with bounded
+  retries, completed-output duplicate execution protection, local/test failure
+  injection, and simple request/readiness logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and

@@ -10,7 +10,10 @@ automatically good, and service boundaries are expensive.
 2. Complete `exercises/phase-3/01-modular-monolith-boundaries.md`.
 3. Review `docs/adr/0001-report-rendering-boundary.md` as an exploratory ADR,
    not as approval to create another service.
-4. Revisit the Phase 2 capstone evidence and identify which pain was solved by
+4. Review `docs/contracts/report-rendering-v1.md` and complete
+   `exercises/phase-3/02-contract-before-network.md` to practice compatibility
+   before adding a network boundary.
+5. Revisit the Phase 2 capstone evidence and identify which pain was solved by
    async work rather than service extraction.
 
 ## Boundary Focus
