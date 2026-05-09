@@ -37,6 +37,12 @@ implementation.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
 - `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
   later worker-backed, boundary-aware, observable operation.
+- `docs/architecture/modular-monolith.md`: Phase 3 modular monolith guide
+  naming current internal module ownership, why service boundaries are
+  expensive, and why report rendering is studied before extraction.
+- `docs/adr/0001-report-rendering-boundary.md`: exploratory ADR draft weighing
+  arguments for and against later report rendering extraction while keeping the
+  current decision inside the API process.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -65,6 +71,9 @@ implementation.
   synchronous report pain, Redis/RQ worker flow, durable job status, retries,
   idempotency, safe side effects, scenario drills, review checklist, quiz,
   interview practice, capstone exercise, and capstone rubric.
+- `lessons/phase-3/README.md`: initial Phase 3 lesson path for modular
+  monolith boundaries, report rendering as a candidate boundary, and the
+  warning that extraction is not automatically good.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -108,6 +117,9 @@ implementation.
   least two failure scenarios, durable status and side-effect inspection, one
   small fix or concrete issue explanation, and a defense of retry/idempotency
   design.
+- `exercises/phase-3/01-modular-monolith-boundaries.md`: first Phase 3
+  exercise requiring learners to identify coupling, ownership of facts, and
+  what would break if each module were extracted.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -167,14 +179,11 @@ implementation.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
-  synchronous customer/work-request CRUD, status history routes, synchronous
-  work request summary reporting helpers with opt-in local route delay,
-  Redis/RQ-backed report job enqueueing with explicit idempotency keys, recent
-  job listing, durable job status and result endpoints, a worker entrypoint with
-  bounded retries, completed-output duplicate execution protection, local/test
-  failure injection, durable report job state with attempt metadata, local
-  report completion notification attempts with idempotent durable keys and
-  status listing, and simple request/readiness logging.
+  explicit internal modules for customers, work requests, report rendering,
+  async report job state, notification attempts, shared route dependencies, a
+  worker entrypoint with bounded retries, completed-output duplicate execution
+  protection, local/test failure injection, and simple request/readiness
+  logging.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and
