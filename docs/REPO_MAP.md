@@ -165,6 +165,10 @@ implementation.
   requiring a scenario run, two status updates, evidence across logs, metrics,
   durable status, one discarded hypothesis, and a learner-written postmortem
   before LLM critique.
+- `exercises/phase-4/04-phase-4-capstone.md`: Phase 4 capstone requiring
+  scenario evidence, bounded logs and metrics, durable status, status updates,
+  hypotheses, learner-written postmortem, and LLM critique without outsourcing
+  conclusions.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -250,11 +254,24 @@ implementation.
   capstone covering backward-compatible contract change, failure scenario
   evidence, boundary reasoning, decision memo quality, verification, LLM
   senior-review use, and scope control.
+- `reviews/rubrics/phase-4-capstone.md`: scoring rubric for the Phase 4
+  capstone covering scenario evidence, timelines, metrics and durable state,
+  incident communication, postmortem quality, LLM-assisted debugging
+  discipline, secret safety, and scope control.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
 - `reviews/llm/TEMPLATE_interview_me.md`: learner-facing mock interview
   template.
+- `reviews/llm/TEMPLATE_incident_commander.md`: Phase 4 incident commander
+  prompt requiring facts, assumptions, learner hypothesis, and a clear next
+  check.
+- `reviews/llm/TEMPLATE_log_analysis_helper.md`: Phase 4 bounded log analysis
+  prompt requiring scenario context, metrics or durable status, and the
+  learner's hypothesis before analysis.
+- `reviews/llm/TEMPLATE_postmortem_critique.md`: Phase 4 postmortem critique
+  prompt for reviewing unsupported claims, weak evidence, action items, and
+  secret-handling risk after the learner writes a draft.
 - `quizzes/phase-1.md`: Phase 1 short-answer quiz for HTTP basics, relational
   modeling, transactions, migrations, health checks, logs, deployment, database
   failure, and scope control.
@@ -264,6 +281,8 @@ implementation.
 - `quizzes/phase-3.md`: Phase 3 short-answer quiz for modular monoliths,
   service extraction, contracts, compatibility, timeouts, partial failure, and
   extraction defense.
+- `quizzes/phase-4.md`: Phase 4 short-answer quiz for logs, metrics,
+  correlation IDs, health checks, incident response, and postmortem quality.
 - `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
   strong-answer traits instead of canned answers.
 - `interviews/phase-2-backend-distributed.md`: Phase 2 backend and distributed
@@ -272,6 +291,10 @@ implementation.
 - `interviews/phase-3-distributed-boundaries.md`: Phase 3 distributed-boundary
   mock interview prompts with strong-answer traits for ownership, extraction
   decisions, contracts, failure debugging, operations, and scope control.
+- `interviews/phase-4-operational-debugging.md`: Phase 4 operational debugging
+  mock interview prompts with strong-answer traits for timelines, logs,
+  metrics, health checks, durable state, incident response, postmortems, and
+  LLM-assisted debugging discipline.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,

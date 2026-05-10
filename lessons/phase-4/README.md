@@ -26,6 +26,11 @@ helps an operator explain what happened.
    evidence, and a short postmortem.
 8. Use `reviews/checklists/incident-review.md` to critique the incident
    response quality after the learner has written their own timeline.
+9. Complete `exercises/phase-4/04-phase-4-capstone.md`, then score it with
+   `reviews/rubrics/phase-4-capstone.md`.
+10. Use `quizzes/phase-4.md` and
+    `interviews/phase-4-operational-debugging.md` to practice short-answer and
+    mock interview defense from the incident evidence.
 
 ## Observability Focus
 
@@ -44,6 +49,9 @@ Learners should be able to explain:
   metrics exposure is justified.
 - How concise status updates, runbooks, and postmortems keep incident learning
   grounded in observed evidence.
+- How LLMs can act as incident commanders, log-analysis helpers, and
+  postmortem critics only after the learner provides bounded evidence and a
+  hypothesis.
 
 Future Phase 4 lessons may add alerting and rollback practice. They should stay
 grounded in observed failures and small-system operational constraints.
