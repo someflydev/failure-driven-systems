@@ -214,3 +214,10 @@ def record_notification_attempt(channel: str, status: str) -> None:
         "opledger_notification_attempts_total",
         {"channel": channel, "status": status},
     )
+
+
+def record_cache_access(endpoint: str, outcome: str) -> None:
+    metrics_registry.increment(
+        "opledger_cache_access_total",
+        {"endpoint": endpoint, "outcome": outcome},
+    )

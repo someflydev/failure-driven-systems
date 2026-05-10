@@ -54,6 +54,15 @@ class Settings(BaseSettings):
             "OPLEDGER_REPORT_QUEUE_NAME",
         ),
     )
+    dashboard_customer_work_request_stats_cache_ttl_seconds: int = Field(
+        default=30,
+        ge=1,
+        le=300,
+        validation_alias=AliasChoices(
+            "DASHBOARD_CUSTOMER_WORK_REQUEST_STATS_CACHE_TTL_SECONDS",
+            "OPLEDGER_DASHBOARD_CUSTOMER_WORK_REQUEST_STATS_CACHE_TTL_SECONDS",
+        ),
+    )
     report_job_max_attempts: int = Field(
         default=3,
         ge=2,

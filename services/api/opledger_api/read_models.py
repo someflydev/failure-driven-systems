@@ -1,14 +1,21 @@
 """Derived read models for dashboard-style access patterns."""
 
 import argparse
+import json
+import logging
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from fastapi.encoders import jsonable_encoder
+from redis.exceptions import RedisError
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
+from opledger_api.cache import get_redis_connection
+from opledger_api.config import Settings
 from opledger_api.db import get_session
+from opledger_api.metrics import record_cache_access
 from opledger_api.models import (
     WORK_REQUEST_STATUSES,
     Customer,
@@ -17,9 +24,18 @@ from opledger_api.models import (
     WorkRequestStatusEvent,
 )
 from opledger_api.schemas import CustomerWorkRequestStatsList
-from opledger_api.shared import LimitQuery, OffsetQuery, SessionDependency
+from opledger_api.shared import (
+    LimitQuery,
+    OffsetQuery,
+    SessionDependency,
+    SettingsDependency,
+)
 
 router = APIRouter(tags=["opsledger"])
+logger = logging.getLogger("opledger_api.read_models")
+
+CUSTOMER_STATS_CACHE_ENDPOINT = "dashboard_customer_work_request_stats"
+CUSTOMER_STATS_CACHE_KEY_PREFIX = "opledger:v1:dashboard:customer-work-request-stats"
 
 
 def rebuild_customer_work_request_stats(
@@ -82,6 +98,7 @@ def rebuild_customer_work_request_stats(
 
     session.add_all(stats_rows)
     session.commit()
+    invalidate_customer_work_request_stats_cache()
     return stats_rows
 
 
@@ -103,14 +120,14 @@ def customer_stats_response(
     }
 
 
-@router.get(
-    "/dashboard/customer-work-request-stats",
-    response_model=CustomerWorkRequestStatsList,
-)
-def list_customer_work_request_stats(
-    session: SessionDependency,
-    limit: LimitQuery = 50,
-    offset: OffsetQuery = 0,
+def customer_stats_cache_key(limit: int, offset: int) -> str:
+    return f"{CUSTOMER_STATS_CACHE_KEY_PREFIX}:limit={limit}:offset={offset}"
+
+
+def load_customer_work_request_stats(
+    session: Session,
+    limit: int,
+    offset: int,
 ) -> dict[str, object]:
     rows = session.execute(
         select(CustomerWorkRequestStats, Customer)
@@ -122,11 +139,113 @@ def list_customer_work_request_stats(
         .limit(limit)
         .offset(offset)
     ).all()
-    return {
+    response = {
         "items": [customer_stats_response(stats, customer) for stats, customer in rows],
         "limit": limit,
         "offset": offset,
     }
+    return cast(dict[str, object], jsonable_encoder(response))
+
+
+def read_cached_customer_work_request_stats(
+    settings: Settings,
+    cache_key: str,
+) -> dict[str, object] | None:
+    try:
+        cached_response = get_redis_connection(settings).get(cache_key)
+    except RedisError as exc:
+        record_cache_access(CUSTOMER_STATS_CACHE_ENDPOINT, "unavailable")
+        logger.warning(
+            "customer_stats_cache_unavailable",
+            extra={
+                "event": "customer_stats_cache_unavailable",
+                "cache_key": cache_key,
+                "error_class": exc.__class__.__name__,
+            },
+        )
+        return None
+
+    if cached_response is None:
+        record_cache_access(CUSTOMER_STATS_CACHE_ENDPOINT, "miss")
+        return None
+
+    record_cache_access(CUSTOMER_STATS_CACHE_ENDPOINT, "hit")
+    if isinstance(cached_response, bytes):
+        cached_response = cached_response.decode("utf-8")
+    return cast(dict[str, object], json.loads(cached_response))
+
+
+def write_cached_customer_work_request_stats(
+    settings: Settings,
+    cache_key: str,
+    response: dict[str, object],
+) -> None:
+    ttl_seconds = settings.dashboard_customer_work_request_stats_cache_ttl_seconds
+    try:
+        get_redis_connection(settings).setex(
+            cache_key,
+            ttl_seconds,
+            json.dumps(response, sort_keys=True),
+        )
+    except RedisError as exc:
+        record_cache_access(CUSTOMER_STATS_CACHE_ENDPOINT, "write_failed")
+        logger.warning(
+            "customer_stats_cache_write_failed",
+            extra={
+                "event": "customer_stats_cache_write_failed",
+                "cache_key": cache_key,
+                "ttl_seconds": ttl_seconds,
+                "error_class": exc.__class__.__name__,
+            },
+        )
+
+
+def invalidate_customer_work_request_stats_cache(
+    settings: Settings | None = None,
+) -> None:
+    try:
+        redis = get_redis_connection(settings)
+        keys = list(redis.scan_iter(match=f"{CUSTOMER_STATS_CACHE_KEY_PREFIX}:*"))
+        if keys:
+            redis.delete(
+                *(
+                    key.decode("utf-8") if isinstance(key, bytes) else key
+                    for key in keys
+                )
+            )
+    except RedisError as exc:
+        logger.warning(
+            "customer_stats_cache_invalidation_failed",
+            extra={
+                "event": "customer_stats_cache_invalidation_failed",
+                "error_class": exc.__class__.__name__,
+            },
+        )
+
+
+@router.get(
+    "/dashboard/customer-work-request-stats",
+    response_model=CustomerWorkRequestStatsList,
+)
+def list_customer_work_request_stats(
+    session: SessionDependency,
+    settings: SettingsDependency,
+    limit: LimitQuery = 50,
+    offset: OffsetQuery = 0,
+    bypass_cache: bool = Query(default=False),
+) -> dict[str, object]:
+    cache_key = customer_stats_cache_key(limit, offset)
+    if not bypass_cache:
+        cached_response = read_cached_customer_work_request_stats(settings, cache_key)
+        if cached_response is not None:
+            return cached_response
+    else:
+        record_cache_access(CUSTOMER_STATS_CACHE_ENDPOINT, "bypass")
+
+    response = load_customer_work_request_stats(session, limit, offset)
+    if not bypass_cache:
+        write_cached_customer_work_request_stats(settings, cache_key, response)
+    return response
 
 
 def parsed_args() -> argparse.Namespace:
