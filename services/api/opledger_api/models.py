@@ -126,6 +126,7 @@ class ReportJob(Base):
     report_type: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="queued")
     idempotency_key: Mapped[str | None] = mapped_column(String(191), nullable=True)
+    correlation_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     redis_job_id: Mapped[str | None] = mapped_column(String(191), nullable=True)
     result_json: Mapped[dict[str, object] | None] = mapped_column(JSON, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)

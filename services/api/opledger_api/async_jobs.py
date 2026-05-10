@@ -6,6 +6,7 @@ from fastapi import APIRouter, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
+from opledger_api.logging import current_correlation_id
 from opledger_api.models import ReportJob
 from opledger_api.report_contracts import (
     WORK_REQUEST_SUMMARY_REPORT,
@@ -56,6 +57,7 @@ def enqueue_work_request_summary_report_job(
         report_type=WORK_REQUEST_SUMMARY_REPORT,
         status="queued",
         idempotency_key=idempotency_key,
+        correlation_id=current_correlation_id(),
     )
     session.add(report_job)
     try:

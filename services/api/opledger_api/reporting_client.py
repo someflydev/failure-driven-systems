@@ -27,12 +27,17 @@ def render_work_request_summary_report_remote(
     *,
     base_url: str,
     timeout_seconds: float,
+    correlation_id: str | None = None,
 ) -> WorkRequestSummaryReport:
     url = f"{base_url.rstrip('/')}/reports/work-requests/summary/render"
+    headers = (
+        {"X-Correlation-ID": correlation_id} if correlation_id is not None else None
+    )
     try:
         response = httpx.post(
             url,
             json=request.model_dump(mode="json"),
+            headers=headers,
             timeout=timeout_seconds,
         )
         response.raise_for_status()

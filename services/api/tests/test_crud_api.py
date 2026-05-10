@@ -320,13 +320,17 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
 
     monkeypatch.setattr(async_jobs, "enqueue_work_request_summary_report", fake_enqueue)
 
-    enqueue_response = client.post("/reports/work-requests/summary/jobs")
+    enqueue_response = client.post(
+        "/reports/work-requests/summary/jobs",
+        headers={"X-Correlation-ID": "corr-report-1"},
+    )
 
     assert enqueue_response.status_code == 202
     body = enqueue_response.json()
     assert body["id"] == 1
     assert body["report_type"] == "work_request_summary"
     assert body["status"] == "queued"
+    assert body["correlation_id"] == "corr-report-1"
     assert body["redis_job_id"] == "rq-job-1"
     assert body["result_json"] is None
     assert body["attempt_count"] == 0
@@ -335,12 +339,14 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     report_job = db_session.get(ReportJob, 1)
     assert report_job is not None
     assert report_job.status == "queued"
+    assert report_job.correlation_id == "corr-report-1"
     assert report_job.redis_job_id == "rq-job-1"
 
     get_response = client.get("/reports/jobs/1")
 
     assert get_response.status_code == 200
     assert get_response.json()["redis_job_id"] == "rq-job-1"
+    assert get_response.json()["correlation_id"] == "corr-report-1"
 
 
 def test_same_report_idempotency_key_returns_same_job(

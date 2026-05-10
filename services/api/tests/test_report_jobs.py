@@ -37,7 +37,9 @@ def test_report_worker_marks_job_running_then_succeeded_with_result(
 
     def fake_render_report(
         _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
     ) -> WorkRequestSummaryReport:
+        assert correlation_id is None
         running_job = db_session.get(ReportJob, report_job.id)
         assert running_job is not None
         assert running_job.status == "running"
@@ -72,6 +74,47 @@ def test_report_worker_marks_job_running_then_succeeded_with_result(
     assert isinstance(report_job.result_json["generated_at"], str)
 
 
+def test_report_worker_passes_job_correlation_id_to_renderer(
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report_job = ReportJob(
+        report_type="work_request_summary",
+        status="queued",
+        correlation_id="corr-worker-1",
+    )
+    db_session.add(report_job)
+    db_session.commit()
+    patch_report_job_session(monkeypatch, db_session)
+    observed_correlation_id: str | None = None
+
+    def fake_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
+    ) -> WorkRequestSummaryReport:
+        nonlocal observed_correlation_id
+        observed_correlation_id = correlation_id
+        return WorkRequestSummaryReport(
+            generated_at=datetime.now(UTC),
+            total_work_requests=0,
+            by_status={
+                "open": 0,
+                "in_progress": 0,
+                "resolved": 0,
+                "cancelled": 0,
+            },
+            status_event_count=0,
+        )
+
+    monkeypatch.setattr(
+        report_jobs, "render_work_request_summary_report", fake_render_report
+    )
+
+    report_jobs.generate_work_request_summary_report_job(report_job.id)
+
+    assert observed_correlation_id == "corr-worker-1"
+
+
 def test_report_worker_marks_job_failed_when_generation_raises(
     db_session: Session,
     monkeypatch: pytest.MonkeyPatch,
@@ -81,7 +124,11 @@ def test_report_worker_marks_job_failed_when_generation_raises(
     db_session.commit()
     patch_report_job_session(monkeypatch, db_session)
 
-    def fail_render_report(_request: WorkRequestSummaryRenderRequest) -> object:
+    def fail_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
+    ) -> object:
+        assert correlation_id is None
         raise ValueError("report failed")
 
     monkeypatch.setattr(
@@ -110,7 +157,11 @@ def test_report_worker_records_reporting_service_error_reason(
     db_session.commit()
     patch_report_job_session(monkeypatch, db_session)
 
-    def fail_render_report(_request: WorkRequestSummaryRenderRequest) -> object:
+    def fail_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
+    ) -> object:
+        assert correlation_id is None
         raise ReportingServiceError("invalid_response_contract")
 
     monkeypatch.setattr(
@@ -142,7 +193,9 @@ def test_report_worker_retry_attempt_count_changes_after_failure(
 
     def flaky_render_report(
         _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
     ) -> WorkRequestSummaryReport:
+        assert correlation_id is None
         nonlocal build_calls
         build_calls += 1
         if build_calls == 1:
@@ -193,7 +246,9 @@ def test_duplicate_report_worker_execution_keeps_existing_output(
 
     def fake_render_report(
         _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
     ) -> WorkRequestSummaryReport:
+        assert correlation_id is None
         nonlocal build_calls
         build_calls += 1
         return WorkRequestSummaryReport(

@@ -1,4 +1,6 @@
+import logging
 from datetime import UTC, datetime
+from time import perf_counter
 
 from redis import Redis
 from rq import Queue, Retry
@@ -6,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_session
+from opledger_api.logging import configure_logging, set_log_context
 from opledger_api.models import ReportJob
 from opledger_api.notifications import notify_report_completed
 from opledger_api.report_contracts import (
@@ -24,6 +27,7 @@ from opledger_api.reports import (
 )
 
 LOCAL_FAILURE_INJECTION_ENVIRONMENTS = {"local", "test"}
+logger = logging.getLogger("opledger_api.worker")
 
 
 class InjectedReportFailure(RuntimeError):
@@ -103,6 +107,7 @@ def report_failure_message(exc: Exception) -> str:
 
 def render_work_request_summary_report(
     request: WorkRequestSummaryRenderRequest,
+    correlation_id: str | None = None,
 ) -> WorkRequestSummaryReport:
     settings = get_settings()
     if settings.report_rendering_service_url:
@@ -110,6 +115,7 @@ def render_work_request_summary_report(
             request,
             base_url=settings.report_rendering_service_url,
             timeout_seconds=settings.report_rendering_service_timeout_seconds,
+            correlation_id=correlation_id,
         )
     return render_work_request_summary_report_local(request)
 
@@ -125,32 +131,95 @@ def maybe_inject_report_failure(settings: Settings, stage: str) -> None:
 
 def generate_work_request_summary_report_job(report_job_id: int) -> None:
     settings = get_settings()
+    configure_logging(service="opledger-worker", environment=settings.environment)
     with get_session() as session:
         report_job = session.get(ReportJob, report_job_id)
         if report_job is None:
             raise RuntimeError(f"ReportJob {report_job_id} was not found.")
-        if report_job.status == "succeeded" and report_job.result_json is not None:
-            return
-
-        report_job.status = "running"
-        report_job.attempt_count += 1
-        report_job.started_at = datetime.now(UTC)
-        report_job.finished_at = None
-        session.commit()
-
+        set_log_context(
+            service="opledger-worker",
+            environment=settings.environment,
+            request_id=None,
+            correlation_id=report_job.correlation_id,
+        )
         try:
-            maybe_inject_report_failure(settings, "before_generation")
-            render_request = build_work_request_summary_render_request(session)
-            report = render_work_request_summary_report(render_request)
-            maybe_inject_report_failure(settings, "after_partial_progress")
-            report_job.result_json = report_result_json(report)
-            report_job.status = "succeeded"
-            report_job.finished_at = datetime.now(UTC)
-            report_job.error_message = None
-            report_job.last_error = None
-            session.commit()
-        except Exception as exc:
-            mark_report_job_failed(report_job, session, report_failure_message(exc))
-            raise
+            if report_job.status == "succeeded" and report_job.result_json is not None:
+                logger.info(
+                    "report_job_duplicate_completed",
+                    extra={
+                        "event": "report_job_duplicate_completed",
+                        "job_id": report_job.id,
+                        "redis_job_id": report_job.redis_job_id,
+                        "status": report_job.status,
+                    },
+                )
+                return
 
-        notify_report_completed(session, report_job)
+            started_at = perf_counter()
+            report_job.status = "running"
+            report_job.attempt_count += 1
+            report_job.started_at = datetime.now(UTC)
+            report_job.finished_at = None
+            session.commit()
+            logger.info(
+                "report_job_started",
+                extra={
+                    "event": "report_job_started",
+                    "job_id": report_job.id,
+                    "redis_job_id": report_job.redis_job_id,
+                    "attempt_count": report_job.attempt_count,
+                    "status": report_job.status,
+                },
+            )
+
+            try:
+                maybe_inject_report_failure(settings, "before_generation")
+                render_request = build_work_request_summary_render_request(session)
+                report = render_work_request_summary_report(
+                    render_request,
+                    correlation_id=report_job.correlation_id,
+                )
+                maybe_inject_report_failure(settings, "after_partial_progress")
+                report_job.result_json = report_result_json(report)
+                report_job.status = "succeeded"
+                report_job.finished_at = datetime.now(UTC)
+                report_job.error_message = None
+                report_job.last_error = None
+                session.commit()
+            except Exception as exc:
+                mark_report_job_failed(report_job, session, report_failure_message(exc))
+                duration_ms = (perf_counter() - started_at) * 1000
+                logger.warning(
+                    "report_job_failed",
+                    extra={
+                        "event": "report_job_failed",
+                        "job_id": report_job.id,
+                        "redis_job_id": report_job.redis_job_id,
+                        "attempt_count": report_job.attempt_count,
+                        "status": report_job.status,
+                        "duration_ms": round(duration_ms, 2),
+                        "error_class": exc.__class__.__name__,
+                    },
+                )
+                raise
+
+            duration_ms = (perf_counter() - started_at) * 1000
+            logger.info(
+                "report_job_succeeded",
+                extra={
+                    "event": "report_job_succeeded",
+                    "job_id": report_job.id,
+                    "redis_job_id": report_job.redis_job_id,
+                    "attempt_count": report_job.attempt_count,
+                    "status": report_job.status,
+                    "duration_ms": round(duration_ms, 2),
+                },
+            )
+            notify_report_completed(session, report_job)
+        finally:
+            set_log_context(
+                service="opledger-worker",
+                environment=settings.environment,
+                request_id=None,
+                correlation_id=None,
+            )

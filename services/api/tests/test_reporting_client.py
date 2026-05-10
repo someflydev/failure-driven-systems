@@ -29,17 +29,20 @@ def test_reporting_client_posts_payload_and_validates_response(
 ) -> None:
     captured_timeout: object | None = None
     captured_payload: object | None = None
+    captured_headers: object | None = None
 
     def fake_post(
         url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
-        nonlocal captured_timeout, captured_payload
+        nonlocal captured_timeout, captured_payload, captured_headers
         assert url == "http://reporting:8001/reports/work-requests/summary/render"
         captured_timeout = timeout
         captured_payload = json
+        captured_headers = headers
         request = httpx.Request("POST", url)
         return httpx.Response(
             200,
@@ -66,10 +69,12 @@ def test_reporting_client_posts_payload_and_validates_response(
         render_request(),
         base_url="http://reporting:8001/",
         timeout_seconds=1.5,
+        correlation_id="corr-client-1",
     )
 
     assert captured_timeout == 1.5
     assert isinstance(captured_payload, dict)
+    assert captured_headers == {"X-Correlation-ID": "corr-client-1"}
     assert report.total_work_requests == 1
 
 
@@ -80,6 +85,7 @@ def test_reporting_client_maps_timeout_to_clear_exception(
         _url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
         raise httpx.TimeoutException("slow")
@@ -101,6 +107,7 @@ def test_reporting_client_accepts_additive_response_fields(
         url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
         request = httpx.Request("POST", url)
@@ -143,6 +150,7 @@ def test_reporting_client_maps_http_status_to_clear_exception(
         _url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
         request = httpx.Request("POST", "http://reporting/render")
@@ -165,6 +173,7 @@ def test_reporting_client_maps_malformed_json_to_clear_exception(
         url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
         request = httpx.Request("POST", url)
@@ -187,6 +196,7 @@ def test_reporting_client_maps_incompatible_contract_to_clear_exception(
         url: str,
         *,
         json: object,
+        headers: object,
         timeout: float,
     ) -> httpx.Response:
         request = httpx.Request("POST", url)

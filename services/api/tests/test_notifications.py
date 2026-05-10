@@ -52,7 +52,7 @@ def test_report_completion_creates_sent_notification_attempt(
     monkeypatch.setattr(
         report_jobs,
         "render_work_request_summary_report",
-        lambda _request: successful_report(),
+        lambda _request, correlation_id=None: successful_report(),
     )
 
     report_jobs.generate_work_request_summary_report_job(report_job.id)
