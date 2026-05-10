@@ -128,6 +128,51 @@ def test_status_filter_returns_only_matching_work_requests(
     ]
 
 
+def test_work_request_list_is_recent_first_with_stable_tie_breaker(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int, str, str], JsonObject],
+) -> None:
+    customer = create_customer()
+    first_request = create_work_request(resource_id(customer), "open", "First work")
+    second_request = create_work_request(resource_id(customer), "open", "Second work")
+    third_request = create_work_request(resource_id(customer), "resolved", "Third work")
+
+    first_page_response = client.get("/work-requests?limit=2&offset=0")
+    second_page_response = client.get("/work-requests?limit=2&offset=2")
+
+    assert first_page_response.status_code == 200
+    assert second_page_response.status_code == 200
+    assert [item["id"] for item in first_page_response.json()["items"]] == [
+        third_request["id"],
+        second_request["id"],
+    ]
+    assert [item["id"] for item in second_page_response.json()["items"]] == [
+        first_request["id"]
+    ]
+
+
+def test_work_request_status_filter_keeps_recent_first_order(
+    client: TestClient,
+    create_customer: Callable[[], JsonObject],
+    create_work_request: Callable[[int, str, str], JsonObject],
+) -> None:
+    customer = create_customer()
+    first_open_request = create_work_request(resource_id(customer), "open", "Open one")
+    create_work_request(resource_id(customer), "resolved", "Resolved work")
+    second_open_request = create_work_request(resource_id(customer), "open", "Open two")
+
+    response = client.get("/work-requests?status=open&limit=10&offset=0")
+
+    assert response.status_code == 200
+    assert response.json()["limit"] == 10
+    assert response.json()["offset"] == 0
+    assert [item["id"] for item in response.json()["items"]] == [
+        second_open_request["id"],
+        first_open_request["id"],
+    ]
+
+
 def test_list_endpoints_reject_pagination_out_of_bounds(
     client: TestClient,
     create_customer: Callable[[], JsonObject],
