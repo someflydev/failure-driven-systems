@@ -81,9 +81,10 @@ implementation.
   synchronous report pain, Redis/RQ worker flow, durable job status, retries,
   idempotency, safe side effects, scenario drills, review checklist, quiz,
   interview practice, capstone exercise, and capstone rubric.
-- `lessons/phase-3/README.md`: initial Phase 3 lesson path for modular
-  monolith boundaries, report rendering as a candidate boundary, and the
-  warning that extraction is not automatically good.
+- `lessons/phase-3/README.md`: complete Phase 3 lesson path for modular
+  monolith boundaries, report rendering as a candidate boundary, contract
+  compatibility, the stateless reporting-service extraction, failure
+  scenarios, review checklist, quiz, interview practice, and capstone defense.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -139,6 +140,10 @@ implementation.
 - `exercises/phase-3/04-timeouts-and-contracts.md`: Phase 3 exercise for
   running reporting timeout and bad-contract scenarios, inspecting durable job
   evidence and logs, and explaining user-visible impact.
+- `exercises/phase-3/05-phase-3-capstone.md`: Phase 3 capstone requiring one
+  backward-compatible report contract change, one service-boundary failure
+  scenario, technical verification, a short decision memo defending whether
+  the extraction should stay, and delayed LLM senior-review critique.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -178,6 +183,10 @@ implementation.
 - `reviews/checklists/phase-2-async-review.md`: practical Phase 2 async review
   checklist covering job API behavior, Redis/Postgres ownership, retries,
   idempotency, side effects, scenario evidence, and scope control.
+- `reviews/checklists/phase-3-service-boundary-review.md`: Phase 3
+  service-boundary review checklist covering ownership, contract stability,
+  timeout behavior, retries, deployment cost, debugging, rollback, and scope
+  control.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature
@@ -186,6 +195,10 @@ implementation.
   capstone covering scenario execution, async state reasoning,
   retry/idempotency design, Redis/Postgres ownership, fix or explanation
   quality, and scope control.
+- `reviews/rubrics/phase-3-capstone.md`: scoring rubric for the Phase 3
+  capstone covering backward-compatible contract change, failure scenario
+  evidence, boundary reasoning, decision memo quality, verification, LLM
+  senior-review use, and scope control.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
@@ -197,11 +210,17 @@ implementation.
 - `quizzes/phase-2.md`: Phase 2 short-answer quiz for async work, retries,
   idempotency, duplicates, Redis versus Postgres, side effects, and eventual
   consistency.
+- `quizzes/phase-3.md`: Phase 3 short-answer quiz for modular monoliths,
+  service extraction, contracts, compatibility, timeouts, partial failure, and
+  extraction defense.
 - `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
   strong-answer traits instead of canned answers.
 - `interviews/phase-2-backend-distributed.md`: Phase 2 backend and distributed
   systems mock interview prompts with strong-answer traits for async jobs,
   queue coordination, retries, idempotency, side effects, and scope control.
+- `interviews/phase-3-distributed-boundaries.md`: Phase 3 distributed-boundary
+  mock interview prompts with strong-answer traits for ownership, extraction
+  decisions, contracts, failure debugging, operations, and scope control.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,

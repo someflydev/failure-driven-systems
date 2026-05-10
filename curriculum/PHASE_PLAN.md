@@ -80,6 +80,8 @@ OpsLedger capability:
 - Define ownership and interfaces around data changes and side effects.
 - Study report rendering as the first possible extraction candidate because it
   is derived computation rather than source-of-truth ownership.
+- Exercise one stateless extracted report-rendering service, then require a
+  capstone defense of whether that extraction should stay.
 
 Allowed concepts:
 
@@ -99,11 +101,15 @@ Expected failure experiences:
 - Tangled dependencies, unclear ownership of status changes, reporting logic
   coupled to write paths, notification code leaking across modules, and
   transaction boundaries that are hard to reason about.
+- Reporting-service timeouts, malformed responses, incompatible contract
+  responses, mixed-version contract drift, and the operational cost of one more
+  process to deploy, inspect, and roll back.
 
 Explanation outcomes:
 
 - Explain which module owns each decision, where coupling remains acceptable,
-  what would justify extraction, and what extra costs a split service would add.
+  what would justify extraction, what extra costs a split service would add,
+  and whether the reporting extraction should stay based on evidence.
 
 ## Phase 4: Observability And Incidents
 

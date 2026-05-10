@@ -66,6 +66,30 @@ Concepts may include bounded contexts, internal APIs, dependency direction,
 transaction boundaries, and integration contracts. Service sprawl is treated as
 a cost, not a maturity signal.
 
+Phase 3 concrete path:
+
+- `lessons/phase-3/README.md`
+- `docs/architecture/modular-monolith.md`
+- `docs/adr/0001-report-rendering-boundary.md`
+- `docs/contracts/report-rendering-v1.md`
+- `docs/contracts/compatibility-playbook.md`
+- `scenarios/phase-3/`
+- `reviews/checklists/phase-3-service-boundary-review.md`
+- `quizzes/phase-3.md`
+- `interviews/phase-3-distributed-boundaries.md`
+- `reviews/rubrics/phase-3-capstone.md`
+
+Boundaries:
+
+- Extract only the stateless report renderer in this phase.
+- Do not add another deployable service.
+- Do not move source-of-truth ownership out of the core API and Postgres.
+- Do not introduce Kubernetes or k3s yet.
+- Do not add caching, performance optimization, or broad observability stack
+  work.
+- Require learners to defend the extraction decision, including the option to
+  fold the renderer back into the monolith.
+
 ## Phase 4: Observability And Incidents
 
 Operational judgment becomes explicit. Learners should investigate failures,

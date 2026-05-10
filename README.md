@@ -162,3 +162,16 @@ rubric in order.
 Phase 2 keeps Postgres as the source of truth and uses Redis only for queue
 coordination. It does not introduce service extraction, k3s, caching, or a
 broad observability stack.
+
+## Phase 3 Path
+
+Start with `lessons/phase-3/README.md` after completing Phase 2. It links the
+modular monolith boundary review, report-rendering ADR, versioned contract
+work, stateless reporting-service extraction, timeout and compatibility
+scenarios, service-boundary review checklist, quiz, interview practice, and
+capstone rubric in order.
+
+Phase 3 intentionally extracts only report rendering. The lesson is not that
+microservices are better; it is that service boundaries add ownership,
+contract, timeout, deployment, debugging, rollback, and local development costs
+that must be defended against concrete evidence.
