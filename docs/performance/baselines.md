@@ -161,3 +161,8 @@ An acceptable Phase 5 optimization proposal must cite a baseline. For example:
 
 If the baseline does not show pressure, the correct conclusion is to keep the
 system simple and gather better evidence later.
+
+After a baseline names the filtered work request list as a candidate hot path,
+inspect the query shape with `docs/performance/query-inspection.md` before
+adding more storage structures. Indexes are durable write-side work, not free
+read speed.

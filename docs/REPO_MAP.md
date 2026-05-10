@@ -63,6 +63,9 @@ implementation.
 - `docs/performance/baselines.md`: Phase 5 guide to the lightweight baseline
   runner, safe local defaults, VPS limits, result recording, and the
   measurement-before-optimization rule.
+- `docs/performance/query-inspection.md`: Phase 5 guide to inspecting the
+  filtered work request list query with `EXPLAIN`, interpreting plan shape, and
+  documenting the write/storage cost of the narrow composite index.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -178,6 +181,10 @@ implementation.
 - `exercises/phase-5/01-measure-before-optimizing.md`: first Phase 5 exercise
   requiring baseline latency and error evidence, dataset notes, metrics
   snippets, and one suspected bottleneck before changing code.
+- `exercises/phase-5/02-pagination-and-indexes.md`: Phase 5 exercise requiring
+  learners to validate bounded pagination, stable ordering, filtered query
+  behavior, and before/after query-plan reasoning for a narrowly justified
+  work request index.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -322,8 +329,8 @@ implementation.
   `/metrics` surface as the API.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
-  migrations for customers, work requests, status events, report jobs, and
-  notification attempts.
+  migrations for customers, work requests, status events, report jobs,
+  notification attempts, and the Phase 5 filtered work request list index.
 - `services/api/tests/`: API scaffold, CRUD route, status history, report job
   endpoint and worker lifecycle, reporting client, model, and schema tests.
 - `services/reporting/tests/`: reporting service contract tests.

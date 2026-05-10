@@ -16,9 +16,12 @@ choose the smallest optimization that fits the evidence.
    compared with the API's existing HTTP metrics.
 4. Complete `exercises/phase-5/01-measure-before-optimizing.md` by collecting
    baseline latency and error evidence before changing code.
-5. Revisit the Phase 2 report exercises and Phase 4 metrics exercise to connect
+5. Read `docs/performance/query-inspection.md`, then complete
+   `exercises/phase-5/02-pagination-and-indexes.md` to connect safe
+   pagination, query plans, and narrowly justified indexes.
+6. Revisit the Phase 2 report exercises and Phase 4 metrics exercise to connect
    request latency, durable report job state, and derived report behavior.
-6. Write a bottleneck hypothesis from measured data. The hypothesis may be that
+7. Write a bottleneck hypothesis from measured data. The hypothesis may be that
    the current dataset does not justify optimization yet.
 
 ## Performance Focus
@@ -36,5 +39,6 @@ Learners should be able to explain:
   denormalized read model.
 - What new failure mode each optimization accepts.
 
-Future Phase 5 lessons may add query-plan inspection, indexes, caching, and read
-models. They should cite baseline evidence before changing system behavior.
+Future Phase 5 lessons may add caching and read models. They should cite
+baseline evidence before changing system behavior and account for the new
+failure modes they introduce.
