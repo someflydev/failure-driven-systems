@@ -56,6 +56,10 @@ implementation.
 - `docs/observability/logging-and-correlation.md`: Phase 4 guide to structured
   JSON logs, request IDs, correlation IDs, report job propagation, secret-safe
   log fields, and what remains out of scope before metrics or tracing.
+- `docs/observability/metrics.md`: Phase 4 guide to the lightweight
+  Prometheus-compatible `/metrics` surfaces, metric names, operational
+  questions, label safety rules, worker exposure limitation, and internal-only
+  access expectations.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -153,6 +157,10 @@ implementation.
 - `exercises/phase-4/01-follow-a-request-through-logs.md`: first Phase 4
   exercise for tracing one report workflow through API, worker, reporting
   service, durable job status, and sanitized logs using a correlation ID.
+- `exercises/phase-4/02-meaningful-metrics.md`: Phase 4 exercise for breaking a
+  reporting dependency, observing request/job/reporting/notification metrics,
+  checking durable job status, and explaining what changed without adding a
+  heavy observability stack.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -186,6 +194,9 @@ implementation.
 - `ops/runbooks/dokku-api-incident.md`: Dokku API incident runbook for bad env
   vars, unavailable Postgres, failed migrations, boot failures, memory pressure,
   and unreadable logs.
+- `ops/dashboards/README.md`: lightweight dashboard sketch and Prometheus query
+  examples for API traffic, report jobs, reporting boundary failures, and
+  notifications without requiring Grafana or a Prometheus container.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
@@ -238,13 +249,14 @@ implementation.
   client, async report job state, notification attempts, shared route
   dependencies, a worker entrypoint with bounded retries, completed-output
   duplicate execution protection, local/test failure injection, structured
-  JSON logs, request ID handling, and correlation ID propagation through report
-  jobs.
+  JSON logs, request ID handling, correlation ID propagation through report
+  jobs, and lightweight in-process metrics for HTTP, report job, worker,
+  reporting-boundary, and notification signals.
 - `services/reporting/reporting_service/`: stateless FastAPI report-rendering
   service that implements `report-rendering.v1` without database ownership and
   exposes disabled-by-default local/test failure modes for boundary drills,
-  with the same structured request logging and correlation header handling as
-  the API.
+  with the same structured request logging, correlation header handling, and
+  `/metrics` surface as the API.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and
