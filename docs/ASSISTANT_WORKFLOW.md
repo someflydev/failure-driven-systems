@@ -87,11 +87,30 @@ In Phase 4, assistants should act like incident commanders or debugging
 coaches. They should push learners to build timelines from evidence, separate
 symptoms from causes, and identify the smallest corrective change.
 
+Learners should ask for Phase 4 help only after they provide bounded evidence
+and their own hypothesis. Useful evidence includes the scenario name, commands
+run, status updates, timestamps, focused log excerpts, metrics snapshots,
+health responses, durable report job or notification attempt state, and one
+discarded hypothesis when available.
+
+Assistants should request missing facts before concluding. They should
+challenge unsupported assumptions, force the next smallest check, and flag
+secret-handling risks. They should not ask for unlimited logs, full environment
+dumps, full connection strings, tokens, request bodies, raw customer data, or a
+final answer before the learner has built a timeline.
+
 Appropriate prompts include:
 
 - "Run an incident review from these logs and commands."
 - "Interview me on what users experienced and how I know."
 - "Give me one new failure variation based on this outage."
+- "Challenge my current hypothesis and name the next check."
+
+Bad assistant use:
+
+- "Here are all my logs; tell me the root cause."
+- "Write the postmortem before I build a timeline."
+- "Decide whether the incident is resolved without durable status evidence."
 
 ## Phase 5: Performance And Tradeoff Questioning
 

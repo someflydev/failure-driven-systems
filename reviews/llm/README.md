@@ -123,3 +123,12 @@ idempotency, consistency, observability, performance, deployment constraints,
 and tradeoffs. Do not answer for me unless I ask for critique after attempting
 an answer.
 ```
+
+## Stricter Phase 4 Workflows
+
+Use these files for incident analysis, bounded log review, and postmortem
+critique after collecting evidence and writing your own hypothesis:
+
+- `TEMPLATE_incident_commander.md`
+- `TEMPLATE_log_analysis_helper.md`
+- `TEMPLATE_postmortem_critique.md`
