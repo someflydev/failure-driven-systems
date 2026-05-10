@@ -1,8 +1,10 @@
 """HTTP client for the extracted report-rendering service."""
 
 from dataclasses import dataclass
+from json import JSONDecodeError
 
 import httpx
+from pydantic import ValidationError
 
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
@@ -10,7 +12,7 @@ from opledger_api.report_contracts import (
 )
 
 
-@dataclass(frozen=True)
+@dataclass
 class ReportingServiceError(RuntimeError):
     """Raised when remote report rendering fails in a bounded way."""
 
@@ -37,11 +39,18 @@ def render_work_request_summary_report_remote(
     except httpx.TimeoutException as exc:
         raise ReportingServiceError("timeout") from exc
     except httpx.HTTPStatusError as exc:
-        raise ReportingServiceError(f"http_{exc.response.status_code}") from exc
+        raise ReportingServiceError(
+            f"non_2xx_status_{exc.response.status_code}"
+        ) from exc
     except httpx.RequestError as exc:
-        raise ReportingServiceError(exc.__class__.__name__) from exc
+        raise ReportingServiceError(f"request_error_{exc.__class__.__name__}") from exc
 
     try:
-        return WorkRequestSummaryReport.model_validate(response.json())
-    except ValueError as exc:
-        raise ReportingServiceError("invalid_response") from exc
+        response_payload = response.json()
+    except JSONDecodeError as exc:
+        raise ReportingServiceError("invalid_response_json") from exc
+
+    try:
+        return WorkRequestSummaryReport.model_validate(response_payload)
+    except ValidationError as exc:
+        raise ReportingServiceError("invalid_response_contract") from exc

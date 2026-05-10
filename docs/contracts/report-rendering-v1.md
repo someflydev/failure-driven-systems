@@ -36,7 +36,9 @@ Optional fields:
 
 Validation rules:
 
-- Unknown request fields are rejected.
+- Unknown request fields are ignored. This allows a newer caller to send a
+  backward-compatible optional field to an older renderer, but safe additions
+  must not change required rendering behavior.
 - Status counts must include every known work request status.
 - Status count values cannot be negative.
 - Status counts must add up to `total_work_requests`.
@@ -62,7 +64,9 @@ Optional fields:
 
 Validation rules:
 
-- Unknown response fields are rejected.
+- Unknown response fields are ignored by current consumers. This allows a newer
+  renderer to return additive metadata to an older worker while required v1
+  fields still validate strictly.
 - Status count completeness and total consistency match the request rules.
 
 ## Compatibility Rules
@@ -71,6 +75,8 @@ Backward-compatible changes:
 
 - Add an optional request field with a default or nullable value.
 - Add an optional response field with a default.
+- Add response metadata that old consumers may ignore without changing the
+  meaning of required fields.
 - Widen documentation around field meaning without changing field names,
   requiredness, types, or semantics.
 - Add renderer behavior that preserves the same output for the same v1 input

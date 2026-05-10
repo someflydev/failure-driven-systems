@@ -25,7 +25,7 @@ class WorkRequestSummaryRenderRequest(BaseModel):
     status_event_count: int = Field(ge=0)
     requested_by: str | None = None
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     @model_validator(mode="after")
     def status_counts_are_complete_and_consistent(
@@ -49,7 +49,7 @@ class WorkRequestSummaryReport(BaseModel):
     status_event_count: int = Field(ge=0)
     warnings: list[str] = Field(default_factory=list)
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     @model_validator(mode="after")
     def status_counts_are_complete_and_consistent(self) -> "WorkRequestSummaryReport":

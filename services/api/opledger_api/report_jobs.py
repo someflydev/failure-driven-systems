@@ -15,7 +15,10 @@ from opledger_api.report_contracts import (
 from opledger_api.report_renderer import (
     render_work_request_summary_report as render_work_request_summary_report_local,
 )
-from opledger_api.reporting_client import render_work_request_summary_report_remote
+from opledger_api.reporting_client import (
+    ReportingServiceError,
+    render_work_request_summary_report_remote,
+)
 from opledger_api.reports import (
     build_work_request_summary_render_request,
 )
@@ -92,6 +95,12 @@ def report_result_json(report: WorkRequestSummaryReport) -> dict[str, object]:
     return report.model_dump(mode="json")
 
 
+def report_failure_message(exc: Exception) -> str:
+    if isinstance(exc, ReportingServiceError):
+        return str(exc)
+    return exc.__class__.__name__
+
+
 def render_work_request_summary_report(
     request: WorkRequestSummaryRenderRequest,
 ) -> WorkRequestSummaryReport:
@@ -141,7 +150,7 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
             report_job.last_error = None
             session.commit()
         except Exception as exc:
-            mark_report_job_failed(report_job, session, exc.__class__.__name__)
+            mark_report_job_failed(report_job, session, report_failure_message(exc))
             raise
 
         notify_report_completed(session, report_job)
