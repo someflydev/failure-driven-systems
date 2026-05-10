@@ -88,6 +88,29 @@ implementation.
 - `docs/performance/caching.md`: Phase 5 guide to the one Redis cached
   dashboard endpoint, stable keys, TTL, bypass, invalidation, stale-cache risk,
   Redis outage fallback, and why Redis is not authoritative.
+- `docs/storage/README.md`: Phase 6 storage decision guide tying datastore
+  choices to actual OpsLedger ownership, workloads, operational cost, and the
+  discipline of not adding another store without evidence.
+- `docs/storage/relational-postgres.md`: Phase 6 comparison note explaining why
+  relational Postgres fits OpsLedger source-of-truth facts and what it costs.
+- `docs/storage/document-stores.md`: Phase 6 comparison note for flexible
+  document-shaped data and why current work request state remains relational.
+- `docs/storage/key-value-and-cache.md`: Phase 6 comparison note for Redis,
+  key-value lookups, queue coordination, cache speed, and disposable state.
+- `docs/storage/queues-and-streams.md`: Phase 6 comparison note for queues,
+  streams, replay, consumer failure, and why Redis/RQ is enough today.
+- `docs/storage/search-indexes.md`: Phase 6 comparison note for search as
+  derived state, including staleness, rebuild, relevance, and authorization
+  risks.
+- `docs/storage/analytical-stores.md`: Phase 6 comparison note for analytical
+  stores, long-range aggregation, freshness gaps, and why the current dashboard
+  read model is enough.
+- `docs/storage/vector-storage.md`: Phase 6 comparison note for vector
+  retrieval, embeddings, evaluation, privacy, and why it is not source of
+  truth.
+- `docs/storage/when-not-to-add-a-datastore.md`: Phase 6 guide to refusing
+  extra datastores when current OpsLedger evidence does not justify the
+  operational burden.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -127,9 +150,9 @@ implementation.
   measurement, query inspection, indexes, read models, Redis caching,
   staleness scenarios, review checklist, quiz, interview practice, and
   capstone.
-- `lessons/phase-6/README.md`: initial Phase 6 path for current-architecture
-  review, ADR reading, decision memo defense, architecture review, and
-  interview practice.
+- `lessons/phase-6/README.md`: Phase 6 path for current-architecture review,
+  ADR reading, storage tradeoff comparison, decision memo defense,
+  architecture review, and interview practice.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -226,6 +249,10 @@ implementation.
   requiring a small architecture decision memo grounded in current workload,
   team, evidence, alternatives, consequences, failure modes, operational cost,
   rollback, and interview defense.
+- `exercises/phase-6/02-datastore-tradeoff-defense.md`: Phase 6 exercise for
+  defending whether OpsLedger should add, reject, or remove a datastore based
+  on workload evidence, source-of-truth ownership, failure modes, and small-team
+  operational cost.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -374,6 +401,10 @@ implementation.
 - `interviews/phase-5-performance-scaling.md`: Phase 5 performance and scaling
   mock interview prompts with strong-answer traits for baselines, query shape,
   read models, Redis cache, staleness, outage fallback, and tradeoff defense.
+- `interviews/phase-6-storage-systems.md`: Phase 6 storage systems mock
+  interview prompts with strong-answer traits for source-of-truth ownership,
+  Redis, document stores, queues/streams, search, analytics, vector storage,
+  and refusing unjustified datastores.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
