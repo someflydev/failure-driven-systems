@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from opledger_api.config import get_settings
 from opledger_api.health import router as health_router
 from opledger_api.logging import configure_logging, log_request
+from opledger_api.metrics import metrics_response
 from opledger_api.routes import router as opsledger_router
 
 
@@ -53,6 +54,10 @@ def create_app() -> FastAPI:
     @app.get("/")
     def root() -> dict[str, str]:
         return {"service": settings.app_name, "status": "ok"}
+
+    @app.get("/metrics")
+    def metrics() -> object:
+        return metrics_response()
 
     return app
 

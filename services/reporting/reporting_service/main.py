@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse, Response
 
 from opledger_api.logging import configure_logging, log_request
+from opledger_api.metrics import metrics_response
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
@@ -29,6 +30,10 @@ def create_app() -> FastAPI:
     @app.get("/health/ready")
     def ready() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/metrics")
+    def metrics() -> object:
+        return metrics_response()
 
     @app.post(
         "/reports/work-requests/summary/render",

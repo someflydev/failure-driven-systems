@@ -4,6 +4,7 @@ from time import monotonic
 import pytest
 from fastapi.testclient import TestClient
 
+from opledger_api.metrics import metrics_registry
 from reporting_service.config import get_settings
 from reporting_service.main import create_app
 
@@ -49,6 +50,25 @@ def test_reporting_service_renders_contract_payload() -> None:
         "status_event_count": 5,
         "warnings": [],
     }
+
+
+def test_reporting_service_metrics_endpoint_uses_reporting_service_label() -> None:
+    metrics_registry.reset()
+    client = TestClient(create_app())
+
+    render_response = client.post(
+        "/reports/work-requests/summary/render",
+        json=valid_render_payload(),
+    )
+    metrics_response = client.get("/metrics")
+
+    assert render_response.status_code == 200
+    assert metrics_response.status_code == 200
+    assert (
+        'opledger_http_requests_total{method="POST",'
+        'path="/reports/work-requests/summary/render",'
+        'service="opledger-reporting",status="200"}'
+    ) in metrics_response.text
 
 
 def test_reporting_service_rejects_invalid_contract_payload() -> None:

@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from opledger_api.db import DatabaseReadinessError
 from opledger_api.health import get_readiness_checker
 from opledger_api.main import create_app
+from opledger_api.metrics import metrics_registry
 
 
 def test_root_route_reports_service() -> None:
@@ -41,6 +42,23 @@ def test_request_logging_includes_method_path_and_status(
     assert request_log_fields.method == "GET"
     assert request_log_fields.path == "/health/live"
     assert request_log_fields.status == 200
+
+
+def test_metrics_endpoint_exposes_prometheus_text_with_route_template() -> None:
+    metrics_registry.reset()
+    client = TestClient(create_app())
+
+    health_response = client.get("/health/live")
+    metrics_response = client.get("/metrics")
+
+    assert health_response.status_code == 200
+    assert metrics_response.status_code == 200
+    assert "text/plain" in metrics_response.headers["content-type"]
+    assert (
+        'opledger_http_requests_total{method="GET",path="/health/live",'
+        'service="opledger-api",status="200"}'
+    ) in metrics_response.text
+    assert "opledger_http_request_duration_seconds_bucket" in metrics_response.text
 
 
 def test_live_health_check_has_no_external_dependency() -> None:

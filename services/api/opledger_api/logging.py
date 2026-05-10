@@ -9,6 +9,8 @@ from uuid import uuid4
 from fastapi import Request
 from starlette.responses import Response
 
+from opledger_api.metrics import record_http_request
+
 REQUEST_ID_HEADER = "x-request-id"
 CORRELATION_ID_HEADER = "x-correlation-id"
 REQUEST_ID_RESPONSE_HEADER = "X-Request-ID"
@@ -120,6 +122,10 @@ def current_correlation_id() -> str | None:
     return correlation_id_context.get()
 
 
+def current_service() -> str:
+    return service_context.get() or "unknown"
+
+
 def set_log_context(
     *,
     service: str | None = None,
@@ -148,12 +154,20 @@ async def log_request(
         response = await call_next(request)
     except Exception:
         duration_ms = (perf_counter() - started_at) * 1000
+        route_path = matched_route_path(request)
+        record_http_request(
+            service=current_service(),
+            method=request.method,
+            path=route_path,
+            status_code=500,
+            duration_seconds=duration_ms / 1000,
+        )
         logger.exception(
             "http_request_failed",
             extra={
                 "event": "http_request_failed",
                 "method": request.method,
-                "path": request.url.path,
+                "path": route_path,
                 "status": 500,
                 "duration_ms": round(duration_ms, 2),
             },
@@ -163,6 +177,14 @@ async def log_request(
         raise
 
     duration_ms = (perf_counter() - started_at) * 1000
+    route_path = matched_route_path(request)
+    record_http_request(
+        service=current_service(),
+        method=request.method,
+        path=route_path,
+        status_code=response.status_code,
+        duration_seconds=duration_ms / 1000,
+    )
     response.headers[REQUEST_ID_RESPONSE_HEADER] = request_id
     response.headers[CORRELATION_ID_RESPONSE_HEADER] = correlation_id
     logger.info(
@@ -170,7 +192,7 @@ async def log_request(
         extra={
             "event": "http_request",
             "method": request.method,
-            "path": request.url.path,
+            "path": route_path,
             "status": response.status_code,
             "duration_ms": round(duration_ms, 2),
         },
@@ -178,3 +200,11 @@ async def log_request(
     request_id_context.reset(request_id_token)
     correlation_id_context.reset(correlation_id_token)
     return response
+
+
+def matched_route_path(request: Request) -> str:
+    route = request.scope.get("route")
+    path = getattr(route, "path", None)
+    if isinstance(path, str):
+        return path
+    return "__unmatched__"
