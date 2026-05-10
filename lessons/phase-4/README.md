@@ -18,9 +18,14 @@ helps an operator explain what happened.
 5. Complete `exercises/phase-4/02-meaningful-metrics.md` by breaking the
    reporting dependency, observing metrics, and tying them back to durable job
    status.
-6. Use `ops/runbooks/phase-1-first-response.md` and
-   `ops/runbooks/dokku-api-incident.md` as examples of evidence-first
-   operations before writing broader Phase 4 runbooks.
+6. Read `ops/runbooks/report-jobs-stuck.md` and
+   `ops/runbooks/reporting-service-down.md` to practice evidence-first
+   operational checks for the async reporting workflow.
+7. Run one incident scenario from `scenarios/phase-4/` and complete
+   `exercises/phase-4/03-incident-debugging-drill.md` with status updates,
+   evidence, and a short postmortem.
+8. Use `reviews/checklists/incident-review.md` to critique the incident
+   response quality after the learner has written their own timeline.
 
 ## Observability Focus
 
@@ -37,7 +42,8 @@ Learners should be able to explain:
   prompts.
 - What questions remain unanswered until alerting, tracing, or dedicated worker
   metrics exposure is justified.
+- How concise status updates, runbooks, and postmortems keep incident learning
+  grounded in observed evidence.
 
-Future Phase 4 lessons may add alerting, incident reviews, rollback practice,
-and postmortems. They should stay grounded in observed failures and small-system
-operational constraints.
+Future Phase 4 lessons may add alerting and rollback practice. They should stay
+grounded in observed failures and small-system operational constraints.

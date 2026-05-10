@@ -92,9 +92,9 @@ implementation.
   monolith boundaries, report rendering as a candidate boundary, contract
   compatibility, the stateless reporting-service extraction, failure
   scenarios, review checklist, quiz, interview practice, and capstone defense.
-- `lessons/phase-4/README.md`: initial Phase 4 lesson path for structured
-  logging, request/correlation IDs, revisiting async and reporting scenarios,
-  and evidence-first incident timelines.
+- `lessons/phase-4/README.md`: Phase 4 lesson path for structured logging,
+  metrics, request/correlation IDs, incident scenarios, status updates,
+  runbooks, postmortems, and evidence-first review.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -161,6 +161,10 @@ implementation.
   reporting dependency, observing request/job/reporting/notification metrics,
   checking durable job status, and explaining what changed without adding a
   heavy observability stack.
+- `exercises/phase-4/03-incident-debugging-drill.md`: Phase 4 incident drill
+  requiring a scenario run, two status updates, evidence across logs, metrics,
+  durable status, one discarded hypothesis, and a learner-written postmortem
+  before LLM critique.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -188,12 +192,36 @@ implementation.
   malformed and incompatible reporting service responses.
 - `scenarios/phase-3/mixed-version-contract.md`: guided contract scenario for
   additive v1 fields, incompatible contract drift, and consumer-driven tests.
+- `scenarios/phase-4/reporting-service-latency-incident.md`: incident drill for
+  slow reporting service behavior using health, logs, metrics, durable report
+  job evidence, and status updates.
+- `scenarios/phase-4/worker-stalled-incident.md`: incident drill for accepted
+  report jobs that remain queued while the worker is stopped, then recover
+  after worker restart.
+- `scenarios/phase-4/noisy-nonfatal-errors.md`: incident drill for separating
+  notification side-effect failures from successful report generation using
+  notification attempts and metrics.
+- `scenarios/phase-4/ambiguous-logs-before-correlation.md`: incident drill for
+  comparing unfiltered logs with correlation-filtered timelines across API,
+  worker, reporting service, and durable job state.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
 - `ops/runbooks/dokku-api-incident.md`: Dokku API incident runbook for bad env
   vars, unavailable Postgres, failed migrations, boot failures, memory pressure,
   and unreadable logs.
+- `ops/runbooks/report-jobs-stuck.md`: Phase 4 runbook for queued or running
+  report jobs that are not progressing, using health checks, durable job
+  status, logs, metrics, and worker/reporting-service evidence.
+- `ops/runbooks/reporting-service-down.md`: Phase 4 runbook for reporting
+  service boundary incidents covering health, worker failures, contract
+  failures, latency, metrics, mitigations, and resolution checks.
+- `ops/incidents/TEMPLATE_incident_status_update.md`: concise Phase 4 status
+  update template for impact, evidence, hypothesis, current action, and next
+  update time during an incident.
+- `ops/incidents/TEMPLATE_postmortem.md`: Phase 4 postmortem template for
+  learner-owned timelines, impact, detection, root cause, contributing factors,
+  action items, and interview explanation.
 - `ops/dashboards/README.md`: lightweight dashboard sketch and Prometheus query
   examples for API traffic, report jobs, reporting boundary failures, and
   notifications without requiring Grafana or a Prometheus container.
@@ -207,6 +235,9 @@ implementation.
   service-boundary review checklist covering ownership, contract stability,
   timeout behavior, retries, deployment cost, debugging, rollback, and scope
   control.
+- `reviews/checklists/incident-review.md`: Phase 4 checklist for critiquing
+  incident response quality, evidence use, correlation, status updates,
+  postmortems, LLM use, and scope control.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature
