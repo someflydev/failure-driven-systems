@@ -60,6 +60,9 @@ implementation.
   Prometheus-compatible `/metrics` surfaces, metric names, operational
   questions, label safety rules, worker exposure limitation, and internal-only
   access expectations.
+- `docs/performance/baselines.md`: Phase 5 guide to the lightweight baseline
+  runner, safe local defaults, VPS limits, result recording, and the
+  measurement-before-optimization rule.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -95,6 +98,9 @@ implementation.
 - `lessons/phase-4/README.md`: Phase 4 lesson path for structured logging,
   metrics, request/correlation IDs, incident scenarios, status updates,
   runbooks, postmortems, and evidence-first review.
+- `lessons/phase-5/README.md`: initial Phase 5 lesson path for safe baseline
+  measurement, metrics comparison, bottleneck hypotheses, and delayed
+  optimization.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -169,6 +175,9 @@ implementation.
   scenario evidence, bounded logs and metrics, durable status, status updates,
   hypotheses, learner-written postmortem, and LLM critique without outsourcing
   conclusions.
+- `exercises/phase-5/01-measure-before-optimizing.md`: first Phase 5 exercise
+  requiring baseline latency and error evidence, dataset notes, metrics
+  snippets, and one suspected bottleneck before changing code.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -332,6 +341,9 @@ implementation.
 - `scripts/scenarios/phase2_redis_down.sh`: small helper for stopping,
   starting, or inspecting Redis and the worker during Phase 2 Redis-down
   drills.
+- `scripts/perf/baseline.py`: dependency-free Phase 5 baseline runner for
+  low-rate work request listing, opt-in work request creation, report job
+  polling, and a small deterministic local read fixture.
 
 ## Intended Layers
 

@@ -175,3 +175,15 @@ Phase 3 intentionally extracts only report rendering. The lesson is not that
 microservices are better; it is that service boundaries add ownership,
 contract, timeout, deployment, debugging, rollback, and local development costs
 that must be defended against concrete evidence.
+
+## Phase 4 Path
+
+Start with `lessons/phase-4/README.md` after completing Phase 3. It links
+structured logs, metrics, correlation IDs, incident drills, runbooks,
+postmortems, and evidence-first review.
+
+## Phase 5 Path
+
+Start with `lessons/phase-5/README.md` after completing Phase 4. It begins
+with lightweight performance baselines, safe local defaults, and bottleneck
+hypotheses before any cache, index, or read model work.
