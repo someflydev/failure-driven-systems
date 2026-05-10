@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from opledger_api import report_jobs
 from opledger_api.config import Settings
+from opledger_api.metrics import metrics_registry
 from opledger_api.models import ReportJob
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
@@ -72,6 +73,40 @@ def test_report_worker_marks_job_running_then_succeeded_with_result(
     assert report_job.attempt_count == 1
     assert report_job.result_json is not None
     assert isinstance(report_job.result_json["generated_at"], str)
+
+
+def test_report_worker_records_success_and_failure_metrics(
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    metrics_registry.reset()
+    report_job = ReportJob(report_type="work_request_summary", status="queued")
+    db_session.add(report_job)
+    db_session.commit()
+    patch_report_job_session(monkeypatch, db_session)
+
+    def fail_render_report(
+        _request: WorkRequestSummaryRenderRequest,
+        correlation_id: str | None = None,
+    ) -> object:
+        raise ValueError("report failed")
+
+    monkeypatch.setattr(
+        report_jobs, "render_work_request_summary_report", fail_render_report
+    )
+
+    with pytest.raises(ValueError, match="report failed"):
+        report_jobs.generate_work_request_summary_report_job(report_job.id)
+
+    rendered_metrics = metrics_registry.render()
+    assert (
+        'opledger_report_jobs_completed_total{report_type="work_request_summary",'
+        'status="failed"} 1'
+    ) in rendered_metrics
+    assert (
+        'opledger_worker_job_failures_total{error_class="ValueError",'
+        'job_type="work_request_summary"} 1'
+    ) in rendered_metrics
 
 
 def test_report_worker_passes_job_correlation_id_to_renderer(

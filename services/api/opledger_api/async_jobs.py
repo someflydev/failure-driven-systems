@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from opledger_api.logging import current_correlation_id
+from opledger_api.metrics import record_report_job_completed, record_report_job_queued
 from opledger_api.models import ReportJob
 from opledger_api.report_contracts import (
     WORK_REQUEST_SUMMARY_REPORT,
@@ -86,6 +87,7 @@ def enqueue_work_request_summary_report_job(
         report_job.finished_at = now
         report_job.last_failed_at = now
         session.commit()
+        record_report_job_completed(report_job.report_type, "failed")
         raise error_response(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             "report_queue_unavailable",
@@ -96,6 +98,7 @@ def enqueue_work_request_summary_report_job(
     report_job.redis_job_id = redis_job_id
     session.commit()
     session.refresh(report_job)
+    record_report_job_queued(report_job.report_type)
     return report_job
 
 

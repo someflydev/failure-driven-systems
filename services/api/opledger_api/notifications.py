@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from opledger_api.metrics import record_notification_attempt
 from opledger_api.models import NotificationAttempt, ReportJob
 from opledger_api.schemas import NotificationAttemptList
 from opledger_api.shared import LimitQuery, OffsetQuery, SessionDependency
@@ -107,6 +108,7 @@ def notify_report_completed(
                 "error": attempt.error,
             },
         )
+        record_notification_attempt(attempt.channel, "failed")
         return attempt
 
     attempt.status = "sent"
@@ -114,6 +116,7 @@ def notify_report_completed(
     attempt.sent_at = datetime.now(UTC)
     session.commit()
     session.refresh(attempt)
+    record_notification_attempt(attempt.channel, "sent")
     return attempt
 
 

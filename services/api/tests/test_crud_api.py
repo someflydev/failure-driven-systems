@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from opledger_api import async_jobs, reports
+from opledger_api.metrics import metrics_registry
 from opledger_api.models import ReportJob, WorkRequestStatusEvent
 
 JsonObject = dict[str, object]
@@ -315,6 +316,8 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     db_session: Session,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    metrics_registry.reset()
+
     def fake_enqueue(report_job_id: int, _settings: object) -> str:
         return f"rq-job-{report_job_id}"
 
@@ -341,6 +344,9 @@ def test_work_request_summary_report_job_can_be_enqueued_and_inspected(
     assert report_job.status == "queued"
     assert report_job.correlation_id == "corr-report-1"
     assert report_job.redis_job_id == "rq-job-1"
+    assert (
+        'opledger_report_jobs_queued_total{report_type="work_request_summary"} 1'
+    ) in metrics_registry.render()
 
     get_response = client.get("/reports/jobs/1")
 

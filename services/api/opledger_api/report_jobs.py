@@ -9,6 +9,10 @@ from sqlalchemy.orm import Session
 from opledger_api.config import Settings, get_settings
 from opledger_api.db import get_session
 from opledger_api.logging import configure_logging, set_log_context
+from opledger_api.metrics import (
+    record_report_job_completed,
+    record_worker_job_failure,
+)
 from opledger_api.models import ReportJob
 from opledger_api.notifications import notify_report_completed
 from opledger_api.report_contracts import (
@@ -188,6 +192,10 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
                 session.commit()
             except Exception as exc:
                 mark_report_job_failed(report_job, session, report_failure_message(exc))
+                record_report_job_completed(report_job.report_type, "failed")
+                record_worker_job_failure(
+                    report_job.report_type, exc.__class__.__name__
+                )
                 duration_ms = (perf_counter() - started_at) * 1000
                 logger.warning(
                     "report_job_failed",
@@ -215,6 +223,7 @@ def generate_work_request_summary_report_job(report_job_id: int) -> None:
                     "duration_ms": round(duration_ms, 2),
                 },
             )
+            record_report_job_completed(report_job.report_type, "succeeded")
             notify_report_completed(session, report_job)
         finally:
             set_log_context(

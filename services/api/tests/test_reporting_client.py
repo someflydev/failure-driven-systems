@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 import httpx
 import pytest
 
+from opledger_api.metrics import metrics_registry
 from opledger_api.report_contracts import WorkRequestSummaryRenderRequest
 from opledger_api.reporting_client import (
     ReportingServiceError,
@@ -81,6 +82,8 @@ def test_reporting_client_posts_payload_and_validates_response(
 def test_reporting_client_maps_timeout_to_clear_exception(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    metrics_registry.reset()
+
     def timeout_post(
         _url: str,
         *,
@@ -98,6 +101,13 @@ def test_reporting_client_maps_timeout_to_clear_exception(
             base_url="http://reporting:8001",
             timeout_seconds=0.1,
         )
+
+    rendered_metrics = metrics_registry.render()
+    assert (
+        'opledger_reporting_service_failures_total{reason="timeout",'
+        'report_type="work_request_summary"} 1'
+    ) in rendered_metrics
+    assert "opledger_reporting_service_call_duration_seconds_bucket" in rendered_metrics
 
 
 def test_reporting_client_accepts_additive_response_fields(

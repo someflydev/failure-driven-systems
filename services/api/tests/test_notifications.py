@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from opledger_api import report_jobs
+from opledger_api.metrics import metrics_registry
 from opledger_api.models import NotificationAttempt, ReportJob
 from opledger_api.notifications import (
     LOCAL_NOTIFICATION_FAILURE_RECIPIENT,
@@ -88,6 +89,7 @@ def test_duplicate_notification_trigger_returns_existing_attempt(
 def test_failed_local_notification_adapter_path_is_visible(
     db_session: Session,
 ) -> None:
+    metrics_registry.reset()
     report_job = ReportJob(report_type="work_request_summary", status="succeeded")
     db_session.add(report_job)
     db_session.commit()
@@ -101,6 +103,9 @@ def test_failed_local_notification_adapter_path_is_visible(
     assert attempt.status == "failed"
     assert attempt.error == "LocalNotificationDeliveryError"
     assert attempt.sent_at is None
+    assert (
+        'opledger_notification_attempts_total{channel="local_log",status="failed"} 1'
+    ) in metrics_registry.render()
 
 
 def test_notification_attempts_are_visible_through_api(
