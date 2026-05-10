@@ -9,8 +9,8 @@ from opledger_api.routes import router as opsledger_router
 
 
 def create_app() -> FastAPI:
-    configure_logging()
     settings = get_settings()
+    configure_logging(service="opledger-api", environment=settings.environment)
     app = FastAPI(title=settings.app_name)
 
     app.middleware("http")(log_request)

@@ -32,13 +32,15 @@ class LocalNotificationAdapter:
             raise LocalNotificationDeliveryError("Local notification send failed.")
 
         logger.info(
-            "event=notification_sent target_type=%s target_id=%s channel=%s "
-            "recipient=%s idempotency_key=%s",
-            attempt.target_type,
-            attempt.target_id,
-            attempt.channel,
-            attempt.recipient,
-            attempt.idempotency_key,
+            "notification_sent",
+            extra={
+                "event": "notification_sent",
+                "target_type": attempt.target_type,
+                "target_id": attempt.target_id,
+                "channel": attempt.channel,
+                "recipient": attempt.recipient,
+                "idempotency_key": attempt.idempotency_key,
+            },
         )
 
 
@@ -94,14 +96,16 @@ def notify_report_completed(
         session.commit()
         session.refresh(attempt)
         logger.info(
-            "event=notification_failed target_type=%s target_id=%s channel=%s "
-            "recipient=%s idempotency_key=%s error=%s",
-            attempt.target_type,
-            attempt.target_id,
-            attempt.channel,
-            attempt.recipient,
-            attempt.idempotency_key,
-            attempt.error,
+            "notification_failed",
+            extra={
+                "event": "notification_failed",
+                "target_type": attempt.target_type,
+                "target_id": attempt.target_id,
+                "channel": attempt.channel,
+                "recipient": attempt.recipient,
+                "idempotency_key": attempt.idempotency_key,
+                "error": attempt.error,
+            },
         )
         return attempt
 

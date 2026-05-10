@@ -3,6 +3,7 @@ import time
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, Response
 
+from opledger_api.logging import configure_logging, log_request
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
@@ -12,7 +13,10 @@ from reporting_service.config import get_settings
 
 
 def create_app() -> FastAPI:
+    settings = get_settings()
+    configure_logging(service="opledger-reporting", environment=settings.environment)
     app = FastAPI(title="OpsLedger Reporting Service")
+    app.middleware("http")(log_request)
 
     @app.get("/")
     def root() -> dict[str, str]:
@@ -33,7 +37,6 @@ def create_app() -> FastAPI:
     def render_summary_report(
         request: WorkRequestSummaryRenderRequest,
     ) -> WorkRequestSummaryReport | JSONResponse | Response:
-        settings = get_settings()
         if settings.local_failure_injection_active:
             if settings.failure_mode == "delay":
                 time.sleep(settings.failure_delay_seconds)

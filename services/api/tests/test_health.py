@@ -1,4 +1,5 @@
 import logging
+from typing import Any, cast
 
 import pytest
 from fastapi.testclient import TestClient
@@ -23,10 +24,23 @@ def test_request_logging_includes_method_path_and_status(
     client = TestClient(create_app())
 
     with caplog.at_level(logging.INFO, logger="opledger_api.requests"):
-        response = client.get("/health/live")
+        response = client.get(
+            "/health/live",
+            headers={"X-Request-ID": "req-1", "X-Correlation-ID": "corr-1"},
+        )
 
     assert response.status_code == 200
-    assert "event=http_request method=GET path=/health/live status=200" in caplog.text
+    assert response.headers["X-Request-ID"] == "req-1"
+    assert response.headers["X-Correlation-ID"] == "corr-1"
+    request_log = next(
+        record
+        for record in caplog.records
+        if getattr(record, "event", None) == "http_request"
+    )
+    request_log_fields = cast(Any, request_log)
+    assert request_log_fields.method == "GET"
+    assert request_log_fields.path == "/health/live"
+    assert request_log_fields.status == 200
 
 
 def test_live_health_check_has_no_external_dependency() -> None:
@@ -129,6 +143,12 @@ def test_ready_health_check_logs_sanitized_database_failure(
         response = client.get("/health/ready")
 
     assert response.status_code == 503
-    assert "event=database_readiness_failed error_class=OperationalError" in caplog.text
-    assert "host=localhost" in caplog.text
+    readiness_log = next(
+        record
+        for record in caplog.records
+        if getattr(record, "event", None) == "database_readiness_failed"
+    )
+    readiness_log_fields = cast(Any, readiness_log)
+    assert readiness_log_fields.error_class == "OperationalError"
+    assert readiness_log_fields.host == "localhost"
     assert "postgresql+psycopg://localhost:55432/opledger" not in caplog.text

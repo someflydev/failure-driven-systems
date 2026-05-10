@@ -36,13 +36,15 @@ def ready(
         database = readiness_checker()
     except DatabaseReadinessError as exc:
         logger.warning(
-            "event=database_readiness_failed error_class=%s driver=%s host=%s "
-            "port=%s database=%s",
-            exc.error_class,
-            exc.target.get("driver"),
-            exc.target.get("host"),
-            exc.target.get("port"),
-            exc.target.get("database"),
+            "database_readiness_failed",
+            extra={
+                "event": "database_readiness_failed",
+                "error_class": exc.error_class,
+                "driver": exc.target.get("driver"),
+                "host": exc.target.get("host"),
+                "port": exc.target.get("port"),
+                "database": exc.target.get("database"),
+            },
         )
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

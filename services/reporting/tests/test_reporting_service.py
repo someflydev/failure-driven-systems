@@ -30,9 +30,11 @@ def test_reporting_service_renders_contract_payload() -> None:
     response = client.post(
         "/reports/work-requests/summary/render",
         json=valid_render_payload(),
+        headers={"X-Correlation-ID": "corr-reporting-1"},
     )
 
     assert response.status_code == 200
+    assert response.headers["X-Correlation-ID"] == "corr-reporting-1"
     assert response.json() == {
         "contract_version": "report-rendering.v1",
         "report_type": "work_request_summary",
