@@ -6,7 +6,7 @@ small VPS deployment target for performance questions to be real. The lesson is
 not to add cache first; it is to measure, explain the bottleneck, and then
 choose the smallest optimization that fits the evidence.
 
-## Initial Path
+## Lesson Path
 
 1. Re-read `curriculum/PHASE_PLAN.md` for the Phase 5 boundaries: measurement
    first, cache only after need, and derived state only with a rebuild story.
@@ -22,10 +22,18 @@ choose the smallest optimization that fits the evidence.
 6. Read `docs/performance/read-models.md`, then complete
    `exercises/phase-5/03-derived-read-models.md` to study explicit rebuilds,
    visible dashboard staleness, and source-of-truth ownership before cache.
-7. Revisit the Phase 2 report exercises and Phase 4 metrics exercise to connect
-   request latency, durable report job state, and derived report behavior.
-8. Write a bottleneck hypothesis from measured data. The hypothesis may be that
-   the current dataset does not justify optimization yet.
+7. Read `docs/performance/caching.md`, then complete
+   `exercises/phase-5/04-caching-and-staleness.md` to study the one Redis
+   cached endpoint, stable keys, TTL, bypass, stale-cache risk, and Redis
+   outage fallback.
+8. Run `scenarios/phase-5/stale-cache.md` and
+   `scenarios/phase-5/redis-cache-unavailable.md` to prove cache behavior under
+   failure instead of assuming it is only a speed feature.
+9. Complete `quizzes/phase-5.md`, practice with
+   `interviews/phase-5-performance-scaling.md`, and review your work with
+   `reviews/checklists/phase-5-performance-review.md`.
+10. Finish `exercises/phase-5/05-phase-5-capstone.md` and self-score with
+    `reviews/rubrics/phase-5-capstone.md`.
 
 ## Performance Focus
 
@@ -43,7 +51,8 @@ Learners should be able to explain:
 - What new failure mode each optimization accepts.
 - Why a read model can be rebuilt from authoritative tables and still be stale
   between rebuilds.
-
-Future Phase 5 lessons may add caching and read models. They should cite
-baseline evidence before changing system behavior and account for the new
-failure modes they introduce.
+- Why the dashboard cache can be stale separately from the dashboard read
+  model.
+- Why Redis cache outage should not corrupt source-of-truth data.
+- How to defend keeping or removing a cache based on before/after evidence and
+  user impact.

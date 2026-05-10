@@ -70,6 +70,9 @@ implementation.
   `customer_work_request_stats` derived dashboard projection, explicit rebuilds,
   visible staleness, source-of-truth ownership, and why read models differ from
   cache.
+- `docs/performance/caching.md`: Phase 5 guide to the one Redis cached
+  dashboard endpoint, stable keys, TTL, bypass, invalidation, stale-cache risk,
+  Redis outage fallback, and why Redis is not authoritative.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -105,9 +108,10 @@ implementation.
 - `lessons/phase-4/README.md`: Phase 4 lesson path for structured logging,
   metrics, request/correlation IDs, incident scenarios, status updates,
   runbooks, postmortems, and evidence-first review.
-- `lessons/phase-5/README.md`: initial Phase 5 lesson path for safe baseline
-  measurement, metrics comparison, bottleneck hypotheses, and delayed
-  optimization.
+- `lessons/phase-5/README.md`: complete Phase 5 lesson path for safe baseline
+  measurement, query inspection, indexes, read models, Redis caching,
+  staleness scenarios, review checklist, quiz, interview practice, and
+  capstone.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -193,6 +197,13 @@ implementation.
   learners to rebuild the customer work request stats projection, simulate
   stale dashboard output, verify source-of-truth endpoints remain correct, and
   explain user impact.
+- `exercises/phase-5/04-caching-and-staleness.md`: Phase 5 exercise requiring
+  learners to inspect the cached dashboard endpoint, collect hit/miss/bypass
+  metrics, demonstrate stale cache behavior, and confirm Redis outage fallback.
+- `exercises/phase-5/05-phase-5-capstone.md`: Phase 5 capstone requiring
+  baseline evidence, query and index reasoning, read-model staleness, cache
+  behavior, Redis outage evidence, a decision memo, quiz/interview practice,
+  and review against the checklist and rubric.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -232,6 +243,12 @@ implementation.
 - `scenarios/phase-4/ambiguous-logs-before-correlation.md`: incident drill for
   comparing unfiltered logs with correlation-filtered timelines across API,
   worker, reporting service, and durable job state.
+- `scenarios/phase-5/stale-cache.md`: guided local scenario for proving the
+  dashboard cache and read model can be stale while source-of-truth work
+  request endpoints remain current.
+- `scenarios/phase-5/redis-cache-unavailable.md`: guided local scenario for
+  stopping Redis, confirming dashboard fallback to the Postgres-backed read
+  model, and verifying source-of-truth data is not corrupted.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
@@ -266,6 +283,9 @@ implementation.
 - `reviews/checklists/incident-review.md`: Phase 4 checklist for critiquing
   incident response quality, evidence use, correlation, status updates,
   postmortems, LLM use, and scope control.
+- `reviews/checklists/phase-5-performance-review.md`: Phase 5 checklist for
+  reviewing baseline evidence, query/index reasoning, read-model ownership,
+  cache behavior, staleness, Redis outage handling, and scope control.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature
@@ -282,6 +302,10 @@ implementation.
   capstone covering scenario evidence, timelines, metrics and durable state,
   incident communication, postmortem quality, LLM-assisted debugging
   discipline, secret safety, and scope control.
+- `reviews/rubrics/phase-5-capstone.md`: scoring rubric for the Phase 5
+  capstone covering measurement evidence, query/index reasoning, read-model
+  ownership, cache behavior, staleness, Redis outage reasoning, and
+  communication quality.
 - `reviews/llm/README.md`: reusable LLM reviewer prompt patterns.
 - `reviews/llm/TEMPLATE_review_my_work.md`: learner-facing critique request
   template.
@@ -307,6 +331,8 @@ implementation.
   extraction defense.
 - `quizzes/phase-4.md`: Phase 4 short-answer quiz for logs, metrics,
   correlation IDs, health checks, incident response, and postmortem quality.
+- `quizzes/phase-5.md`: Phase 5 short-answer quiz for measurement, pagination,
+  indexes, read models, Redis cache, staleness, failure, and review judgment.
 - `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
   strong-answer traits instead of canned answers.
 - `interviews/phase-2-backend-distributed.md`: Phase 2 backend and distributed
@@ -319,18 +345,21 @@ implementation.
   mock interview prompts with strong-answer traits for timelines, logs,
   metrics, health checks, durable state, incident response, postmortems, and
   LLM-assisted debugging discipline.
+- `interviews/phase-5-performance-scaling.md`: Phase 5 performance and scaling
+  mock interview prompts with strong-answer traits for baselines, query shape,
+  read models, Redis cache, staleness, outage fallback, and tradeoff defense.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   explicit internal modules for customers, work requests, versioned report
   rendering contracts, local report rendering, a bounded reporting-service
   client, async report job state, notification attempts, an explicit
-  customer work request stats read-model rebuild and dashboard read path, shared route
-  dependencies, a worker entrypoint with bounded retries, completed-output
-  duplicate execution protection, local/test failure injection, structured
-  JSON logs, request ID handling, correlation ID propagation through report
-  jobs, and lightweight in-process metrics for HTTP, report job, worker,
-  reporting-boundary, and notification signals.
+  customer work request stats read-model rebuild and Redis cached dashboard
+  read path, shared route dependencies, a worker entrypoint with bounded
+  retries, completed-output duplicate execution protection, local/test failure
+  injection, structured JSON logs, request ID handling, correlation ID
+  propagation through report jobs, and lightweight in-process metrics for HTTP,
+  report job, worker, reporting-boundary, notification, and cache signals.
 - `services/reporting/reporting_service/`: stateless FastAPI report-rendering
   service that implements `report-rendering.v1` without database ownership and
   exposes disabled-by-default local/test failure modes for boundary drills,
@@ -342,8 +371,8 @@ implementation.
   notification attempts, the Phase 5 filtered work request list index, and the
   customer work request stats read model.
 - `services/api/tests/`: API scaffold, CRUD route, status history, derived
-  read-model, report job endpoint and worker lifecycle, reporting client,
-  model, and schema tests.
+  read-model and cache, report job endpoint and worker lifecycle, reporting
+  client, model, and schema tests.
 - `services/reporting/tests/`: reporting service contract tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures, including Docker Compose checks.
@@ -362,8 +391,8 @@ implementation.
   starting, or inspecting Redis and the worker during Phase 2 Redis-down
   drills.
 - `scripts/perf/baseline.py`: dependency-free Phase 5 baseline runner for
-  low-rate work request listing, opt-in work request creation, report job
-  polling, and a small deterministic local read fixture.
+  low-rate work request listing, dashboard stats reads, opt-in work request
+  creation, report job polling, and a small deterministic local read fixture.
 
 ## Intended Layers
 
