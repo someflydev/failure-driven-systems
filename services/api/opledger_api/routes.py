@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from opledger_api.async_jobs import router as async_jobs_router
 from opledger_api.customers import router as customers_router
 from opledger_api.notifications import router as notifications_router
+from opledger_api.read_models import router as read_models_router
 from opledger_api.reports import router as reports_router
 from opledger_api.work_requests import router as work_requests_router
 
@@ -14,3 +15,4 @@ router.include_router(work_requests_router)
 router.include_router(reports_router)
 router.include_router(async_jobs_router)
 router.include_router(notifications_router)
+router.include_router(read_models_router)

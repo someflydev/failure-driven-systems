@@ -114,6 +114,22 @@ class WorkRequestStatusEvent(Base):
     work_request: Mapped[WorkRequest] = relationship(back_populates="status_events")
 
 
+class CustomerWorkRequestStats(Base):
+    __tablename__ = "customer_work_request_stats"
+
+    customer_id: Mapped[int] = mapped_column(
+        ForeignKey("customers.id", name="fk_customer_work_request_stats_customer_id"),
+        primary_key=True,
+    )
+    total_work_requests: Mapped[int] = mapped_column(nullable=False, default=0)
+    open_count: Mapped[int] = mapped_column(nullable=False, default=0)
+    in_progress_count: Mapped[int] = mapped_column(nullable=False, default=0)
+    resolved_count: Mapped[int] = mapped_column(nullable=False, default=0)
+    cancelled_count: Mapped[int] = mapped_column(nullable=False, default=0)
+    status_event_count: Mapped[int] = mapped_column(nullable=False, default=0)
+    rebuilt_at: Mapped[datetime] = mapped_column(nullable=False)
+
+
 class ReportJob(Base):
     __tablename__ = "report_jobs"
     __table_args__ = (

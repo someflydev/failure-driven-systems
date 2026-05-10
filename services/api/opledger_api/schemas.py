@@ -85,6 +85,25 @@ class WorkRequestStatusEventList(BaseModel):
     offset: int
 
 
+class CustomerWorkRequestStatsRead(BaseModel):
+    customer_id: int
+    customer_name: str
+    customer_email: EmailText
+    total_work_requests: int
+    open_count: int
+    in_progress_count: int
+    resolved_count: int
+    cancelled_count: int
+    status_event_count: int
+    rebuilt_at: datetime
+
+
+class CustomerWorkRequestStatsList(BaseModel):
+    items: list[CustomerWorkRequestStatsRead]
+    limit: int
+    offset: int
+
+
 class ReportJobRead(BaseModel):
     id: int
     report_type: str

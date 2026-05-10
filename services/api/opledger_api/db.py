@@ -31,9 +31,12 @@ class DatabaseReadinessError(RuntimeError):
 
 @lru_cache
 def _cached_engine(database_url: str, connect_timeout_seconds: int) -> Engine:
+    connect_args: dict[str, int] = {}
+    if not database_url.startswith("sqlite"):
+        connect_args["connect_timeout"] = connect_timeout_seconds
     return create_engine(
         database_url,
-        connect_args={"connect_timeout": connect_timeout_seconds},
+        connect_args=connect_args,
         pool_pre_ping=True,
     )
 
