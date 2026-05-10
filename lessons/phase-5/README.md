@@ -19,9 +19,12 @@ choose the smallest optimization that fits the evidence.
 5. Read `docs/performance/query-inspection.md`, then complete
    `exercises/phase-5/02-pagination-and-indexes.md` to connect safe
    pagination, query plans, and narrowly justified indexes.
-6. Revisit the Phase 2 report exercises and Phase 4 metrics exercise to connect
+6. Read `docs/performance/read-models.md`, then complete
+   `exercises/phase-5/03-derived-read-models.md` to study explicit rebuilds,
+   visible dashboard staleness, and source-of-truth ownership before cache.
+7. Revisit the Phase 2 report exercises and Phase 4 metrics exercise to connect
    request latency, durable report job state, and derived report behavior.
-7. Write a bottleneck hypothesis from measured data. The hypothesis may be that
+8. Write a bottleneck hypothesis from measured data. The hypothesis may be that
    the current dataset does not justify optimization yet.
 
 ## Performance Focus
@@ -38,6 +41,8 @@ Learners should be able to explain:
 - What evidence would justify an index, pagination change, cache key, or
   denormalized read model.
 - What new failure mode each optimization accepts.
+- Why a read model can be rebuilt from authoritative tables and still be stale
+  between rebuilds.
 
 Future Phase 5 lessons may add caching and read models. They should cite
 baseline evidence before changing system behavior and account for the new

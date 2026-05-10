@@ -66,6 +66,10 @@ implementation.
 - `docs/performance/query-inspection.md`: Phase 5 guide to inspecting the
   filtered work request list query with `EXPLAIN`, interpreting plan shape, and
   documenting the write/storage cost of the narrow composite index.
+- `docs/performance/read-models.md`: Phase 5 guide to the
+  `customer_work_request_stats` derived dashboard projection, explicit rebuilds,
+  visible staleness, source-of-truth ownership, and why read models differ from
+  cache.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -185,6 +189,10 @@ implementation.
   learners to validate bounded pagination, stable ordering, filtered query
   behavior, and before/after query-plan reasoning for a narrowly justified
   work request index.
+- `exercises/phase-5/03-derived-read-models.md`: Phase 5 exercise requiring
+  learners to rebuild the customer work request stats projection, simulate
+  stale dashboard output, verify source-of-truth endpoints remain correct, and
+  explain user impact.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -316,7 +324,8 @@ implementation.
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,
   explicit internal modules for customers, work requests, versioned report
   rendering contracts, local report rendering, a bounded reporting-service
-  client, async report job state, notification attempts, shared route
+  client, async report job state, notification attempts, an explicit
+  customer work request stats read-model rebuild and dashboard read path, shared route
   dependencies, a worker entrypoint with bounded retries, completed-output
   duplicate execution protection, local/test failure injection, structured
   JSON logs, request ID handling, correlation ID propagation through report
@@ -330,9 +339,11 @@ implementation.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs,
-  notification attempts, and the Phase 5 filtered work request list index.
-- `services/api/tests/`: API scaffold, CRUD route, status history, report job
-  endpoint and worker lifecycle, reporting client, model, and schema tests.
+  notification attempts, the Phase 5 filtered work request list index, and the
+  customer work request stats read model.
+- `services/api/tests/`: API scaffold, CRUD route, status history, derived
+  read-model, report job endpoint and worker lifecycle, reporting client,
+  model, and schema tests.
 - `services/reporting/tests/`: reporting service contract tests.
 - `docs/runbooks/DB_CONNECTIVITY.md`: local and future Dokku troubleshooting
   guide for database readiness failures, including Docker Compose checks.
@@ -342,6 +353,8 @@ implementation.
 - `scripts/dev-down.sh`: small wrapper around `docker compose down`.
 - `scripts/migrate.sh`: explicit Alembic migration wrapper for host or Compose
   execution.
+- `scripts/rebuild-read-models.sh`: explicit host-local command for rebuilding
+  the customer work request stats read model from source-of-truth tables.
 - `scripts/scenarios/phase2_worker_down.sh`: small helper for stopping,
   starting, or inspecting only the Compose worker during Phase 2 worker-down
   drills.
