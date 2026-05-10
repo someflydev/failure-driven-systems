@@ -4,6 +4,7 @@ from sqlalchemy import (
     JSON,
     CheckConstraint,
     ForeignKey,
+    Index,
     String,
     Text,
     UniqueConstraint,
@@ -47,6 +48,12 @@ class WorkRequest(Base):
         CheckConstraint(
             "status in ('open', 'in_progress', 'resolved', 'cancelled')",
             name="ck_work_requests_status",
+        ),
+        Index(
+            "ix_work_requests_status_created_at_id",
+            "status",
+            "created_at",
+            "id",
         ),
     )
 

@@ -78,7 +78,12 @@ def list_work_requests(
     limit: LimitQuery = 50,
     offset: OffsetQuery = 0,
 ) -> dict[str, object]:
-    statement = select(WorkRequest).order_by(WorkRequest.id).limit(limit).offset(offset)
+    statement = (
+        select(WorkRequest)
+        .order_by(WorkRequest.created_at.desc(), WorkRequest.id.desc())
+        .limit(limit)
+        .offset(offset)
+    )
     if status_filter is not None:
         statement = statement.where(WorkRequest.status == status_filter)
     work_requests = session.scalars(statement).all()
