@@ -38,13 +38,13 @@ def test_render_request_requires_contract_fields() -> None:
     assert "total_work_requests" in str(exc_info.value)
 
 
-def test_render_request_rejects_unknown_extra_fields() -> None:
+def test_render_request_ignores_additive_unknown_fields() -> None:
     payload = valid_render_request_payload() | {"renderer_timeout_ms": 5000}
 
-    with pytest.raises(ValidationError) as exc_info:
-        WorkRequestSummaryRenderRequest.model_validate(payload)
+    request = WorkRequestSummaryRenderRequest.model_validate(payload)
 
-    assert "renderer_timeout_ms" in str(exc_info.value)
+    assert request.total_work_requests == 3
+    assert "renderer_timeout_ms" not in request.model_dump()
 
 
 def test_render_request_accepts_backward_compatible_optional_fields() -> None:
@@ -55,13 +55,13 @@ def test_render_request_accepts_backward_compatible_optional_fields() -> None:
     assert request.requested_by == "operator@example.com"
 
 
-def test_render_response_rejects_unknown_extra_fields() -> None:
+def test_render_response_ignores_backward_compatible_additive_fields() -> None:
     payload = valid_render_request_payload() | {"warnings": [], "debug_trace_id": "abc"}
 
-    with pytest.raises(ValidationError) as exc_info:
-        WorkRequestSummaryReport.model_validate(payload)
+    report = WorkRequestSummaryReport.model_validate(payload)
 
-    assert "debug_trace_id" in str(exc_info.value)
+    assert report.warnings == []
+    assert "debug_trace_id" not in report.model_dump()
 
 
 def test_render_response_requires_contract_fields() -> None:

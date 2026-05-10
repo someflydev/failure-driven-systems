@@ -94,6 +94,48 @@ def test_reporting_client_maps_timeout_to_clear_exception(
         )
 
 
+def test_reporting_client_accepts_additive_response_fields(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def newer_renderer_post(
+        url: str,
+        *,
+        json: object,
+        timeout: float,
+    ) -> httpx.Response:
+        request = httpx.Request("POST", url)
+        return httpx.Response(
+            200,
+            request=request,
+            json={
+                "contract_version": "report-rendering.v1",
+                "report_type": "work_request_summary",
+                "generated_at": "2026-01-01T12:00:00Z",
+                "total_work_requests": 1,
+                "by_status": {
+                    "open": 1,
+                    "in_progress": 0,
+                    "resolved": 0,
+                    "cancelled": 0,
+                },
+                "status_event_count": 2,
+                "warnings": [],
+                "renderer_build": "newer-than-client",
+            },
+        )
+
+    monkeypatch.setattr(httpx, "post", newer_renderer_post)
+
+    report = render_work_request_summary_report_remote(
+        render_request(),
+        base_url="http://reporting:8001",
+        timeout_seconds=1.0,
+    )
+
+    assert report.total_work_requests == 1
+    assert "renderer_build" not in report.model_dump()
+
+
 def test_reporting_client_maps_http_status_to_clear_exception(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -108,7 +150,58 @@ def test_reporting_client_maps_http_status_to_clear_exception(
 
     monkeypatch.setattr(httpx, "post", failing_post)
 
-    with pytest.raises(ReportingServiceError, match="http_503"):
+    with pytest.raises(ReportingServiceError, match="non_2xx_status_503"):
+        render_work_request_summary_report_remote(
+            render_request(),
+            base_url="http://reporting:8001",
+            timeout_seconds=1.0,
+        )
+
+
+def test_reporting_client_maps_malformed_json_to_clear_exception(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def malformed_post(
+        url: str,
+        *,
+        json: object,
+        timeout: float,
+    ) -> httpx.Response:
+        request = httpx.Request("POST", url)
+        return httpx.Response(200, request=request, content="{not valid json")
+
+    monkeypatch.setattr(httpx, "post", malformed_post)
+
+    with pytest.raises(ReportingServiceError, match="invalid_response_json"):
+        render_work_request_summary_report_remote(
+            render_request(),
+            base_url="http://reporting:8001",
+            timeout_seconds=1.0,
+        )
+
+
+def test_reporting_client_maps_incompatible_contract_to_clear_exception(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def incompatible_post(
+        url: str,
+        *,
+        json: object,
+        timeout: float,
+    ) -> httpx.Response:
+        request = httpx.Request("POST", url)
+        return httpx.Response(
+            200,
+            request=request,
+            json={
+                "contract_version": "report-rendering.v2",
+                "report_type": "work_request_summary",
+            },
+        )
+
+    monkeypatch.setattr(httpx, "post", incompatible_post)
+
+    with pytest.raises(ReportingServiceError, match="invalid_response_contract"):
         render_work_request_summary_report_remote(
             render_request(),
             base_url="http://reporting:8001",

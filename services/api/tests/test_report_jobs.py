@@ -13,6 +13,7 @@ from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
 )
+from opledger_api.reporting_client import ReportingServiceError
 
 
 def patch_report_job_session(
@@ -98,6 +99,34 @@ def test_report_worker_marks_job_failed_when_generation_raises(
     assert report_job.finished_at is not None
     assert report_job.attempt_count == 1
     assert report_job.result_json is None
+
+
+def test_report_worker_records_reporting_service_error_reason(
+    db_session: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    report_job = ReportJob(report_type="work_request_summary", status="queued")
+    db_session.add(report_job)
+    db_session.commit()
+    patch_report_job_session(monkeypatch, db_session)
+
+    def fail_render_report(_request: WorkRequestSummaryRenderRequest) -> object:
+        raise ReportingServiceError("invalid_response_contract")
+
+    monkeypatch.setattr(
+        report_jobs, "render_work_request_summary_report", fail_render_report
+    )
+
+    with pytest.raises(ReportingServiceError, match="invalid_response_contract"):
+        report_jobs.generate_work_request_summary_report_job(report_job.id)
+
+    db_session.refresh(report_job)
+    assert report_job.status == "failed"
+    assert (
+        report_job.error_message
+        == "Reporting service failed: invalid_response_contract"
+    )
+    assert report_job.last_error == report_job.error_message
 
 
 def test_report_worker_retry_attempt_count_changes_after_failure(
