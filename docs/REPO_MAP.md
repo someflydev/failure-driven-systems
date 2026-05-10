@@ -40,13 +40,28 @@ implementation.
   pointer to the implemented Phase 1 relational model.
 - `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
 - `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
-  later worker-backed, boundary-aware, observable operation.
+  later worker-backed, boundary-aware, observable, measured, and
+  architecture-defense operation.
+- `docs/architecture/current-system.md`: Phase 6 snapshot of the actual
+  current system shape across API, Postgres, Redis, worker, reporting service,
+  logs, metrics, local Compose, and documented Dokku deployment mode.
 - `docs/architecture/modular-monolith.md`: Phase 3 modular monolith guide
   naming current internal module ownership, why service boundaries are
   expensive, and why report rendering is studied before extraction.
+- `docs/adr/TEMPLATE.md`: Phase 6 ADR template requiring context, decision,
+  alternatives, consequences, failure modes, operational cost, rollback, and
+  interview defense.
 - `docs/adr/0001-report-rendering-boundary.md`: accepted-for-learning ADR
   explaining the narrow stateless report-rendering service extraction and why
   the same extraction may be unjustified in a small production system.
+- `docs/adr/0002-fastapi-python-primary-stack.md`: ADR defending FastAPI and
+  Python as the primary stack for the current workload and team constraints.
+- `docs/adr/0003-postgres-source-of-truth.md`: ADR defending Postgres as the
+  durable source of truth for OpsLedger facts and derived-state rebuilds.
+- `docs/adr/0004-redis-queue-cache-postgres-durability.md`: ADR defining Redis
+  as queue/cache coordination while Postgres remains durable.
+- `docs/adr/0005-dokku-first-deployment.md`: ADR defending Dokku as the first
+  deployment strategy and naming what it does not solve.
 - `docs/contracts/report-rendering-v1.md`: Phase 3 report rendering request and
   response contract, HTTP endpoint, compatibility rules, versioning approach,
   and stateless ownership boundary.
@@ -112,6 +127,9 @@ implementation.
   measurement, query inspection, indexes, read models, Redis caching,
   staleness scenarios, review checklist, quiz, interview practice, and
   capstone.
+- `lessons/phase-6/README.md`: initial Phase 6 path for current-architecture
+  review, ADR reading, decision memo defense, architecture review, and
+  interview practice.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -204,6 +222,10 @@ implementation.
   baseline evidence, query and index reasoning, read-model staleness, cache
   behavior, Redis outage evidence, a decision memo, quiz/interview practice,
   and review against the checklist and rubric.
+- `exercises/phase-6/01-decision-memo-defense.md`: first Phase 6 exercise
+  requiring a small architecture decision memo grounded in current workload,
+  team, evidence, alternatives, consequences, failure modes, operational cost,
+  rollback, and interview defense.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -286,6 +308,10 @@ implementation.
 - `reviews/checklists/phase-5-performance-review.md`: Phase 5 checklist for
   reviewing baseline evidence, query/index reasoning, read-model ownership,
   cache behavior, staleness, Redis outage handling, and scope control.
+- `reviews/checklists/architecture-review.md`: Phase 6 checklist for reviewing
+  ADRs, decision memos, system design answers, and architecture proposals
+  against workload, team, data ownership, operational cost, failure modes,
+  rollback, and interview defense.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature

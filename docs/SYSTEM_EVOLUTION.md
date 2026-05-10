@@ -49,17 +49,33 @@ improving the modular monolith.
 
 The point is to practice boundary reasoning, not to accumulate services.
 
-## Stage 4: Observable And Performance-Aware Operation
+## Stage 4: Observable Operation
 
 OpsLedger becomes a system the learner can operate under pressure. Logs,
 metrics, alerts, runbooks, incident reviews, and rollback decisions are tied to
 real failures in requests, workers, reports, notifications, and deploys.
 
-Performance work also arrives from evidence. Slow dashboards, expensive report
-queries, or high-read work request views may justify indexes, pagination
-changes, materialized views, caching, Redis, or other derived read models. Each
-derived view must identify the source of truth, rebuild strategy, staleness
-risk, and correction path.
+This stage prepares learners to debug with evidence instead of guessing.
 
-This stage prepares learners to defend architecture choices with evidence from
-the system they have actually built and operated.
+## Stage 5: Measured Performance And Derived State
+
+Performance work arrives from evidence. Slow dashboards, expensive report
+queries, or high-read work request views may justify indexes, pagination
+changes, derived read models, caching, Redis, or other read optimizations.
+Each derived view must identify the source of truth, rebuild strategy,
+staleness risk, and correction path.
+
+The current system has one Postgres-backed customer dashboard read model and
+one Redis cache around that dashboard endpoint. Postgres remains the source of
+truth.
+
+## Stage 6: Architecture Defense
+
+After the learner has built, operated, measured, and broken the system, Phase 6
+turns those experiences into architecture decision records and decision memo
+defense. Proposals must name workload, team, operational cost, source-of-truth
+ownership, failure modes, rollback, and evidence that would change the
+decision.
+
+The goal is interview-ready judgment grounded in this repository, not bigger
+diagrams or architecture labels.
