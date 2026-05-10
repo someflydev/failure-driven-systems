@@ -1,10 +1,14 @@
+import time
+
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse, Response
 
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
 )
 from opledger_api.report_renderer import render_work_request_summary_report
+from reporting_service.config import get_settings
 
 
 def create_app() -> FastAPI:
@@ -28,7 +32,34 @@ def create_app() -> FastAPI:
     )
     def render_summary_report(
         request: WorkRequestSummaryRenderRequest,
-    ) -> WorkRequestSummaryReport:
+    ) -> WorkRequestSummaryReport | JSONResponse | Response:
+        settings = get_settings()
+        if settings.local_failure_injection_active:
+            if settings.failure_mode == "delay":
+                time.sleep(settings.failure_delay_seconds)
+            elif settings.failure_mode == "http_500":
+                return JSONResponse(
+                    status_code=500,
+                    content={
+                        "detail": "Injected reporting service failure.",
+                        "failure_mode": settings.failure_mode,
+                    },
+                )
+            elif settings.failure_mode == "malformed_response":
+                return Response(
+                    content="{not valid json",
+                    media_type="application/json",
+                )
+            elif settings.failure_mode == "incompatible_response":
+                return JSONResponse(
+                    status_code=200,
+                    content={
+                        "contract_version": "report-rendering.v2",
+                        "report_type": "work_request_summary",
+                        "generated_at": request.generated_at.isoformat(),
+                    },
+                )
+
         return render_work_request_summary_report(request)
 
     return app

@@ -49,6 +49,9 @@ services:
     command: ["uv", "run", "--no-sync", "uvicorn", "reporting_service.main:app", "--app-dir", "services/reporting", "--host", "0.0.0.0", "--port", "8001"]
     environment:
       OPLEDGER_ENVIRONMENT: local-docker
+      OPLEDGER_REPORTING_FAILURE_INJECTION_ENABLED: ${OPLEDGER_REPORTING_FAILURE_INJECTION_ENABLED:-false}
+      OPLEDGER_REPORTING_FAILURE_MODE: ${OPLEDGER_REPORTING_FAILURE_MODE:-none}
+      OPLEDGER_REPORTING_FAILURE_DELAY_SECONDS: ${OPLEDGER_REPORTING_FAILURE_DELAY_SECONDS:-0}
     ports:
       - "${REPORTING_PORT:-18081}:8001"
     healthcheck:
