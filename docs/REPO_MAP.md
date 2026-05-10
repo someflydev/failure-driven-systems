@@ -53,6 +53,9 @@ implementation.
 - `docs/contracts/compatibility-playbook.md`: Phase 3 playbook for safe and
   unsafe report contract changes, consumer-driven compatibility thinking, and
   versioned contract debugging.
+- `docs/observability/logging-and-correlation.md`: Phase 4 guide to structured
+  JSON logs, request IDs, correlation IDs, report job propagation, secret-safe
+  log fields, and what remains out of scope before metrics or tracing.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -85,6 +88,9 @@ implementation.
   monolith boundaries, report rendering as a candidate boundary, contract
   compatibility, the stateless reporting-service extraction, failure
   scenarios, review checklist, quiz, interview practice, and capstone defense.
+- `lessons/phase-4/README.md`: initial Phase 4 lesson path for structured
+  logging, request/correlation IDs, revisiting async and reporting scenarios,
+  and evidence-first incident timelines.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -144,6 +150,9 @@ implementation.
   backward-compatible report contract change, one service-boundary failure
   scenario, technical verification, a short decision memo defending whether
   the extraction should stay, and delayed LLM senior-review critique.
+- `exercises/phase-4/01-follow-a-request-through-logs.md`: first Phase 4
+  exercise for tracing one report workflow through API, worker, reporting
+  service, durable job status, and sanitized logs using a correlation ID.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -228,11 +237,14 @@ implementation.
   rendering contracts, local report rendering, a bounded reporting-service
   client, async report job state, notification attempts, shared route
   dependencies, a worker entrypoint with bounded retries, completed-output
-  duplicate execution protection, local/test failure injection, and simple
-  request/readiness logging.
+  duplicate execution protection, local/test failure injection, structured
+  JSON logs, request ID handling, and correlation ID propagation through report
+  jobs.
 - `services/reporting/reporting_service/`: stateless FastAPI report-rendering
   service that implements `report-rendering.v1` without database ownership and
-  exposes disabled-by-default local/test failure modes for boundary drills.
+  exposes disabled-by-default local/test failure modes for boundary drills,
+  with the same structured request logging and correlation header handling as
+  the API.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and
