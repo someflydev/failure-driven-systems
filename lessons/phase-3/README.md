@@ -15,7 +15,10 @@ extraction is not automatically good, and service boundaries are expensive.
    before adding a network boundary.
 5. Complete `exercises/phase-3/03-extract-reporting-service.md` to wire the
    stateless service with explicit timeout and failure behavior.
-6. Revisit the Phase 2 capstone evidence and identify which pain was solved by
+6. Review `docs/contracts/compatibility-playbook.md`, then complete
+   `exercises/phase-3/04-timeouts-and-contracts.md` using the reporting
+   timeout, bad-response, and mixed-version scenarios.
+7. Revisit the Phase 2 capstone evidence and identify which pain was solved by
    async work rather than service extraction.
 
 ## Boundary Focus
@@ -28,6 +31,8 @@ Learners should be able to explain:
 - Why moving a module into another process creates failure modes that do not
   exist for in-process calls.
 - Why a clean internal contract is useful before a service is extracted.
+- Why additive contract fields are different from missing fields, wrong
+  versions, malformed responses, and slow downstream services.
 
 Future Phase 3 lessons may add contract reviews, dependency direction checks,
 and extraction criteria. They should not add more deployable services without a

@@ -16,7 +16,8 @@ implementation.
 - `.dockerignore`: Docker build-context exclusions for local env files,
   virtualenvs, caches, and generated artifacts.
 - `docker-compose.yml`: local development stack with API, Postgres, Redis, a
-  worker process, and the stateless reporting service used by the worker.
+  worker process, the stateless reporting service used by the worker, and
+  disabled-by-default local reporting-service failure injection settings.
 - `deploy/dokku/README.md`: Phase 1 Dokku deployment path for the single
   Dockerfile-based API service, including app creation, Postgres linking,
   config, deploy, migrations, health checks, logs, and rollback basics.
@@ -24,8 +25,9 @@ implementation.
   post-deploy checklist.
 - `.env.example`: local placeholder environment values for Compose, Redis,
   reporting service ports and timeouts, and health tuning, plus
-  disabled-by-default report retry and local/test failure injection settings;
-  real `.env` files must remain uncommitted.
+  disabled-by-default report retry, worker failure injection, and reporting
+  service failure injection settings; real `.env` files must remain
+  uncommitted.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
@@ -48,6 +50,9 @@ implementation.
 - `docs/contracts/report-rendering-v1.md`: Phase 3 report rendering request and
   response contract, HTTP endpoint, compatibility rules, versioning approach,
   and stateless ownership boundary.
+- `docs/contracts/compatibility-playbook.md`: Phase 3 playbook for safe and
+  unsafe report contract changes, consumer-driven compatibility thinking, and
+  versioned contract debugging.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -131,6 +136,9 @@ implementation.
 - `exercises/phase-3/03-extract-reporting-service.md`: Phase 3 exercise for
   extracting the stateless report renderer, wiring bounded worker calls, and
   defending the educational value against small-system production cost.
+- `exercises/phase-3/04-timeouts-and-contracts.md`: Phase 3 exercise for
+  running reporting timeout and bad-contract scenarios, inspecting durable job
+  evidence and logs, and explaining user-visible impact.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -151,6 +159,13 @@ implementation.
 - `scenarios/phase-2/redis-unavailable.md`: guided local scenario for stopping
   Redis, observing enqueue failure, and stating what the app can and cannot do
   without queue coordination.
+- `scenarios/phase-3/reporting-timeout.md`: guided local scenario for delaying
+  the extracted reporting service past the worker timeout and inspecting
+  durable failure evidence.
+- `scenarios/phase-3/reporting-bad-response.md`: guided local scenario for
+  malformed and incompatible reporting service responses.
+- `scenarios/phase-3/mixed-version-contract.md`: guided contract scenario for
+  additive v1 fields, incompatible contract drift, and consumer-driven tests.
 - `ops/runbooks/phase-1-first-response.md`: first-response runbook for health
   endpoints, logs, environment, database reachability, migrations, and rollback
   thinking.
@@ -197,7 +212,8 @@ implementation.
   duplicate execution protection, local/test failure injection, and simple
   request/readiness logging.
 - `services/reporting/reporting_service/`: stateless FastAPI report-rendering
-  service that implements `report-rendering.v1` without database ownership.
+  service that implements `report-rendering.v1` without database ownership and
+  exposes disabled-by-default local/test failure modes for boundary drills.
 - `services/api/alembic.ini`: Alembic entry point for API database migrations.
 - `services/api/migrations/`: Alembic migration environment and deterministic
   migrations for customers, work requests, status events, report jobs, and
