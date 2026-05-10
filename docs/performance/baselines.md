@@ -51,6 +51,12 @@ Poll a known report job status:
 scripts/perf/baseline.py poll-report-job --report-job-id 1
 ```
 
+Read the derived customer dashboard, which is the only Phase 5 cached endpoint:
+
+```sh
+scripts/perf/baseline.py dashboard-customer-stats
+```
+
 Write raw samples to CSV when you want evidence for a note or review:
 
 ```sh

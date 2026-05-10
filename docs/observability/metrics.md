@@ -76,6 +76,16 @@ the reporting boundary failing?
 - Durable notification attempts remain available at `/notification-attempts`
   for specific target inspection.
 
+`opledger_cache_access_total{endpoint,outcome}`
+
+- Question: Is the deliberately cached dashboard endpoint hitting Redis,
+  missing Redis, bypassing cache, or falling back because Redis is unavailable?
+- Current `endpoint` is `dashboard_customer_work_request_stats`.
+- `outcome` is a bounded value such as `hit`, `miss`, `bypass`,
+  `unavailable`, or `write_failed`.
+- Use it with `docs/performance/caching.md` to compare cache behavior with
+  source-of-truth reads and read-model staleness.
+
 ## Worker Exposure Limitation
 
 The RQ worker is not an HTTP service, so it does not expose its own `/metrics`

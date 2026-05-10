@@ -47,6 +47,7 @@ def parsed_args() -> argparse.Namespace:
         "scenario",
         choices=[
             "list-work-requests",
+            "dashboard-customer-stats",
             "create-work-requests",
             "poll-report-job",
             "seed-read-fixture",
@@ -239,6 +240,12 @@ def scenario_request(
 ) -> tuple[str, str, dict[str, Any] | None]:
     if args.scenario == "list-work-requests":
         return "GET", f"/work-requests?limit={args.limit}&offset=0", None
+    if args.scenario == "dashboard-customer-stats":
+        return (
+            "GET",
+            f"/dashboard/customer-work-request-stats?limit={args.limit}&offset=0",
+            None,
+        )
     if args.scenario == "create-work-requests":
         assert args.customer_id is not None
         return (
