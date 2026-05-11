@@ -70,8 +70,9 @@ target exists in the repository.
 Scenario and incident tests are deferred until Phase 1 has enough operational
 surface area to make scenario work meaningful.
 
-Cache and k3s tests are deferred until later phases create those components
-through a demonstrated need.
+Cache tests arrive with the Phase 5 cache behavior. k3s verification currently
+means static manifest syntax checks and deployment checklist review; cluster
+smoke tests are deferred until a prompt requires an actual k3s runtime drill.
 
 Property-based tests are deferred unless a small, clear invariant appears that
 would be better taught through generated examples than through a few readable

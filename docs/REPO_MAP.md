@@ -23,6 +23,14 @@ implementation.
   config, deploy, migrations, health checks, logs, and rollback basics.
 - `deploy/dokku/checklist.md`: concise Dokku deployment preflight and
   post-deploy checklist.
+- `deploy/k3s/README.md`: later Phase 6 orchestration learning path for
+  running the API, worker, and stateless reporting service on k3s without
+  making Kubernetes the default starting deployment.
+- `deploy/k3s/checklist.md`: k3s preflight, deploy, health, logs, rollout,
+  rollback, and resource checklist for a constrained VPS.
+- `deploy/k3s/manifests/`: plain Kubernetes starter manifests for the
+  OpsLedger namespace, config, secret placeholders, API Deployment/Service,
+  worker Deployment, reporting Deployment/Service, and API ingress placeholder.
 - `.env.example`: local placeholder environment values for Compose, Redis,
   reporting service ports and timeouts, and health tuning, plus
   disabled-by-default report retry, worker failure injection, and reporting
@@ -48,6 +56,8 @@ implementation.
 - `docs/architecture/modular-monolith.md`: Phase 3 modular monolith guide
   naming current internal module ownership, why service boundaries are
   expensive, and why report rendering is studied before extraction.
+- `docs/deployment/dokku-vs-k3s.md`: Phase 6 deployment-platform comparison
+  explaining where Dokku remains simpler and where k3s teaches orchestration.
 - `docs/adr/TEMPLATE.md`: Phase 6 ADR template requiring context, decision,
   alternatives, consequences, failure modes, operational cost, rollback, and
   interview defense.
@@ -62,6 +72,9 @@ implementation.
   as queue/cache coordination while Postgres remains durable.
 - `docs/adr/0005-dokku-first-deployment.md`: ADR defending Dokku as the first
   deployment strategy and naming what it does not solve.
+- `docs/adr/0006-k3s-later-orchestration-learning-path.md`: ADR accepting k3s
+  as a later orchestration learning path while keeping Dokku as the default
+  first deployment recommendation.
 - `docs/contracts/report-rendering-v1.md`: Phase 3 report rendering request and
   response contract, HTTP endpoint, compatibility rules, versioning approach,
   and stateless ownership boundary.
@@ -278,6 +291,9 @@ implementation.
 - `exercises/phase-6/03-runtime-selection-defense.md`: Phase 6 exercise for
   defending Python, Go, TypeScript/Node, JVM, Rust, BEAM/Elixir, or a rejected
   polyglot move against actual OpsLedger components and operational cost.
+- `exercises/phase-6/04-dokku-vs-k3s-defense.md`: Phase 6 exercise requiring
+  a deployment-platform defense that compares Dokku and k3s against OpsLedger
+  workload, team, resource, secrets, networking, rollout, and rollback costs.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -433,6 +449,9 @@ implementation.
 - `interviews/phase-6-language-runtime.md`: Phase 6 language and runtime mock
   interview prompts with strong-answer traits for Python/FastAPI, Go,
   TypeScript/Node, JVM, Rust, BEAM/Elixir, and polyglot restraint.
+- `interviews/phase-6-deployment-platforms.md`: Phase 6 deployment-platform
+  mock interview prompts for defending Dokku, k3s, stateful dependency
+  placement, rollouts, secrets, networking, observability, and team fit.
 - `extensions/polyglot-report-renderer/README.md`: optional extension spec for
   reimplementing only the stateless report renderer in Go or TypeScript behind
   `report-rendering.v1`; not required for the main OpsLedger path.
@@ -497,8 +516,9 @@ implementation.
 - `reviews/`: review rubrics, critique prompts, and expected reasoning checks.
 - `interviews/`: architecture defense and interview simulation materials.
 - `deploy/`: deployment configuration and operator-facing deployment docs. The
-  current concrete path is Dokku for the single-service API; k3s remains
-  deferred.
+  first concrete path is Dokku for the single-service API. k3s now exists as a
+  later orchestration learning path and should not be treated as the default
+  starting deployment.
 - `ops/`: runbooks, incident response notes, operational checks, and maintenance
   guidance when those materials become concrete.
 - `scripts/`: small automation scripts that support verified workflows. The
@@ -511,8 +531,9 @@ implementation.
 ## Population Rules
 
 - Do not create empty implementation directories just to match the map.
-- Do not add k3s manifests, new databases, service extraction, retries, or
-  idempotency before the curriculum creates a concrete need.
+- Do not add new databases, service extraction, retries, or idempotency before
+  the curriculum creates a concrete need. Keep the k3s manifests scoped to the
+  later orchestration learning path.
 - Keep planned material clearly labeled as planned.
 - Keep current-state claims accurate.
 - Prefer narrow, durable documents over broad placeholders.

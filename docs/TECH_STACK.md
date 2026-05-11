@@ -101,9 +101,11 @@ remaining realistic for a small scaffold.
 
 ## Deferred Choices
 
-k3s manifests, additional caches beyond the Phase 5 dashboard cache, additional
-service extraction, dead-letter workflows, and a full outbox dispatcher are
-deferred until later prompts create the concrete failure or teaching moment.
+k3s now exists only as a later orchestration learning path under
+`deploy/k3s/`; it is not part of the early default stack. Additional caches
+beyond the Phase 5 dashboard cache, additional service extraction,
+dead-letter workflows, and a full outbox dispatcher are deferred until later
+prompts create the concrete failure or teaching moment.
 
 ## Later Language Discussions
 

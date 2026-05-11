@@ -22,15 +22,21 @@ small, specific decisions from evidence, constraints, and operational cost.
 6. Read `docs/languages/README.md` and the runtime comparison docs in
    `docs/languages/` to compare Python, Go, TypeScript/Node, JVM, Rust, BEAM,
    and polyglot tradeoffs against actual OpsLedger components.
-7. Complete `exercises/phase-6/01-decision-memo-defense.md`.
-8. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
-9. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
-10. Review the memo with `reviews/checklists/architecture-review.md`.
-11. Practice defending the decision as an interview answer: state the context,
+7. Read `docs/deployment/dokku-vs-k3s.md`, `deploy/dokku/`, and
+   `deploy/k3s/` to compare the early Dokku path with later orchestration
+   practice.
+8. Complete `exercises/phase-6/01-decision-memo-defense.md`.
+9. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
+10. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
+11. Complete `exercises/phase-6/04-dokku-vs-k3s-defense.md`.
+12. Review the memo with `reviews/checklists/architecture-review.md`.
+13. Practice defending the decision as an interview answer: state the context,
    decision, tradeoffs, failure modes, rollback plan, and evidence that would
    change your mind.
-12. Use `interviews/phase-6-storage-systems.md` and
-    `interviews/phase-6-language-runtime.md` to practice follow-up questions.
+14. Use `interviews/phase-6-storage-systems.md`,
+    `interviews/phase-6-language-runtime.md`, and
+    `interviews/phase-6-deployment-platforms.md` to practice follow-up
+    questions.
 
 ## Phase 6 Focus
 
@@ -43,6 +49,8 @@ Learners should be able to explain:
 - Why the reporting service is a narrow stateless extraction, not a general
   endorsement of service sprawl.
 - Why Dokku fits the early deployment target and what it does not solve.
+- Why k3s is introduced later for orchestration learning and is not the
+  default starting deployment.
 - How measured performance and incident evidence constrain architecture
   proposals.
 - How to compare document stores, key-value systems, queues/streams, search
@@ -59,6 +67,7 @@ Learners should be able to explain:
 
 Optional extension work may use `extensions/polyglot-report-renderer/README.md`
 to practice a contract-compatible Go or TypeScript report renderer outside the
-main path. Future Phase 6 work may add proposal critique drills and capstone
-architecture reviews. It should not add k3s manifests, new runtime datastores,
-or new main-path runtime features until a later prompt creates that need.
+main path. k3s work should stay scoped to the later deployment learning path.
+Future Phase 6 work may add proposal critique drills and capstone architecture
+reviews. It should not add new runtime datastores or new main-path runtime
+features until a later prompt creates that need.
