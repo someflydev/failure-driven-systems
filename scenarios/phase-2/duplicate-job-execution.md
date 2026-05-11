@@ -41,6 +41,7 @@ Never paste real database URLs into scenario notes, commits, or chat.
 ```sh
 DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
 OPLEDGER_REDIS_URL=redis://localhost:56379/0 \
+PYTHONPATH=services/api \
 uv run python -c 'from opledger_api.report_jobs import generate_work_request_summary_report_job; generate_work_request_summary_report_job(1)'
 ```
 

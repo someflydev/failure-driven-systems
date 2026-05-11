@@ -35,6 +35,7 @@ Never paste real database URLs into scenario notes, commits, or chat.
 
 ```sh
 DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
+PYTHONPATH=services/api \
 uv run python -c 'from opledger_api.db import get_session; from opledger_api.models import ReportJob; from opledger_api.notifications import LOCAL_NOTIFICATION_FAILURE_RECIPIENT, notify_report_completed; s=get_session(); j=ReportJob(report_type="work_request_summary", status="succeeded"); s.add(j); s.commit(); s.refresh(j); a=notify_report_completed(s, j, recipient=LOCAL_NOTIFICATION_FAILURE_RECIPIENT); print(j.id, a.status, a.error); s.close()'
 ```
 

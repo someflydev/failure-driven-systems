@@ -26,12 +26,14 @@ For manual inspection against a migrated local stack, create a failed local
 notification attempt and inspect it through the API:
 
 ```sh
+DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
+PYTHONPATH=services/api \
 uv run python -c 'from opledger_api.db import get_session; from opledger_api.models import ReportJob; from opledger_api.notifications import LOCAL_NOTIFICATION_FAILURE_RECIPIENT, notify_report_completed; s=get_session(); j=ReportJob(report_type="work_request_summary", status="succeeded"); s.add(j); s.commit(); s.refresh(j); a=notify_report_completed(s, j, recipient=LOCAL_NOTIFICATION_FAILURE_RECIPIENT); print(j.id, a.status, a.error); s.close()'
 curl -sS http://localhost:18080/notification-attempts?target_type=report_job\&target_id={id}
 ```
 
-Use the same local database environment you use for migrations, but do not copy
-the full connection string into incident notes.
+The `DATABASE_URL` above uses the local Compose placeholder credential only.
+Do not copy real connection strings into incident notes.
 
 Inspect logs if the stack is running:
 
