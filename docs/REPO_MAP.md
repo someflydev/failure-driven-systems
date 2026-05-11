@@ -10,6 +10,9 @@ implementation.
 - `README.md`: public positioning, audience, differentiators, and phase
   sequence, plus the current local development workflow.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
+- `RELEASE_CHECKLIST.md`: public-readiness checklist for verification, docs,
+  deployment guidance, secrets, internal metrics exposure, scenario safety, and
+  readability.
 - `Dockerfile`: production-flavored local image definition for the FastAPI API
   service and stateless reporting service using repo-root `uv` tooling and
   Python 3.12.
@@ -39,6 +42,11 @@ implementation.
 - `pyproject.toml`: repo-root Python 3.12 project metadata, dependencies, and
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
+- `docs/NAVIGATION.md`: single high-level map of major learner, system,
+  operations, assessment, role-path, and prompt-history artifacts.
+- `docs/PORTFOLIO_GUIDE.md`: guidance for presenting OpsLedger publicly using
+  evidence, decision memos, incident writeups, deployment notes, and interview
+  narratives.
 - `docs/ASSISTANT_WORKFLOW.md`: staged LLM collaboration rules for learners
   and coding assistants, including review, quiz, interview, and adversarial
   panel use after learner attempts.
