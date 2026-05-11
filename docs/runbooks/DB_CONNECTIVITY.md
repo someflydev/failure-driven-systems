@@ -72,8 +72,10 @@ uv run alembic -c services/api/alembic.ini revision --autogenerate -m "describe 
 
 ## Docker Compose Checks
 
-The repo-root `docker-compose.yml` runs only Postgres and the API. Start both
-services with:
+The current repo-root `docker-compose.yml` includes Postgres, Redis, the API,
+the worker, and the stateless reporting service. Earlier Phase 1 work
+introduced only API and Postgres; later phases added Redis-backed jobs,
+reporting, and cache behavior. Start the current local stack with:
 
 ```sh
 docker compose up --build
@@ -85,13 +87,14 @@ Or use the small wrapper:
 ./scripts/dev-up.sh
 ```
 
-Confirm the declared services stay scoped to Phase 1:
+Confirm the declared services match the current stack:
 
 ```sh
 docker compose config --services
 ```
 
-The expected output is `postgres` and `api` only.
+The expected services are `postgres`, `redis`, `api`, `reporting`, and
+`worker`.
 
 Apply migrations explicitly after the containers are running:
 
@@ -110,12 +113,20 @@ Inside Compose, the API uses `postgres` as the database host because that is the
 service name on the Compose network. From the host, Postgres is published on
 port `55432` by default.
 
+`/health/ready` currently checks whether the API can reach Postgres. It does
+not prove Redis, reporting service, or worker liveness. For later-phase
+dependencies, use job status endpoints, service health checks, and logs in
+addition to API readiness.
+
 Useful local diagnostics:
 
 ```sh
 docker compose ps
 docker compose logs api
 docker compose logs postgres
+docker compose logs redis
+docker compose logs worker
+docker compose logs reporting
 ```
 
 Stop containers without deleting the database volume:

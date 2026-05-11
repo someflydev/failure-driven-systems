@@ -45,22 +45,28 @@ Health tests keep liveness and readiness separate. Liveness must answer without
 checking external dependencies. Readiness must report database availability or a
 sanitized unavailable response.
 
-Migration checks are still manual in Phase 1. When a local database is
-available, run the Alembic migrations and inspect the generated tables,
-constraints, and foreign keys. The automated suite validates the model and API
-behavior, but it is not a substitute for checking the actual migration against
-Postgres.
+Migration checks are outside the default fast gate. The automated suite
+validates model and API behavior, but it uses isolated test databases and is
+not a substitute for checking Alembic against Postgres. When the Compose stack
+is running, use the optional smoke check:
+
+```sh
+./scripts/smoke/postgres_migrations.sh
+```
+
+That script applies migrations inside the API container, checks
+`/health/ready`, and exercises one tiny customer creation path against the
+Compose Postgres database.
 
 Manual operational checks are also intentionally small: start the API, call
 `GET /health/live`, call `GET /health/ready`, and exercise one successful CRUD
 path plus one predictable failure path. These checks prove the service wiring
 works outside the in-process test client.
 
-Docker Compose checks are now part of Phase 1 local operational verification:
-build and start the API plus Postgres stack, run Alembic migrations explicitly,
-and confirm both health endpoints from the host. Keep these checks focused on
-the two-service local workflow; they are not a substitute for later deployment
-smoke tests.
+Docker Compose checks are now part of local operational verification: build and
+start the current stack, run Alembic migrations explicitly, and confirm health
+endpoints from the host. These local checks are not a substitute for later
+deployment smoke tests.
 
 ## Deferred Layers
 

@@ -10,9 +10,9 @@ implementation.
 - `README.md`: public positioning, audience, differentiators, and phase
   sequence, plus the current local development workflow.
 - `AGENT.md`: routing instructions for future coding-assistant sessions.
-- `RELEASE_CHECKLIST.md`: public-readiness checklist for verification, docs,
-  deployment guidance, secrets, internal metrics exposure, scenario safety, and
-  readability.
+- `RELEASE_CHECKLIST.md`: public-readiness checklist for verification,
+  optional Postgres migration smoke checks, docs, deployment guidance, secrets,
+  internal metrics exposure, scenario safety, and readability.
 - `Dockerfile`: production-flavored local image definition for the FastAPI API
   service and stateless reporting service using repo-root `uv` tooling and
   Python 3.12.
@@ -155,8 +155,9 @@ implementation.
 - `docs/languages/polyglot-systems.md`: Phase 6 guide to justified polyglot
   systems, contract boundaries, and why OpsLedger's main path stays
   Python/FastAPI.
-- `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
-  entrypoint, fixture discipline, and deferred testing layers.
+- `docs/TESTING_STRATEGY.md`: current test layers, local verification
+  entrypoint, optional Compose/Postgres migration smoke check, fixture
+  discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
   technology decisions.
 - `docs/async/phase-2-job-lifecycle.md`: Phase 2 async report job lifecycle,
@@ -553,8 +554,12 @@ implementation.
 - `scripts/dev-down.sh`: small wrapper around `docker compose down`.
 - `scripts/migrate.sh`: explicit Alembic migration wrapper for host or Compose
   execution.
-- `scripts/rebuild-read-models.sh`: explicit host-local command for rebuilding
-  the customer work request stats read model from source-of-truth tables.
+- `scripts/rebuild-read-models.sh`: explicit host-local or Compose command for
+  rebuilding the customer work request stats read model from source-of-truth
+  tables.
+- `scripts/smoke/postgres_migrations.sh`: optional Compose smoke check that
+  applies Alembic migrations against Postgres, checks API readiness, and
+  exercises a tiny customer create path.
 - `scripts/scenarios/phase2_worker_down.sh`: small helper for stopping,
   starting, or inspecting only the Compose worker during Phase 2 worker-down
   drills.
@@ -586,8 +591,8 @@ implementation.
 - `ops/`: runbooks, incident response notes, operational checks, and maintenance
   guidance when those materials become concrete.
 - `scripts/`: small automation scripts that support verified workflows. The
-  current entries cover verification, local Compose startup/shutdown, and
-  explicit database migrations.
+  current entries cover verification, local Compose startup/shutdown, explicit
+  database migrations, read-model rebuilds, and optional smoke checks.
 - `tests/`: repository or application tests once there is behavior to verify.
 - `data/`: sample data, fixtures, or generated learner outputs when required by
   exercises.

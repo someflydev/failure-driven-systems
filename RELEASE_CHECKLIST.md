@@ -6,6 +6,8 @@ milestone.
 ## Verification
 
 - Run `./scripts/verify.sh`.
+- If Docker Compose is available, run `./scripts/smoke/postgres_migrations.sh`
+  with the local stack up to prove Alembic applies against Postgres.
 - Run any repo-provided docs or link check.
 - Run `find .prompts -maxdepth 1 -name 'PROMPT_*.txt' | sort` and confirm
   `PROMPT_01.txt` through `PROMPT_40.txt` exist with no gaps.
