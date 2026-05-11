@@ -47,10 +47,10 @@ Create a Phase 4 incident evidence package. Run either:
 
 Use scenarios from `scenarios/phase-4/`:
 
-- `reporting-service-latency-incident.md`
-- `worker-stalled-incident.md`
-- `noisy-nonfatal-errors.md`
-- `ambiguous-logs-before-correlation.md`
+- `scenarios/phase-4/reporting-service-latency-incident.md`
+- `scenarios/phase-4/worker-stalled-incident.md`
+- `scenarios/phase-4/noisy-nonfatal-errors.md`
+- `scenarios/phase-4/ambiguous-logs-before-correlation.md`
 
 Your evidence package must include:
 
@@ -140,10 +140,12 @@ Review:
 Use LLMs only after collecting evidence and writing your own hypothesis. Good
 uses include:
 
-- Ask `TEMPLATE_incident_commander.md` to challenge your next check.
-- Ask `TEMPLATE_log_analysis_helper.md` to identify ambiguity in bounded logs.
-- Ask `TEMPLATE_postmortem_critique.md` to find unsupported claims in your
-  draft.
+- Ask `reviews/llm/TEMPLATE_incident_commander.md` to challenge your next
+  check.
+- Ask `reviews/llm/TEMPLATE_log_analysis_helper.md` to identify ambiguity in
+  bounded logs.
+- Ask `reviews/llm/TEMPLATE_postmortem_critique.md` to find unsupported claims
+  in your draft.
 
 Do not ask for unlimited diagnosis, final scenario answers, invented logs,
 invented metrics, or a completed postmortem.
