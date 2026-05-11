@@ -5,6 +5,20 @@ adds moving parts only after failure makes them useful, and keeps Postgres as
 the clear source of truth unless a later lesson deliberately introduces derived
 state.
 
+This is orientation, not an answer key or proof that these components are
+always justified.
+
+```mermaid
+flowchart LR
+    P1[Phase 1<br/>Synchronous API and Postgres]
+    P2[Phase 2<br/>Worker, Redis queue, durable jobs]
+    P3[Phase 3<br/>Contracts and reporting boundary]
+    P4[Phase 4<br/>Logs, metrics, incidents]
+    P5[Phase 5<br/>Indexes, read model, cache]
+    P6[Phase 6<br/>Architecture defense]
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6
+```
+
 ## Stage 1: One Synchronous Service
 
 OpsLedger begins as one deployable service on a small Linux VPS, deployed with

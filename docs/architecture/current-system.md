@@ -8,6 +8,22 @@ performance exercises.
 
 ## Runtime Shape
 
+This is orientation, not an answer key or proof that these components are
+always justified.
+
+```mermaid
+flowchart LR
+    Caller[Caller] --> API[FastAPI API]
+    API --> Postgres[(Postgres source of truth)]
+    API --> Redis[(Redis queue and cache)]
+    Redis --> Worker[RQ worker]
+    Worker --> Redis
+    Worker --> Postgres
+    Worker --> Reporting[Stateless reporting service]
+    API -. protected /metrics .-> Metrics[Internal metrics access]
+    Reporting -. protected /metrics .-> Metrics
+```
+
 - API: FastAPI application in `services/api/opledger_api/`, served by the
   repo-root `Dockerfile` with Uvicorn on container port `8000`.
 - Postgres: durable source of truth for customers, work requests, status
