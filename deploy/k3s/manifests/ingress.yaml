@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opledger-api
+  namespace: opledger
+  labels:
+    app.kubernetes.io/name: opledger-api
+    app.kubernetes.io/part-of: opledger
+  annotations:
+    # Keep metrics and debug-style endpoints internal. Do not route /metrics
+    # through public ingress without explicit auth and network controls.
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: api.opledger.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: opledger-api
+                port:
+                  name: http
