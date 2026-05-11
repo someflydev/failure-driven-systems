@@ -40,7 +40,8 @@ implementation.
   quality-tool configuration for the `uv` workflow.
 - `docs/DOCTRINE.md`: durable learning doctrine.
 - `docs/ASSISTANT_WORKFLOW.md`: staged LLM collaboration rules for learners
-  and coding assistants.
+  and coding assistants, including review, quiz, interview, and adversarial
+  panel use after learner attempts.
 - `docs/COMMIT_DISCIPLINE.md`: prompt-numbered multi-line commit message
   guidance and examples.
 - `docs/CONSTRAINTS.md`: infrastructure and budget assumptions.
@@ -168,8 +169,8 @@ implementation.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
 - `lessons/phase-1/README.md`: Phase 1 lesson index linking app features,
-  exercises, scenarios, runbooks, deployment docs, review gates, quiz,
-  interview practice, and capstone in order.
+  exercises, scenarios, runbooks, deployment docs, top-level assessment guides,
+  review gates, quiz, interview practice, and capstone in order.
 - `lessons/phase-2/README.md`: complete Phase 2 lesson path linking
   synchronous report pain, Redis/RQ worker flow, durable job status, retries,
   idempotency, safe side effects, scenario drills, review checklist, quiz,
@@ -187,7 +188,7 @@ implementation.
   capstone.
 - `lessons/phase-6/README.md`: Phase 6 path for current-architecture review,
   ADR reading, storage tradeoff comparison, decision memo defense,
-  architecture review, and interview practice.
+  architecture review, system-wide review, and mock interview panel practice.
 - `exercises/TEMPLATE.md`: canonical structure for later learner exercises.
 - `exercises/phase-1/01-basic-crud.md`: first Phase 1 CRUD exercise for
   customers and work requests.
@@ -294,6 +295,10 @@ implementation.
 - `exercises/phase-6/04-dokku-vs-k3s-defense.md`: Phase 6 exercise requiring
   a deployment-platform defense that compares Dokku and k3s against OpsLedger
   workload, team, resource, secrets, networking, rollout, and rollback costs.
+- `exercises/phase-6/05-mock-interview-panel.md`: Phase 6 exercise requiring
+  the learner to run a backend, distributed debugging, or architecture mock
+  panel, record attempted answers, critique, weak areas, follow-up actions, and
+  a revised two-minute answer.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -360,6 +365,8 @@ implementation.
 - `ops/dashboards/README.md`: lightweight dashboard sketch and Prometheus query
   examples for API traffic, report jobs, reporting boundary failures, and
   notifications without requiring Grafana or a Prometheus container.
+- `reviews/README.md`: top-level guide for using checklists, rubrics, and LLM
+  templates only after learner attempts and evidence gathering.
 - `reviews/checklists/phase-1-api-review.md`: practical Phase 1 API review
   checklist covering validation, constraints, transactions, errors, health
   behavior, tests, and scope control.
@@ -380,6 +387,10 @@ implementation.
   ADRs, decision memos, system design answers, and architecture proposals
   against workload, team, data ownership, operational cost, failure modes,
   rollback, and interview defense.
+- `reviews/checklists/system-wide-review.md`: cross-phase review checklist for
+  connecting source of truth, backend behavior, async work, service boundaries,
+  incidents, performance, deployment, runtime, and interview defense from
+  evidence.
 - `reviews/rubrics/phase-1-capstone.md`: scoring rubric for the Phase 1
   capstone covering correctness, relational reasoning, operational debugging,
   deployment evidence, explanation quality, and restraint around premature
@@ -414,6 +425,11 @@ implementation.
 - `reviews/llm/TEMPLATE_postmortem_critique.md`: Phase 4 postmortem critique
   prompt for reviewing unsupported claims, weak evidence, action items, and
   secret-handling risk after the learner writes a draft.
+- `reviews/llm/TEMPLATE_adversarial_architecture_panel.md`: Phase 6 LLM
+  template requiring a learner-written proposal, artifacts, evidence, reasoning,
+  and operational assumptions before adversarial architecture critique.
+- `quizzes/README.md`: top-level quiz format and self-grading guide for
+  short-answer phase checks without answer keys.
 - `quizzes/phase-1.md`: Phase 1 short-answer quiz for HTTP basics, relational
   modeling, transactions, migrations, health checks, logs, deployment, database
   failure, and scope control.
@@ -427,6 +443,9 @@ implementation.
   correlation IDs, health checks, incident response, and postmortem quality.
 - `quizzes/phase-5.md`: Phase 5 short-answer quiz for measurement, pagination,
   indexes, read models, Redis cache, staleness, failure, and review judgment.
+- `interviews/README.md`: top-level guide to backend feature deep dives,
+  distributed failure debugging, operational incidents, architecture decision
+  defense, and role-track-specific interview practice.
 - `interviews/phase-1-backend.md`: Phase 1 backend mock interview prompts with
   strong-answer traits instead of canned answers.
 - `interviews/phase-2-backend-distributed.md`: Phase 2 backend and distributed
@@ -452,6 +471,18 @@ implementation.
 - `interviews/phase-6-deployment-platforms.md`: Phase 6 deployment-platform
   mock interview prompts for defending Dokku, k3s, stateful dependency
   placement, rollouts, secrets, networking, observability, and team fit.
+- `interviews/mock-panels/README.md`: guide for running longer mock interview
+  panels from learner evidence, with human, peer, self-review, or LLM paths.
+- `interviews/mock-panels/backend-implementation-panel.md`: backend
+  implementation panel script covering system walkthroughs, data integrity, API
+  semantics, async extension, and test judgment.
+- `interviews/mock-panels/distributed-systems-debugging-panel.md`: distributed
+  debugging panel script covering stuck jobs, queue versus truth, boundary
+  failure, incident updates, and corrective action.
+- `interviews/mock-panels/architecture-staff-engineer-panel.md`: architecture
+  and staff engineer panel script covering current system explanation, decision
+  defense, datastore pressure, runtime/platform changes, and tradeoffs under
+  pressure.
 - `extensions/polyglot-report-renderer/README.md`: optional extension spec for
   reimplementing only the stateless report renderer in Go or TypeScript behind
   `report-rendering.v1`; not required for the main OpsLedger path.

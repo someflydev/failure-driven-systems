@@ -72,6 +72,9 @@ service, the repo-root `Dockerfile`, explicit migrations, and readable logs.
 
 Use these checks before treating Phase 1 as complete:
 
+- `reviews/README.md`
+- `quizzes/README.md`
+- `interviews/README.md`
 - `reviews/checklists/phase-1-api-review.md`
 - `quizzes/phase-1.md`
 - `interviews/phase-1-backend.md`

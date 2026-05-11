@@ -29,7 +29,9 @@ choose the smallest optimization that fits the evidence.
 8. Run `scenarios/phase-5/stale-cache.md` and
    `scenarios/phase-5/redis-cache-unavailable.md` to prove cache behavior under
    failure instead of assuming it is only a speed feature.
-9. Complete `quizzes/phase-5.md`, practice with
+9. Read `reviews/README.md`, `quizzes/README.md`, and
+   `interviews/README.md` before assessment, then complete
+   `quizzes/phase-5.md`, practice with
    `interviews/phase-5-performance-scaling.md`, and review your work with
    `reviews/checklists/phase-5-performance-review.md`.
 10. Finish `exercises/phase-5/05-phase-5-capstone.md` and self-score with

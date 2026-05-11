@@ -24,8 +24,10 @@ helps an operator explain what happened.
 7. Run one incident scenario from `scenarios/phase-4/` and complete
    `exercises/phase-4/03-incident-debugging-drill.md` with status updates,
    evidence, and a short postmortem.
-8. Use `reviews/checklists/incident-review.md` to critique the incident
-   response quality after the learner has written their own timeline.
+8. Read `reviews/README.md`, `quizzes/README.md`, and
+   `interviews/README.md`, then use `reviews/checklists/incident-review.md` to
+   critique the incident response quality after the learner has written their
+   own timeline.
 9. Complete `exercises/phase-4/04-phase-4-capstone.md`, then score it with
    `reviews/rubrics/phase-4-capstone.md`.
 10. Use `quizzes/phase-4.md` and

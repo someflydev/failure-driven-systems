@@ -78,6 +78,10 @@ hidden setup.
 
 ## Review And Assessment
 
+- `reviews/README.md`: how to use checklists, rubrics, and LLM templates after
+  completing learner attempts.
+- `quizzes/README.md`: quiz format and self-grading guidance.
+- `interviews/README.md`: interview modes and role-track practice.
 - `reviews/checklists/phase-2-async-review.md`: review checklist for async job
   behavior, Redis/Postgres ownership, retries, idempotency, side effects, and
   user-visible consistency.

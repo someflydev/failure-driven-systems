@@ -25,18 +25,24 @@ small, specific decisions from evidence, constraints, and operational cost.
 7. Read `docs/deployment/dokku-vs-k3s.md`, `deploy/dokku/`, and
    `deploy/k3s/` to compare the early Dokku path with later orchestration
    practice.
-8. Complete `exercises/phase-6/01-decision-memo-defense.md`.
-9. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
-10. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
-11. Complete `exercises/phase-6/04-dokku-vs-k3s-defense.md`.
-12. Review the memo with `reviews/checklists/architecture-review.md`.
-13. Practice defending the decision as an interview answer: state the context,
+8. Read `reviews/README.md`, `quizzes/README.md`,
+   `interviews/README.md`, and `interviews/mock-panels/README.md` so review,
+   quiz, and interview materials are used after learner attempts.
+9. Complete `exercises/phase-6/01-decision-memo-defense.md`.
+10. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
+11. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
+12. Complete `exercises/phase-6/04-dokku-vs-k3s-defense.md`.
+13. Review the memo with `reviews/checklists/architecture-review.md` and, for
+    cross-phase readiness, `reviews/checklists/system-wide-review.md`.
+14. Practice defending the decision as an interview answer: state the context,
    decision, tradeoffs, failure modes, rollback plan, and evidence that would
    change your mind.
-14. Use `interviews/phase-6-storage-systems.md`,
+15. Use `interviews/phase-6-storage-systems.md`,
     `interviews/phase-6-language-runtime.md`, and
     `interviews/phase-6-deployment-platforms.md` to practice follow-up
     questions.
+16. Complete `exercises/phase-6/05-mock-interview-panel.md` with one guide
+    from `interviews/mock-panels/` and record weak areas for follow-up.
 
 ## Phase 6 Focus
 

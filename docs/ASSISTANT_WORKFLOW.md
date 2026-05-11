@@ -12,6 +12,11 @@ The default order is:
 3. Ask for explanation third.
 4. Compare with possible solutions only after a serious attempt.
 
+The review, quiz, and interview layer follows the same order. Learners should
+complete an exercise, scenario, decision memo, or incident timeline before
+using `reviews/`, `quizzes/`, `interviews/`, or LLM templates for critique and
+defense practice.
+
 ## Learner Responsibilities
 
 Before asking an assistant for help, learners should provide the relevant
@@ -136,3 +141,8 @@ Appropriate prompts include:
 - "Act as a skeptical architecture reviewer."
 - "Mock interview me on the evolution from one service to async work."
 - "Challenge whether this boundary should become a separate service."
+
+For adversarial panels, learners should provide their artifacts, evidence, and
+reasoning before critique. Assistants should ask one question at a time, press
+for evidence from OpsLedger, and avoid providing polished model answers before
+the learner has attempted a defense.

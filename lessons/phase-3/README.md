@@ -25,14 +25,17 @@ costs solve a concrete failure, ownership problem, or learning objective.
 6. Review `docs/contracts/compatibility-playbook.md`, then complete
    `exercises/phase-3/04-timeouts-and-contracts.md` using the reporting
    timeout, bad-response, and mixed-version scenarios.
-7. Use `reviews/checklists/phase-3-service-boundary-review.md` to critique the
+7. Read `reviews/README.md`, `quizzes/README.md`, and
+   `interviews/README.md` to use assessment material after your attempt rather
+   than as an answer source.
+8. Use `reviews/checklists/phase-3-service-boundary-review.md` to critique the
    reporting boundary for ownership, contract stability, timeout behavior,
    retries, deployment cost, debugging, and rollback.
-8. Take `quizzes/phase-3.md`, then use
+9. Take `quizzes/phase-3.md`, then use
    `interviews/phase-3-distributed-boundaries.md` for mock defense practice.
-9. Complete `exercises/phase-3/05-phase-3-capstone.md` and score it with
+10. Complete `exercises/phase-3/05-phase-3-capstone.md` and score it with
    `reviews/rubrics/phase-3-capstone.md`.
-10. Revisit the Phase 2 capstone evidence and identify which pain was solved by
+11. Revisit the Phase 2 capstone evidence and identify which pain was solved by
     async work rather than service extraction.
 
 ## Boundary Focus

@@ -140,6 +140,20 @@ The curriculum progresses through six phases:
 5. Performance, caching, and read models when justified by measured pressure.
 6. Architecture defense, system design, and interview readiness.
 
+## Review, Quiz, And Interview Practice
+
+Each phase includes assessment material that should be used after learner
+attempts, not as replacement instructions:
+
+- `reviews/README.md`: how to use checklists, rubrics, and LLM critique
+  templates.
+- `quizzes/README.md`: quiz format and self-grading guidance.
+- `interviews/README.md`: mock interview modes and role-track practice.
+- `reviews/checklists/system-wide-review.md`: cross-phase review before a
+  portfolio review or mock panel.
+- `interviews/mock-panels/`: longer backend, distributed debugging, and
+  architecture panel scripts.
+
 Additional directories and application code should appear only when later
 prompts justify them. This repository should remain easy to navigate, honest
 about what exists, and strict about teaching judgment before tooling.
@@ -195,6 +209,6 @@ Postgres as the source of truth.
 
 Start with `lessons/phase-6/README.md` after completing Phase 5. It uses the
 current system architecture, ADRs, storage and runtime comparison guides,
-decision memo exercises, and architecture review checklist to practice
-defending tradeoffs from concrete OpsLedger constraints instead of generic
-system design labels.
+decision memo exercises, the architecture review checklist, the system-wide
+review checklist, and mock panel guides to practice defending tradeoffs from
+concrete OpsLedger constraints instead of generic system design labels.
