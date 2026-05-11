@@ -16,7 +16,7 @@ warm the dashboard cache:
 ```sh
 ./scripts/dev-up.sh
 ./scripts/migrate.sh --compose
-scripts/rebuild-read-models.sh
+./scripts/rebuild-read-models.sh --compose
 curl -s "http://127.0.0.1:18080/dashboard/customer-work-request-stats?limit=50&offset=0"
 ```
 

@@ -43,13 +43,24 @@ One owner remains responsible for each authoritative fact:
 Rebuild the read model explicitly:
 
 ```sh
-scripts/rebuild-read-models.sh
+./scripts/rebuild-read-models.sh --compose
 ```
 
 The command deletes the current projection and recalculates it from source
 tables. That makes the derivation visible and reviewable. If the command is
 wrong, the fix is to correct the rebuild logic and run it again; source data is
 not replaced.
+
+For host-local runs outside Compose, point the script at reachable Postgres and
+Redis services. This example uses the local Compose placeholder credential
+from `.env.example`; do not paste real database URLs into notes, commits, or
+chat:
+
+```sh
+DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
+OPLEDGER_REDIS_URL=redis://localhost:56379/0 \
+./scripts/rebuild-read-models.sh
+```
 
 ## Staleness
 

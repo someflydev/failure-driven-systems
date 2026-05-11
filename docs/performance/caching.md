@@ -70,8 +70,9 @@ expiration can repopulate Redis from the read model.
 
 There are two separate stale intervals:
 
-- The read model can lag source tables until `scripts/rebuild-read-models.sh`
-  runs.
+- The read model can lag source tables until
+  `./scripts/rebuild-read-models.sh --compose` runs in the local Compose
+  workflow.
 - Redis can keep an older dashboard response until TTL expiration or rebuild
   invalidation.
 

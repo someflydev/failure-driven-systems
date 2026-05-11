@@ -88,7 +88,7 @@ Run:
 
 ```sh
 ./scripts/verify.sh
-scripts/rebuild-read-models.sh
+./scripts/rebuild-read-models.sh --compose
 ```
 
 Manual checks:
@@ -139,5 +139,7 @@ dashboard data while preserving correct workflow state.
 ## Deployment/Debugging Actions If Relevant
 
 Run migrations before using the dashboard endpoint, then run
-`scripts/rebuild-read-models.sh` in the target environment. If dashboard totals
-look wrong, compare them with `GET /work-requests` before changing code.
+`./scripts/rebuild-read-models.sh --compose` in the local Compose environment.
+For another target environment, run the same module with database and Redis
+configuration that can reach that environment. If dashboard totals look wrong,
+compare them with `GET /work-requests` before changing code.

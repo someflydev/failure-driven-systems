@@ -16,7 +16,7 @@ work request. Rebuild the read model:
 ```sh
 ./scripts/dev-up.sh
 ./scripts/migrate.sh --compose
-scripts/rebuild-read-models.sh
+./scripts/rebuild-read-models.sh --compose
 ```
 
 Warm the cache:
@@ -58,7 +58,7 @@ endpoint should show the current work request state.
 After running:
 
 ```sh
-scripts/rebuild-read-models.sh
+./scripts/rebuild-read-models.sh --compose
 ```
 
 the cache should be invalidated best-effort and the next dashboard read should
