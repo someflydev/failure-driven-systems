@@ -4,6 +4,11 @@ The curriculum is organized into six phases. Concepts must appear only when the
 learner has enough direct experience to understand the failure or friction that
 motivates them.
 
+Role-path overlays live in `paths/README.md`. They do not replace the phase
+sequence or fork OpsLedger; they bias the same exercises, scenarios, reviews,
+and interviews toward backend/Python, data/backend, distributed systems,
+generalist backend, or architecture decision interview targets.
+
 ## Phase 1: Single Service Fundamentals
 
 Start with one deployable service and Postgres as the source of truth. The
@@ -122,3 +127,7 @@ actual OpsLedger components instead of debating them generically.
 LLM use belongs here as interviewer, critic, and reviewer. The learner should
 answer, defend, revise, and explain. The LLM should not replace the learner's
 reasoning or produce unexamined architecture.
+
+Phase 6 is also where learners should pick or finalize a role overlay from
+`paths/`, run the matching guide in `interviews/role-tracks/`, and prepare the
+cross-path defense in `paths/shared-capstone.md`.

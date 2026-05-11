@@ -168,6 +168,28 @@ implementation.
 - `curriculum/README.md`: phase sequence and concept timing boundaries.
 - `curriculum/PHASE_PLAN.md`: OpsLedger capability plan for each curriculum
   phase.
+- `paths/README.md`: role-path overlay index explaining that backend/Python,
+  data/backend, distributed systems, generalist backend, and architecture
+  decision paths bias the same OpsLedger system rather than forking the
+  codebase.
+- `paths/backend-python.md`: backend/Python role guide emphasizing API
+  semantics, transactions, tests, async report jobs, Python runtime defense,
+  and backend interview checkpoints.
+- `paths/data-backend.md`: data/backend role guide emphasizing source of truth,
+  migrations, query shape, derived read models, cache staleness, and datastore
+  refusal.
+- `paths/distributed-systems.md`: practical distributed systems role guide
+  emphasizing async work, Redis coordination, service contracts, timeouts,
+  incidents, and partial-failure debugging.
+- `paths/generalist-backend.md`: generalist backend role guide emphasizing
+  end-to-end feature ownership, local runtime/deployment basics, incidents,
+  performance, review, and concise explanation.
+- `paths/architecture-decisions.md`: architecture decision role guide
+  emphasizing ADRs, built-artifact evidence, tradeoffs, rollback,
+  source-of-truth boundaries, and operational cost.
+- `paths/shared-capstone.md`: cross-path portfolio defense requiring
+  implementation, debugging, review, and explanation milestones from real
+  OpsLedger artifacts.
 - `lessons/phase-1/README.md`: Phase 1 lesson index linking app features,
   exercises, scenarios, runbooks, deployment docs, top-level assessment guides,
   review gates, quiz, interview practice, and capstone in order.
@@ -483,6 +505,9 @@ implementation.
   and staff engineer panel script covering current system explanation, decision
   defense, datastore pressure, runtime/platform changes, and tradeoffs under
   pressure.
+- `interviews/role-tracks/`: concise role-specific mock interview guides for
+  backend/Python, data/backend, distributed systems, generalist backend, and
+  architecture decision overlays.
 - `extensions/polyglot-report-renderer/README.md`: optional extension spec for
   reimplementing only the stateless report renderer in Go or TypeScript behind
   `report-rendering.v1`; not required for the main OpsLedger path.

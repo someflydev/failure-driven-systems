@@ -145,6 +145,9 @@ The curriculum progresses through six phases:
 Each phase includes assessment material that should be used after learner
 attempts, not as replacement instructions:
 
+- `paths/README.md`: role-path overlays for backend/Python, data/backend,
+  distributed systems, generalist backend, and architecture decision practice
+  over the same OpsLedger system.
 - `reviews/README.md`: how to use checklists, rubrics, and LLM critique
   templates.
 - `quizzes/README.md`: quiz format and self-grading guidance.
@@ -212,3 +215,8 @@ current system architecture, ADRs, storage and runtime comparison guides,
 decision memo exercises, the architecture review checklist, the system-wide
 review checklist, and mock panel guides to practice defending tradeoffs from
 concrete OpsLedger constraints instead of generic system design labels.
+
+Use `paths/README.md` when you want to bias the same phase sequence toward a
+specific interview target. The role paths do not fork the project; they select
+which existing exercises, scenarios, reviews, and interviews deserve extra
+attention before the shared portfolio defense in `paths/shared-capstone.md`.

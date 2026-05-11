@@ -28,21 +28,25 @@ small, specific decisions from evidence, constraints, and operational cost.
 8. Read `reviews/README.md`, `quizzes/README.md`,
    `interviews/README.md`, and `interviews/mock-panels/README.md` so review,
    quiz, and interview materials are used after learner attempts.
-9. Complete `exercises/phase-6/01-decision-memo-defense.md`.
-10. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
-11. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
-12. Complete `exercises/phase-6/04-dokku-vs-k3s-defense.md`.
-13. Review the memo with `reviews/checklists/architecture-review.md` and, for
+9. Read `paths/README.md` and choose a role overlay if you are preparing for a
+   specific interview target.
+10. Complete `exercises/phase-6/01-decision-memo-defense.md`.
+11. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
+12. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
+13. Complete `exercises/phase-6/04-dokku-vs-k3s-defense.md`.
+14. Review the memo with `reviews/checklists/architecture-review.md` and, for
     cross-phase readiness, `reviews/checklists/system-wide-review.md`.
-14. Practice defending the decision as an interview answer: state the context,
+15. Practice defending the decision as an interview answer: state the context,
    decision, tradeoffs, failure modes, rollback plan, and evidence that would
    change your mind.
-15. Use `interviews/phase-6-storage-systems.md`,
+16. Use `interviews/phase-6-storage-systems.md`,
     `interviews/phase-6-language-runtime.md`, and
     `interviews/phase-6-deployment-platforms.md` to practice follow-up
     questions.
-16. Complete `exercises/phase-6/05-mock-interview-panel.md` with one guide
+17. Complete `exercises/phase-6/05-mock-interview-panel.md` with one guide
     from `interviews/mock-panels/` and record weak areas for follow-up.
+18. Use the matching guide in `interviews/role-tracks/`, then finish with
+    `paths/shared-capstone.md`.
 
 ## Phase 6 Focus
 
@@ -73,7 +77,9 @@ Learners should be able to explain:
 
 Optional extension work may use `extensions/polyglot-report-renderer/README.md`
 to practice a contract-compatible Go or TypeScript report renderer outside the
-main path. k3s work should stay scoped to the later deployment learning path.
-Future Phase 6 work may add proposal critique drills and capstone architecture
-reviews. It should not add new runtime datastores or new main-path runtime
-features until a later prompt creates that need.
+main path. Role overlays in `paths/` may change what the learner emphasizes,
+but they should not duplicate exercises or create alternate codebases. k3s
+work should stay scoped to the later deployment learning path. Future Phase 6
+work may add proposal critique drills and capstone architecture reviews. It
+should not add new runtime datastores or new main-path runtime features until a
+later prompt creates that need.
