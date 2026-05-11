@@ -111,6 +111,28 @@ implementation.
 - `docs/storage/when-not-to-add-a-datastore.md`: Phase 6 guide to refusing
   extra datastores when current OpsLedger evidence does not justify the
   operational burden.
+- `docs/languages/README.md`: Phase 6 runtime decision guide tying language
+  choices to actual OpsLedger components, team constraints, operability, and
+  rollback rather than generic language rankings.
+- `docs/languages/python.md`: Phase 6 comparison note for Python/FastAPI as
+  the current API, worker, reporting, test, and tooling baseline.
+- `docs/languages/go.md`: Phase 6 comparison note for Go as a possible fit for
+  small operational services, CLIs, or a narrow stateless report renderer.
+- `docs/languages/typescript-node.md`: Phase 6 comparison note for
+  TypeScript/Node as a possible fit for full-stack teams, schema-sharing, and
+  I/O-heavy product surfaces.
+- `docs/languages/jvm.md`: Phase 6 comparison note for JVM languages where
+  enterprise integration, mature service platforms, or organizational
+  standards justify the runtime cost.
+- `docs/languages/rust.md`: Phase 6 comparison note for Rust where measured
+  performance, memory safety, or systems-level constraints justify the team
+  and tooling cost.
+- `docs/languages/beam-elixir.md`: Phase 6 comparison note for BEAM/Elixir
+  where supervision, realtime messaging, or highly concurrent workflow
+  pressure exists.
+- `docs/languages/polyglot-systems.md`: Phase 6 guide to justified polyglot
+  systems, contract boundaries, and why OpsLedger's main path stays
+  Python/FastAPI.
 - `docs/TESTING_STRATEGY.md`: current Phase 1 test layers, local verification
   entrypoint, fixture discipline, and deferred testing layers.
 - `docs/TECH_STACK.md`: current stack choices, Python tooling, and deferred
@@ -253,6 +275,9 @@ implementation.
   defending whether OpsLedger should add, reject, or remove a datastore based
   on workload evidence, source-of-truth ownership, failure modes, and small-team
   operational cost.
+- `exercises/phase-6/03-runtime-selection-defense.md`: Phase 6 exercise for
+  defending Python, Go, TypeScript/Node, JVM, Rust, BEAM/Elixir, or a rejected
+  polyglot move against actual OpsLedger components and operational cost.
 - `scenarios/phase-1/db-unavailable.md`: guided local database outage scenario
   for observing live-but-not-ready behavior.
 - `scenarios/phase-2/worker-unavailable.md`: guided local scenario for stopping
@@ -405,6 +430,12 @@ implementation.
   interview prompts with strong-answer traits for source-of-truth ownership,
   Redis, document stores, queues/streams, search, analytics, vector storage,
   and refusing unjustified datastores.
+- `interviews/phase-6-language-runtime.md`: Phase 6 language and runtime mock
+  interview prompts with strong-answer traits for Python/FastAPI, Go,
+  TypeScript/Node, JVM, Rust, BEAM/Elixir, and polyglot restraint.
+- `extensions/polyglot-report-renderer/README.md`: optional extension spec for
+  reimplementing only the stateless report renderer in Go or TypeScript behind
+  `report-rendering.v1`; not required for the main OpsLedger path.
 - `services/api/opledger_api/`: FastAPI package with app creation,
   configuration, database engine/session setup, dependency-free liveness,
   database-backed readiness, Phase 1 SQLAlchemy models, Pydantic schemas,

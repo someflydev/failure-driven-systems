@@ -19,14 +19,18 @@ small, specific decisions from evidence, constraints, and operational cost.
 5. Read `docs/storage/README.md` and the storage comparison docs in
    `docs/storage/` to compare Postgres, Redis, and rejected datastore options
    against actual OpsLedger workloads.
-6. Complete `exercises/phase-6/01-decision-memo-defense.md`.
-7. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
-8. Review the memo with `reviews/checklists/architecture-review.md`.
-9. Practice defending the decision as an interview answer: state the context,
+6. Read `docs/languages/README.md` and the runtime comparison docs in
+   `docs/languages/` to compare Python, Go, TypeScript/Node, JVM, Rust, BEAM,
+   and polyglot tradeoffs against actual OpsLedger components.
+7. Complete `exercises/phase-6/01-decision-memo-defense.md`.
+8. Complete `exercises/phase-6/02-datastore-tradeoff-defense.md`.
+9. Complete `exercises/phase-6/03-runtime-selection-defense.md`.
+10. Review the memo with `reviews/checklists/architecture-review.md`.
+11. Practice defending the decision as an interview answer: state the context,
    decision, tradeoffs, failure modes, rollback plan, and evidence that would
    change your mind.
-10. Use `interviews/phase-6-storage-systems.md` to practice storage-system
-    follow-up questions.
+12. Use `interviews/phase-6-storage-systems.md` and
+    `interviews/phase-6-language-runtime.md` to practice follow-up questions.
 
 ## Phase 6 Focus
 
@@ -46,9 +50,15 @@ Learners should be able to explain:
   needs all of them.
 - When not to add another datastore because Postgres, Redis, indexes, read
   models, cache, or an outbox are enough for the current evidence.
+- How to compare Python, Go, TypeScript/Node, JVM, Rust, and BEAM/Elixir
+  without ranking languages outside component, team, and operational context.
+- Why a polyglot report-rendering extension can be useful practice without
+  fragmenting the main OpsLedger path.
 - What each decision costs a one-person or small-team operator.
 - How to reverse or revise a decision when the evidence changes.
 
-Future Phase 6 work may add proposal critique drills and capstone architecture
-reviews. It should not add k3s manifests, new runtime datastores, or new
-runtime features until a later prompt creates that need.
+Optional extension work may use `extensions/polyglot-report-renderer/README.md`
+to practice a contract-compatible Go or TypeScript report renderer outside the
+main path. Future Phase 6 work may add proposal critique drills and capstone
+architecture reviews. It should not add k3s manifests, new runtime datastores,
+or new main-path runtime features until a later prompt creates that need.

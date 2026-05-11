@@ -194,6 +194,7 @@ Postgres as the source of truth.
 ## Phase 6 Path
 
 Start with `lessons/phase-6/README.md` after completing Phase 5. It uses the
-current system architecture, ADRs, decision memo exercises, and architecture
-review checklist to practice defending tradeoffs from concrete OpsLedger
-constraints instead of generic system design labels.
+current system architecture, ADRs, storage and runtime comparison guides,
+decision memo exercises, and architecture review checklist to practice
+defending tradeoffs from concrete OpsLedger constraints instead of generic
+system design labels.

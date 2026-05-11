@@ -115,6 +115,10 @@ The final phase turns experience into explanation. Learners practice defending
 architecture decisions, comparing alternatives, identifying failure modes, and
 answering system design questions from concrete project history.
 
+Runtime and language comparisons belong here because learners can now tie
+Python, Go, TypeScript/Node, JVM, Rust, BEAM/Elixir, and polyglot tradeoffs to
+actual OpsLedger components instead of debating them generically.
+
 LLM use belongs here as interviewer, critic, and reviewer. The learner should
 answer, defend, revise, and explain. The LLM should not replace the learner's
 reasoning or produce unexamined architecture.

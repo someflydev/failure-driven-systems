@@ -189,8 +189,9 @@ OpsLedger capability:
 Allowed concepts:
 
 - Architecture tradeoff analysis, system design narratives, capacity reasoning,
-  failure-mode comparison, boundary extraction criteria, migration planning, and
-  LLM-assisted interview practice where the learner remains accountable.
+  failure-mode comparison, boundary extraction criteria, runtime and language
+  tradeoff analysis, migration planning, and LLM-assisted interview practice
+  where the learner remains accountable.
 
 Disallowed concepts:
 
@@ -208,4 +209,5 @@ Explanation outcomes:
 
 - Defend why OpsLedger started as one service, why async work was added, why
   boundaries were drawn where they were, what would justify a service split,
-  and how operational evidence shaped the design.
+  when another language or runtime would be justified, and how operational
+  evidence shaped the design.

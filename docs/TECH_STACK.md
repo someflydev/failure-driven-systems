@@ -107,8 +107,8 @@ deferred until later prompts create the concrete failure or teaching moment.
 
 ## Later Language Discussions
 
-Other runtimes can be discussed later as architecture tradeoffs, not as early
-defaults:
+Other runtimes are discussed in `docs/languages/` as architecture tradeoffs,
+not as early defaults:
 
 - Go may fit small operational services, CLIs, or concurrency-heavy components.
 - JVM languages may fit teams that need mature enterprise integrations or
