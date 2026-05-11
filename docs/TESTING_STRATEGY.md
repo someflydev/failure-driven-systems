@@ -1,8 +1,7 @@
 # Testing Strategy
 
-OpsLedger Phase 1 uses fast local checks to teach delivery discipline without
-introducing deployment or distributed-system machinery before the curriculum
-needs it.
+OpsLedger uses fast local checks as the default delivery gate, with optional
+runtime smoke checks when Compose or a deployment target is available.
 
 ## Local Verification Entry Point
 
@@ -18,10 +17,9 @@ learners do not have to remember which partial command proves a change.
 
 ## Current Test Layers
 
-Unit-style model and schema tests cover Pydantic validation rules and
-SQLAlchemy relationship behavior without starting the API. These tests are fast
-and make it clear which failures are rejected before a request reaches route
-code.
+Unit-style model and schema tests cover Pydantic validation rules and SQLAlchemy
+relationship behavior without starting the API. These tests are fast and make
+it clear which failures are rejected before a request reaches route code.
 
 API tests use FastAPI's test client with an isolated in-memory SQLite database.
 The shared fixtures in `services/api/tests/conftest.py` create one test
@@ -29,13 +27,20 @@ database per test, override the API database dependency, and seed customers or
 work requests through HTTP so tests exercise the same validation and route code
 as callers. These tests cover customer creation, duplicate email conflict,
 missing records, work request creation, status filters, pagination bounds,
-status transitions, status history, durable report job status, and report
-result availability.
+status transitions, status history, durable report job status, report result
+availability, notification attempts, derived read models, cache behavior, and
+metrics access control.
 
 Report worker tests exercise the worker function directly against the isolated
 test database. They cover running, success, failed attempts, controlled local
-failure injection, attempt counts, persisted error evidence, and bounded RQ
-retry configuration without requiring a live Redis server.
+failure injection, attempt counts, persisted error evidence, bounded RQ retry
+configuration, completed-output duplicate execution protection, notification
+side effects, and reporting-service client behavior without requiring a live
+Redis server.
+
+Reporting service tests cover the stateless report-rendering contract,
+additive request compatibility, local/test failure modes, metrics labels, and
+metrics access control.
 
 Database utility tests cover database URL normalization and sanitized readiness
 target reporting. They protect operational behavior without requiring a real
@@ -70,15 +75,15 @@ deployment smoke tests.
 
 ## Deferred Layers
 
-Deployment smoke tests are deferred until Dokku or another concrete deployment
-target exists in the repository.
+Automated real Dokku and k3s runtime smoke tests are still manual/deferred
+unless a later prompt adds a concrete deployment runtime drill.
 
-Scenario and incident tests are deferred until Phase 1 has enough operational
-surface area to make scenario work meaningful.
+Scenario and incident checks remain learner-operated drills unless a prompt
+turns a specific scenario into automation.
 
-Cache tests arrive with the Phase 5 cache behavior. k3s verification currently
-means static manifest syntax checks and deployment checklist review; cluster
-smoke tests are deferred until a prompt requires an actual k3s runtime drill.
+k3s verification currently means static manifest syntax checks and deployment
+checklist review; cluster smoke tests are deferred until a prompt requires an
+actual k3s runtime drill.
 
 Property-based tests are deferred unless a small, clear invariant appears that
 would be better taught through generated examples than through a few readable

@@ -1,9 +1,11 @@
 # Repository Map
 
-This repository begins with doctrine, navigation, and the initial OpsLedger API
-scaffold. Directories should be created or populated only when later prompts
-justify them. Planned directories below define the intended shape, not current
-implementation.
+This map describes the current OpsLedger repository. The project now includes
+the Phase 6 artifact set: API, worker, reporting service, Postgres migrations,
+Redis-backed queue/cache behavior, observability docs, deployment guidance,
+reviews, scenarios, quizzes, interviews, and architecture decision material.
+Future prompts should still create or populate new areas only when the lesson
+justifies them.
 
 ## Current Foundation
 
@@ -55,10 +57,11 @@ implementation.
 - `docs/CONSTRAINTS.md`: infrastructure and budget assumptions.
 - `docs/DOMAIN.md`: OpsLedger domain boundaries, conceptual entities, and the
   pointer to the implemented Phase 1 relational model.
-- `docs/REPO_MAP.md`: intended repository layers and directory responsibilities.
-- `docs/SYSTEM_EVOLUTION.md`: planned OpsLedger evolution from one service to
-  later worker-backed, boundary-aware, observable, measured, and
-  architecture-defense operation.
+- `docs/REPO_MAP.md`: current repository layers and directory
+  responsibilities.
+- `docs/SYSTEM_EVOLUTION.md`: OpsLedger evolution from one service to later
+  worker-backed, boundary-aware, observable, measured, and architecture-defense
+  operation.
 - `docs/architecture/current-system.md`: Phase 6 snapshot of the actual
   current system shape across API, Postgres, Redis, worker, reporting service,
   logs, metrics, local Compose, and documented Dokku deployment mode.
@@ -572,9 +575,12 @@ implementation.
 
 ## Intended Layers
 
-- `services/`: OpsLedger application services. The current implementation starts
-  with one minimal FastAPI service under `services/api/`; keep module boundaries
-  explicit before extracting anything.
+- `services/`: OpsLedger application services. `services/api/` contains the
+  core FastAPI API, database-owned modules, migrations, and worker entrypoint
+  launched as `opledger_api.worker`. `services/reporting/` contains the
+  stateless reporting service used by the worker for the report-rendering
+  boundary exercise. Postgres and Redis ownership is documented in architecture,
+  async, performance, and deployment docs rather than hidden in service labels.
 - `curriculum/`: phase-level learning structure, concept timing, and progression
   rules.
 - `lessons/`: individual lesson plans once the curriculum needs concrete
