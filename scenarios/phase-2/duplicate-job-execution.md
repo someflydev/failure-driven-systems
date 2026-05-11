@@ -35,6 +35,9 @@ curl -sS http://localhost:18080/notification-attempts?target_type=report_job\&ta
 After the job reaches `succeeded`, run the same worker function against the same
 job id from the host:
 
+The `DATABASE_URL` below uses the local Compose placeholder credential only.
+Never paste real database URLs into scenario notes, commits, or chat.
+
 ```sh
 DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
 OPLEDGER_REDIS_URL=redis://localhost:56379/0 \

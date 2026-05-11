@@ -39,6 +39,9 @@ curl -sS http://localhost:18080/health/ready
 
 Start the worker with failure injection enabled:
 
+The `DATABASE_URL` below uses the Compose placeholder credential from
+`.env.example`; do not paste real database URLs into scenario notes or commits.
+
 ```sh
 OPLEDGER_ENVIRONMENT=local \
 DATABASE_URL=postgresql+psycopg://opledger:opledger_local_password@localhost:55432/opledger \
@@ -85,6 +88,8 @@ the final `attempt_count`.
 ## Observe Recovery
 
 Stop the injected-failure worker and restart it without injection:
+
+This uses the same local-only Compose placeholder credential.
 
 ```sh
 OPLEDGER_ENVIRONMENT=local \
