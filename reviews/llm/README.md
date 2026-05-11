@@ -132,3 +132,10 @@ critique after collecting evidence and writing your own hypothesis:
 - `TEMPLATE_incident_commander.md`
 - `TEMPLATE_log_analysis_helper.md`
 - `TEMPLATE_postmortem_critique.md`
+
+## Adversarial Architecture Panel
+
+Use `TEMPLATE_adversarial_architecture_panel.md` after writing a decision memo,
+ADR, or system design answer. It requires learner artifacts, evidence, and
+reasoning before critique, and it tells the LLM not to invent missing
+measurements, services, datastores, deployments, or polished answers.
