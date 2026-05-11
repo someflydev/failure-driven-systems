@@ -109,6 +109,13 @@ class Settings(BaseSettings):
             "OPLEDGER_REPORT_RENDERING_SERVICE_TIMEOUT_SECONDS",
         ),
     )
+    metrics_access_token: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "METRICS_ACCESS_TOKEN",
+            "OPLEDGER_METRICS_ACCESS_TOKEN",
+        ),
+    )
 
     model_config = SettingsConfigDict(env_prefix="OPLEDGER_", populate_by_name=True)
 

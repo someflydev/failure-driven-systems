@@ -89,4 +89,6 @@ curl -s http://127.0.0.1:18081/metrics
 ```
 
 Treat these as internal endpoints. If a production deployment exposes them,
-put them behind private networking, firewall rules, or an authenticating proxy.
+put them behind private networking, firewall rules, an authenticating proxy, or
+set `OPLEDGER_METRICS_ACCESS_TOKEN` and pass the token as a bearer token or
+`X-OpsLedger-Metrics-Token` header.

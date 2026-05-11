@@ -4,6 +4,7 @@ from typing import Any, cast
 import pytest
 from fastapi.testclient import TestClient
 
+from opledger_api.config import get_settings
 from opledger_api.db import DatabaseReadinessError
 from opledger_api.health import get_readiness_checker
 from opledger_api.main import create_app
@@ -59,6 +60,69 @@ def test_metrics_endpoint_exposes_prometheus_text_with_route_template() -> None:
         'service="opledger-api",status="200"}'
     ) in metrics_response.text
     assert "opledger_http_request_duration_seconds_bucket" in metrics_response.text
+
+
+def test_metrics_endpoint_rejects_missing_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get("/metrics")
+
+    assert response.status_code == 403
+    get_settings.cache_clear()
+
+
+def test_metrics_endpoint_rejects_wrong_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"Authorization": "Bearer wrong-token"},
+    )
+
+    assert response.status_code == 403
+    get_settings.cache_clear()
+
+
+def test_metrics_endpoint_accepts_bearer_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"Authorization": "Bearer test-token"},
+    )
+
+    assert response.status_code == 200
+    assert "text/plain" in response.headers["content-type"]
+    get_settings.cache_clear()
+
+
+def test_metrics_endpoint_accepts_internal_token_header_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"X-OpsLedger-Metrics-Token": "test-token"},
+    )
+
+    assert response.status_code == 200
+    assert "text/plain" in response.headers["content-type"]
+    get_settings.cache_clear()
 
 
 def test_live_health_check_has_no_external_dependency() -> None:

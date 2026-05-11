@@ -1,10 +1,10 @@
 import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
 from opledger_api.logging import configure_logging, log_request
-from opledger_api.metrics import metrics_response
+from opledger_api.metrics import metrics_response, require_metrics_access
 from opledger_api.report_contracts import (
     WorkRequestSummaryRenderRequest,
     WorkRequestSummaryReport,
@@ -32,7 +32,8 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     @app.get("/metrics")
-    def metrics() -> object:
+    def metrics(request: Request) -> object:
+        require_metrics_access(request, settings.metrics_access_token)
         return metrics_response()
 
     @app.post(

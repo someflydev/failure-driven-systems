@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable
+from secrets import compare_digest
 from threading import Lock
 
+from fastapi import HTTPException, Request, status
 from fastapi.responses import Response
 
 PROMETHEUS_CONTENT_TYPE = "text/plain; version=0.0.4; charset=utf-8"
@@ -127,6 +129,29 @@ def metrics_response() -> Response:
     return Response(
         content=metrics_registry.render(),
         media_type=PROMETHEUS_CONTENT_TYPE,
+    )
+
+
+def require_metrics_access(request: Request, configured_token: str | None) -> None:
+    if configured_token is None or configured_token == "":
+        return
+
+    auth_header = request.headers.get("authorization", "")
+    bearer_prefix = "Bearer "
+    bearer_token = (
+        auth_header[len(bearer_prefix) :]
+        if auth_header.startswith(bearer_prefix)
+        else None
+    )
+    header_token = request.headers.get("x-opsledger-metrics-token")
+    supplied_tokens = [token for token in (bearer_token, header_token) if token]
+
+    if any(compare_digest(token, configured_token) for token in supplied_tokens):
+        return
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Metrics access is forbidden.",
     )
 
 

@@ -76,7 +76,9 @@ but it also creates more network surfaces to secure and debug.
 
 Do not expose `/metrics` or debug-style endpoints publicly by default. Use
 internal access such as `kubectl port-forward`, a private network, or an
-authenticated metrics stack.
+authenticated metrics stack. If public proxying or ingress can reach
+`/metrics`, set `OPLEDGER_METRICS_ACCESS_TOKEN` so API and reporting metrics
+require a bearer token or `X-OpsLedger-Metrics-Token` header.
 
 ## Observability
 

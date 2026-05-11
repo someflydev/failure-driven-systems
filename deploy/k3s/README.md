@@ -147,9 +147,13 @@ The API exposes:
 
 The reporting service exposes the same health surface plus `/metrics`.
 
-The ingress placeholder routes only normal API HTTP traffic. Do not expose
-internal metrics or debug endpoints through public ingress by default. Prefer
-internal access such as:
+The ingress placeholder uses `/` Prefix routing for API HTTP traffic, so it can
+also reach `/metrics`. Do not expose internal metrics or debug endpoints
+through public ingress by default. The example secret includes
+`OPLEDGER_METRICS_ACCESS_TOKEN`; set it to a real random value before applying
+the manifests if ingress or port-forwarding could reach `/metrics`. With that
+token set, metrics requests must include either `Authorization: Bearer <token>`
+or `X-OpsLedger-Metrics-Token: <token>`. Prefer internal access such as:
 
 ```sh
 kubectl -n opledger port-forward service/opledger-api 8000:8000

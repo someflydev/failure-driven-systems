@@ -70,6 +70,16 @@ dokku config:set opledger-api \
   OPLEDGER_DATABASE_CONNECT_TIMEOUT_SECONDS=3
 ```
 
+If the public Dokku proxy can reach the app directly, protect `/metrics` with a
+secret token:
+
+```sh
+dokku config:set opledger-api OPLEDGER_METRICS_ACCESS_TOKEN=REPLACE_WITH_RANDOM_TOKEN
+```
+
+With that token set, metrics requests must include either
+`Authorization: Bearer <token>` or `X-OpsLedger-Metrics-Token: <token>`.
+
 Do not set `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, or
 `POSTGRES_PORT` on the app. Those names are local Docker Compose inputs, not the
 Dokku application contract.

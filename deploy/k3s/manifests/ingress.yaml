@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/name: opledger-api
     app.kubernetes.io/part-of: opledger
   annotations:
-    # Keep metrics and debug-style endpoints internal. Do not route /metrics
-    # through public ingress without explicit auth and network controls.
+    # Prefix routing includes /metrics. Set OPLEDGER_METRICS_ACCESS_TOKEN and
+    # add network controls before using this public ingress for real traffic.
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:

@@ -6,6 +6,11 @@ internal network access. Do not publish them directly to the internet without an
 authenticating proxy or network rule; metric labels can reveal route names,
 status patterns, and operational shape even when they avoid customer data.
 
+By default, local `/metrics` requests remain open so Compose and manual curl
+checks stay simple. When `OPLEDGER_METRICS_ACCESS_TOKEN` is set, both the API
+and reporting service return `403` unless the request includes either
+`Authorization: Bearer <token>` or `X-OpsLedger-Metrics-Token: <token>`.
+
 The implementation uses a small in-process registry instead of a full
 observability stack. That is enough for Phase 4 because the questions are
 practical: is traffic arriving, are requests slow, are jobs completing, and is

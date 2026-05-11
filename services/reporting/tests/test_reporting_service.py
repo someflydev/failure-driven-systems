@@ -71,6 +71,69 @@ def test_reporting_service_metrics_endpoint_uses_reporting_service_label() -> No
     ) in metrics_response.text
 
 
+def test_reporting_service_metrics_rejects_missing_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get("/metrics")
+
+    assert response.status_code == 403
+    get_settings.cache_clear()
+
+
+def test_reporting_service_metrics_rejects_wrong_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"Authorization": "Bearer wrong-token"},
+    )
+
+    assert response.status_code == 403
+    get_settings.cache_clear()
+
+
+def test_reporting_service_metrics_accepts_bearer_token_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"Authorization": "Bearer test-token"},
+    )
+
+    assert response.status_code == 200
+    assert "text/plain" in response.headers["content-type"]
+    get_settings.cache_clear()
+
+
+def test_reporting_service_metrics_accepts_internal_token_header_when_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    get_settings.cache_clear()
+    monkeypatch.setenv("OPLEDGER_METRICS_ACCESS_TOKEN", "test-token")
+    client = TestClient(create_app())
+
+    response = client.get(
+        "/metrics",
+        headers={"X-OpsLedger-Metrics-Token": "test-token"},
+    )
+
+    assert response.status_code == 200
+    assert "text/plain" in response.headers["content-type"]
+    get_settings.cache_clear()
+
+
 def test_reporting_service_rejects_invalid_contract_payload() -> None:
     client = TestClient(create_app())
     payload = valid_render_payload()
