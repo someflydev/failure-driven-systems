@@ -37,8 +37,9 @@ pressure that makes it worth discussing.
 6. Architecture and interviews: ADRs, datastore/runtime/platform tradeoffs,
    system-wide review, and mock panels grounded in OpsLedger evidence.
 
-Start with `lessons/phase-1/README.md`. Use `curriculum/README.md` and
-`curriculum/PHASE_PLAN.md` for the full sequence.
+Start with [lessons/phase-1/README.md](lessons/phase-1/README.md). Use
+[curriculum/README.md](curriculum/README.md) and
+[curriculum/PHASE_PLAN.md](curriculum/PHASE_PLAN.md) for the full sequence.
 
 ## Constraints
 
@@ -78,19 +79,19 @@ The `.env.example` values are local placeholders. Do not commit a real `.env`.
 
 ## Where To Go
 
-- `docs/NAVIGATION.md`: map of major artifacts.
-- `docs/DOMAIN.md`: OpsLedger domain model and boundaries.
-- `docs/REPO_MAP.md`: repository structure and responsibilities.
-- `exercises/`: learner tasks for each phase.
-- `scenarios/`: guided failure drills.
-- `reviews/`: checklists, rubrics, and LLM critique templates.
-- `quizzes/`: phase self-checks.
-- `interviews/`: mock interviews and role-track panels.
-- `paths/`: role overlays for backend/Python, data/backend, distributed
+- [docs/NAVIGATION.md](docs/NAVIGATION.md): map of major artifacts.
+- [docs/DOMAIN.md](docs/DOMAIN.md): OpsLedger domain model and boundaries.
+- [docs/REPO_MAP.md](docs/REPO_MAP.md): repository structure and responsibilities.
+- [exercises/](exercises/): learner tasks for each phase.
+- [scenarios/](scenarios/): guided failure drills.
+- [reviews/](reviews/): checklists, rubrics, and LLM critique templates.
+- [quizzes/](quizzes/): phase self-checks.
+- [interviews/](interviews/): mock interviews and role-track panels.
+- [paths/](paths/): role overlays for backend/Python, data/backend, distributed
   systems, generalist backend, and architecture decisions.
-- `deploy/dokku/`: first VPS deployment path.
-- `deploy/k3s/`: later orchestration learning path.
-- `docs/PORTFOLIO_GUIDE.md`: how to present the work publicly.
+- [deploy/dokku/](deploy/dokku/): first VPS deployment path.
+- [deploy/k3s/](deploy/k3s/): later orchestration learning path.
+- [docs/PORTFOLIO_GUIDE.md](docs/PORTFOLIO_GUIDE.md): how to present the work publicly.
 
 ## LLM Boundaries
 
