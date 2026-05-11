@@ -2,7 +2,7 @@
 
 OpsLedger is the single evolving system domain for Failure-Driven Systems. It
 is a small internal operations workflow platform used to track customer work
-requests, status changes, operational notes, generated reports, and later
+requests, status changes, generated reports, and later operational notes,
 notifications.
 
 The domain is intentionally ordinary. It gives learners enough real workflow
@@ -53,7 +53,7 @@ boundaries until later prompts create that need.
 | Customers | Identify the organization or person associated with work. | Phase 1 |
 | Work requests | The central unit of operational work being created, viewed, updated, and completed. | Phase 1 |
 | Status events | A durable history of meaningful state changes on a work request. | Phase 1 |
-| Operator notes | Human-authored context attached while handling work. | Phase 1 |
+| Operator notes | Human-authored context attached while handling work. | Deferred until a prompt creates implementation pressure |
 | Reports | Generated summaries or exports based on operational data. | Phase 2 |
 | Notification attempts | Records of attempts to notify people about status changes or report readiness. | Phase 2 |
 | Derived read models | Rebuilt or refreshed views optimized for dashboards, summaries, or expensive reads. | Phase 5 |
@@ -61,8 +61,8 @@ boundaries until later prompts create that need.
 ## Phase Fit
 
 In Phase 1, OpsLedger is one synchronous service. Learners handle customers,
-work requests, status events, and notes through direct request/response flows
-and a clear Postgres source of truth.
+work requests, and status events through direct request/response flows and a
+clear Postgres source of truth.
 
 The first implemented relational model is intentionally narrower than the full
 Phase 1 concept list: it includes customers and work requests only. See

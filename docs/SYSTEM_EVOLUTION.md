@@ -9,7 +9,9 @@ state.
 
 OpsLedger begins as one deployable service on a small Linux VPS, deployed with
 Dokku and backed by Postgres. It handles customers, work requests, status
-events, and operator notes directly in request/response flows.
+events, and lifecycle history directly in request/response flows. Operator
+notes remain a deferred domain concept until a prompt creates implementation
+pressure.
 
 The teaching goal is ownership of the simplest real system shape: validation,
 transactions, migrations, logging, configuration, deploys, and rollback

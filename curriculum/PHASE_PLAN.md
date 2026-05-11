@@ -10,7 +10,6 @@ OpsLedger capability:
 
 - Create, view, update, and list customers and work requests.
 - Record status events as work requests move through a simple lifecycle.
-- Attach operator notes to work requests.
 - Deploy one synchronous service backed by Postgres on a small VPS with Dokku.
 
 Allowed concepts:
